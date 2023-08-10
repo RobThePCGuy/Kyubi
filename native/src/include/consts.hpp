@@ -29,6 +29,7 @@
 #define MAIN_CONFIG   INTLROOT "/config"
 #define MAIN_SOCKET   INTLROOT "/socket"
 #define LOG_PIPE      INTLROOT "/log"
+#define EARLYMNT      INTLROOT "/early-mount.d"
 
 constexpr const char *applet_names[] = { "su", "resetprop", nullptr };
 

@@ -63,8 +63,17 @@ void mount_mirrors() {
                 });
                 if (!rw) continue;
                 string preinit_dir = resolve_preinit_dir(info.target.data());
+                string early_mnt_dir = resolve_early_mount_dir(info.target.data());
+                //
                 xmkdir(preinit_dir.data(), 0700);
+                xmkdir(early_mnt_dir.data(), 0700);
+                xmkdir((early_mnt_dir + "/initrc.d").data(), 0700);
+
                 if ((mounted = rec_mount(preinit_dir, path))) {
+                    xmount(nullptr, path, nullptr, MS_UNBINDABLE, nullptr);
+                    // mount the early-mount.d
+                    ssprintf(path, sizeof(path), "%s/" EARLYMNT, get_magisk_tmp());
+                    rec_mount(early_mnt_dir, path);
                     xmount(nullptr, path, nullptr, MS_UNBINDABLE, nullptr);
                     break;
                 }
