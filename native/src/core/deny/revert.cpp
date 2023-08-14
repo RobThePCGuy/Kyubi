@@ -233,7 +233,7 @@ void revert_unmount(int pid) {
 
     // Unmount early-mount.d files
     for (auto &info: parse_mount_info("self")) {
-        if (info.source == "early-mount.d") { // bind mount from early-mount
+        if (info.source == EARLYMNTNAME) { // bind mount from early-mount
             lazy_unmount(info.target.data());
         }
     }

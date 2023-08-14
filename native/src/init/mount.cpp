@@ -166,10 +166,12 @@ static void mount_preinit_dir(string preinit_dev) {
         if (access(early_mnt_dir.data(), F_OK)) {
             LOGW("empty mount dir: %s\n", early_mnt_dir.data());
         } else {
+            // Copy mount files to tmpfs and bind mount it to original partitions
+            // We cannot mount files directly from PREINITMNT as it will cause
+            // preinit partition unable to mount when boot
             LOGD("early mount: %s\n", early_mnt_dir.data());
-            xmount("early-mount.d", EARLYMNT, "tmpfs", 0, nullptr);
+            xmount(EARLYMNTNAME, EARLYMNT, "tmpfs", 0, nullptr);
             cp_afc(early_mnt_dir.data(), EARLYMNT);
-            xmount(nullptr, EARLYMNT, nullptr, MS_RDONLY | MS_REMOUNT, nullptr);
         }
         xumount2(PREINITMNT, MNT_DETACH);
     } else {
@@ -291,6 +293,25 @@ static void simple_mount(const string &sdir, const string &ddir = "") {
 }
 
 static void early_mount() {
+    // preinit modules
+    if (auto dir = xopen_dir(PREINITMIRR)) {
+        for (dirent *entry; (entry = xreaddir(dir.get()));) {
+            auto name = PREINITMIRR "/"s + entry->d_name;
+            auto emnt = name + "/early-mount";
+            if (xaccess(emnt.data(), R_OK) == 0 &&
+                access((name + "/disable").data(), F_OK) != 0 &&
+                access((name + "/remove").data(), F_OK) != 0) {
+                // Copy mount files to tmpfs and bind mount it to original partitions
+                // We cannot mount files directly from PREINITMIRR as it will cause
+                // preinit partition unable to mount when boot
+                LOGD("Loading custom early mount patch: [%s]\n", emnt.data());
+                cp_afc(emnt.data(), EARLYMNT);
+            }
+        }
+    }
+    xmount(nullptr, EARLYMNT, nullptr, MS_RDONLY | MS_REMOUNT, nullptr);
+
+    // TODO: support magic mount
     if (access(EARLYMNT "/system", F_OK) == 0)
         simple_mount(EARLYMNT "/system", "/system");
 #define EARLY_MNT(part) \

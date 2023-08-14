@@ -468,6 +468,8 @@ void disable_modules() {
         if (off) {
             ssprintf(buf + off, sizeof(buf) - off, "/%s/sepolicy.rule", entry->d_name);
             unlink(buf);
+            ssprintf(buf + off, sizeof(buf) - off, "/%s/early-mount", entry->d_name);
+            rm_rf(buf);
         }
     });
 }
@@ -482,6 +484,8 @@ void remove_modules() {
         if (off) {
             ssprintf(buf + off, sizeof(buf) - off, "/%s/sepolicy.rule", entry->d_name);
             unlink(buf);
+            ssprintf(buf + off, sizeof(buf) - off, "/%s/early-mount", entry->d_name);
+            rm_rf(buf);
         }
     });
     rm_rf(MODULEROOT);

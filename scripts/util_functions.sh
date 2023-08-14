@@ -573,15 +573,18 @@ copy_preinit_files() {
   fi
 
   # Copy all enabled sepolicy.rule
-  for r in $NVBASE/modules*/*/sepolicy.rule; do
-    [ -f "$r" ] || continue
-    local MODDIR=${r%/*}
+  for d in $NVBASE/modules*/*; do
+    r="${d}/sepolicy.rule"
+    e="${d}/early-mount"
+    local MODDIR=$d
+    [ -d $MODDIR ] || continue
     [ -f $MODDIR/disable ] && continue
     [ -f $MODDIR/remove ] && continue
     [ -f $MODDIR/update ] && continue
     local MODNAME=${MODDIR##*/}
-    mkdir -p $PREINITDIR/$MODNAME
-    cp -f $r $PREINITDIR/$MODNAME/sepolicy.rule
+    mkdir -p "$PREINITDIR/$MODNAME"
+    [ -f "$r" ] && cp -f $r $PREINITDIR/$MODNAME/sepolicy.rule
+    [ -d "$e" ] && cp -afc $e $PREINITDIR/$MODNAME/early-mount
   done
 }
 
@@ -710,8 +713,8 @@ install_module() {
   fi
 
   # Copy over custom sepolicy rules
-  if [ -f $MODPATH/sepolicy.rule ]; then
-    ui_print "- Installing custom sepolicy rules"
+  if [ -f $MODPATH/sepolicy.rule ] || [ -d $MODPATH/early-mount ]; then
+    ui_print "- Installing custom sepolicy rules, early-mount files"
     copy_preinit_files
   fi
 
