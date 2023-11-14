@@ -242,26 +242,6 @@ static void inject_magisk_bins(root_node *system) {
     delete bin->extract("supolicy");
 }
 
-static void inject_zygisk_libs(root_node *system) {
-    if (access("/system/bin/linker", F_OK) == 0) {
-        auto lib = system->get_child<inter_node>("lib");
-        if (!lib) {
-            lib = new inter_node("lib");
-            system->insert(lib);
-        }
-        lib->insert(new zygisk_node(native_bridge.data(), false));
-    }
-
-    if (access("/system/bin/linker64", F_OK) == 0) {
-        auto lib64 = system->get_child<inter_node>("lib64");
-        if (!lib64) {
-            lib64 = new inter_node("lib64");
-            system->insert(lib64);
-        }
-        lib64->insert(new zygisk_node(native_bridge.data(), true));
-    }
-}
-
 vector<module_info> *module_list;
 
 void load_modules() {
@@ -305,22 +285,6 @@ void load_modules() {
     if (get_magisk_tmp() != "/sbin"sv || !str_contains(getenv("PATH") ?: "", "/sbin")) {
         // Need to inject our binaries into /system/bin
         inject_magisk_bins(system);
-    }
-
-    if (zygisk_enabled) {
-        string native_bridge_orig = get_prop(NBPROP);
-        if (native_bridge_orig.empty()) {
-            native_bridge_orig = "0";
-        }
-        native_bridge = native_bridge_orig != "0" ? ZYGISKLDR + native_bridge_orig : ZYGISKLDR;
-        set_prop(NBPROP, native_bridge.data());
-        // Weather Huawei's Maple compiler is enabled.
-        // If so, system server will be created by a special Zygote which ignores the native bridge
-        // and make system server out of our control. Avoid it by disabling.
-        if (get_prop("ro.maple.enable") == "1") {
-            set_prop("ro.maple.enable", "0");
-        }
-        inject_zygisk_libs(system);
     }
 
     if (!system->is_empty()) {

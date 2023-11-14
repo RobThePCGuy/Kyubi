@@ -37,6 +37,7 @@ struct module_info {
 };
 
 extern bool zygisk_enabled;
+extern bool stop_trace_zygote;
 extern std::vector<module_info> *module_list;
 extern std::string native_bridge;
 

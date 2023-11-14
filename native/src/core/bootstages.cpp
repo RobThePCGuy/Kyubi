@@ -303,9 +303,21 @@ static bool check_key_combo() {
  ***********************/
 
 extern int disable_deny();
+extern void start_zygisk();
+
 
 bool MagiskD::post_fs_data() const {
     as_rust().setup_logfile();
+
+    for (const char *bin : { "magisk32", "magisk64" }) {
+        string bin_path = string(get_magisk_tmp()) + "/" + bin;
+        if (access(bin_path.data(), F_OK) == 0) {
+           // make magisk bin as read-only so that it can't be modified or deleted
+           chmod(bin_path.data(), 0755);
+           xmount(bin_path.data(), bin_path.data(), nullptr, MS_BIND, nullptr);
+           xmount(nullptr, bin_path.data(), nullptr, MS_BIND | MS_RDONLY | MS_REMOUNT, nullptr);
+        }
+    }
 
     LOGI("** post-fs-data mode running\n");
 
@@ -339,6 +351,8 @@ bool MagiskD::post_fs_data() const {
         initialize_denylist();
         handle_modules();
     }
+
+    if (zygisk_enabled) start_zygisk();
 
 early_abort:
     auto mirror_dir = get_magisk_tmp() + "/"s MIRRDIR;

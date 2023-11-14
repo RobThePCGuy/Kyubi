@@ -39,7 +39,10 @@ LOCAL_SRC_FILES := \
     core/deny/cli.cpp \
     core/deny/utils.cpp \
     core/deny/revert.cpp \
-    core/zygisk/memory.cpp
+    core/zygisk/memory.cpp \
+    core/zygisk/proc_monitor.cpp \
+    core/zygisk/ptrace.cpp \
+    core/zygisk/ptrace_utils.cpp
 
 LOCAL_LDLIBS := -llog
 LOCAL_LDFLAGS := -Wl,--dynamic-list=src/exported_sym.txt

@@ -13,20 +13,16 @@
 
 using namespace std;
 
+void *self_handle = nullptr;
 string native_bridge = "0";
+bool stop_trace_zygote = false;
 
-static bool is_compatible_with(uint32_t) {
+extern "C" [[maybe_unused]] void zygisk_inject_entry(void *handle) {
+    self_handle = handle;
     zygisk_logging();
     hook_functions();
     ZLOGD("load success\n");
-    return false;
 }
-
-extern "C" [[maybe_unused]] NativeBridgeCallbacks NativeBridgeItf{
-    .version = 2,
-    .padding = {},
-    .isCompatibleWith = &is_compatible_with,
-};
 
 // The following code runs in zygote/app process
 
@@ -220,17 +216,9 @@ void reset_zygisk(bool restore) {
     }
     if (restore) {
         zygote_start_count = 1;
+        stop_trace_zygote = false;
     } else if (zygote_start_count.fetch_add(1) > 3) {
-        LOGW("zygote crashes too many times, rolling-back\n");
-        restore = true;
-    }
-    if (restore) {
-        string native_bridge_orig = "0";
-        if (native_bridge.length() > strlen(ZYGISKLDR)) {
-            native_bridge_orig = native_bridge.substr(strlen(ZYGISKLDR));
-        }
-        set_prop(NBPROP, native_bridge_orig.data());
-    } else {
-        set_prop(NBPROP, native_bridge.data());
+        LOGW("zygote crashes too many times, stop injecting\n");
+        stop_trace_zygote = true;
     }
 }
