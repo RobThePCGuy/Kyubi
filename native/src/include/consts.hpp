@@ -1,6 +1,10 @@
 #pragma once
 
 #define JAVA_PACKAGE_NAME "com.topjohnwu.magisk"
+// magiskinit will hex patch this constant,
+// appending \0 to prevent the compiler from reusing the string for "1"
+#define RANDOM_SOCKET_NAME  "d30138f2310a9fb9c54a3e0c21f58591\0"
+
 #define ZYGISKLDR       "libzygisk.so"
 #define NBPROP          "ro.dalvik.vm.native.bridge"
 #define SECURE_DIR      "/data/adb"
