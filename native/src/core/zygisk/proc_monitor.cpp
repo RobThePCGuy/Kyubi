@@ -10,6 +10,7 @@
 #include <sys/wait.h>
 #include <string>
 #include <set>
+#include <sys/stat.h>
 
 #include <base.hpp>
 #include <core.hpp>
@@ -40,6 +41,39 @@ std::string get_program(int pid) {
     }
     buf[sz] = 0;
     return buf;
+}
+
+static inline int read_ns(const int pid, struct stat *st) {
+    char path[32];
+    sprintf(path, "/proc/%d/ns/mnt", pid);
+    return stat(path, st);
+}
+
+static bool unmount_zygote(int pid, int fd) {
+    struct stat st, init_st;
+    if (access(("/proc/self/fd/"s + to_string(fd) + "/cmdline").data(), F_OK) != 0 || read_ns(pid, &st))
+        return true;
+
+    if (read_ns(1, &init_st) || 
+        (init_st.st_ino == st.st_ino && init_st.st_dev == st.st_dev))
+        return false;
+
+    if (access(("/proc/self/fd/"s + to_string(system_server_fd) + "/cmdline").data(), F_OK) != 0)
+        return false;
+
+    revert_daemon(pid, -2);
+    return true;
+}
+
+static int last_pid = 0;
+
+static void *wait_unmount() {
+    int pid = last_pid;
+    int fd = xopen(("/proc/"s + to_string(pid)).data(), O_PATH);
+    while (!unmount_zygote(pid, fd))
+        usleep(1000000);
+    close(fd);
+    return nullptr;
 }
 
 void * init_monitor() {
@@ -86,6 +120,10 @@ void * init_monitor() {
                             tracer = string(get_magisk_tmp()) + "/magisk32";
                         }
                         if (tracer != "" && !stop_trace_zygote) {
+                            if (sulist_enabled) {
+                                last_pid = pid;
+                                new_daemon_thread(reinterpret_cast<thread_entry>(&wait_unmount));
+                            }
                             kill(pid, SIGSTOP);
                             ptrace(PTRACE_CONT, pid, 0, 0);
                             waitpid(pid, & status, __WALL);

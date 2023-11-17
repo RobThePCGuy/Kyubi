@@ -38,7 +38,8 @@ constexpr const char *DB_SETTING_KEYS[] = {
     "root_access",
     "multiuser_mode",
     "mnt_ns",
-    "denylist",
+    "magiskhide",
+    "sulist",
     "zygisk"
 };
 
@@ -48,6 +49,7 @@ enum {
     SU_MULTIUSER_MODE,
     SU_MNT_NS,
     DENYLIST_CONFIG,
+    SULIST_CONFIG,
     ZYGISK_CONFIG
 };
 

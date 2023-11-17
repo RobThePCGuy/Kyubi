@@ -5,6 +5,11 @@
 #include <unwind.h>
 #include <bitset>
 #include <list>
+#include <sys/prctl.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <sys/stat.h>
 
 #include <lsplt.hpp>
 
@@ -38,6 +43,9 @@ enum {
     SERVER_FORK_AND_SPECIALIZE,
     DO_REVERT_UNMOUNT,
     SKIP_CLOSE_LOG_PIPE,
+    DO_ALLOW,
+    ALLOWLIST_ENFORCED,
+    RESTORE_MOUNT_EXTERNAL_NONE,
 
     FLAG_MAX
 };
@@ -150,9 +158,16 @@ DCL_HOOK_FUNC(int, fork) {
 DCL_HOOK_FUNC(int, unshare, int flags) {
     int res = old_unshare(flags);
     if (g_ctx && (flags & CLONE_NEWNS) != 0 && res == 0) {
-        if (g_ctx->flags[DO_REVERT_UNMOUNT]) {
-            revert_unmount();
-        }
+        (g_ctx->flags[DO_ALLOW])?
+                (void)remote_request_sulist() :
+        ((g_ctx->flags[ALLOWLIST_ENFORCED] == false && g_ctx->flags[DO_REVERT_UNMOUNT])?
+                revert_unmount() : (void)0);
+        // clean up mount id hole by unshare mount namespace twice
+        old_unshare(CLONE_NEWNS);
+        // restore MOUNT_EXTERNAL_NONE
+        if (g_ctx->flags[RESTORE_MOUNT_EXTERNAL_NONE])
+            g_ctx->args.app->mount_external = 0;
+        logging_muted = true;
         // Restore errno back to 0
         errno = 0;
     }
@@ -543,10 +558,33 @@ void HookContext::app_specialize_pre() {
 
     vector<int> module_fds;
     int fd = remote_get_info(args.app->uid, process, &info_flags, module_fds);
-    if ((info_flags & UNMOUNT_MASK) == UNMOUNT_MASK) {
-        ZLOGI("[%s] is on the denylist\n", process);
+    if ((info_flags & ALLOWLIST_ENFORCING) == ALLOWLIST_ENFORCING) {
+        flags[ALLOWLIST_ENFORCED] = true;
+        if ((info_flags & PROCESS_ON_ALLOWLIST) == PROCESS_ON_ALLOWLIST ||
+            (info_flags & PROCESS_IS_MAGISK_APP) == PROCESS_IS_MAGISK_APP) {
+            ZLOGI("[%s] is on the allowlist\n", process);
+            flags[DO_ALLOW] = true;
+            // Ensure separated namespace, allow denylist to handle isolated process before Android 11
+            if (args.app->mount_external == 0 /* MOUNT_EXTERNAL_NONE */) {
+                args.app->mount_external = 1 /* MOUNT_EXTERNAL_DEFAULT */;
+                flags[RESTORE_MOUNT_EXTERNAL_NONE] = true;
+            }
+        }
+    } else if ((info_flags & UNMOUNT_MASK) == UNMOUNT_MASK) {
+        ZLOGI("[%s] is on the hidelist\n", process);
         flags[DO_REVERT_UNMOUNT] = true;
-    } else if (fd >= 0) {
+        // Ensure separated namespace, allow denylist to handle isolated process before Android 11
+        if (args.app->mount_external == 0 /* MOUNT_EXTERNAL_NONE */) {
+            // Only apply the fix before Android 11, as it can cause undefined behaviour in later versions
+            char sdk_ver_str[92]; // PROPERTY_VALUE_MAX
+            if (__system_property_get("ro.build.version.sdk", sdk_ver_str) && atoi(sdk_ver_str) < 30) {
+                args.app->mount_external = 1 /* MOUNT_EXTERNAL_DEFAULT */;
+                flags[RESTORE_MOUNT_EXTERNAL_NONE] = true;
+            }
+        }
+    }
+
+    if (fd >= 0) {
         run_modules_pre(module_fds);
     }
     close(fd);

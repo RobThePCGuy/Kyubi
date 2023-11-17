@@ -16,6 +16,7 @@ using namespace std;
 void *self_handle = nullptr;
 string native_bridge = "0";
 bool stop_trace_zygote = false;
+int system_server_fd = -1;
 
 extern "C" [[maybe_unused]] void zygisk_inject_entry(void *handle) {
     self_handle = handle;
@@ -27,8 +28,7 @@ extern "C" [[maybe_unused]] void zygisk_inject_entry(void *handle) {
 // The following code runs in zygote/app process
 
 static inline bool should_load_modules(uint32_t flags) {
-    return (flags & UNMOUNT_MASK) != UNMOUNT_MASK &&
-           (flags & PROCESS_IS_MAGISK_APP) != PROCESS_IS_MAGISK_APP;
+    return (flags & PROCESS_IS_MAGISK_APP) != PROCESS_IS_MAGISK_APP;
 }
 
 int remote_get_info(int uid, const char *process, uint32_t *flags, vector<int> &fds) {
@@ -40,6 +40,15 @@ int remote_get_info(int uid, const char *process, uint32_t *flags, vector<int> &
             fds = recv_fds(fd);
         }
         return fd;
+    }
+    return -1;
+}
+
+int remote_request_sulist() {
+    if (int fd = zygisk_request(ZygiskRequest::SULIST_ROOT_NS); fd >= 0) {
+        int res = read_int(fd);
+        close(fd);
+        return res;
     }
     return -1;
 }
@@ -122,14 +131,20 @@ static void get_process_info(int client, const sock_cred *cred) {
 
     check_pkg_refresh();
     if (is_deny_target(uid, process)) {
-        flags |= PROCESS_ON_DENYLIST;
+        flags |= (sulist_enabled)? PROCESS_ON_ALLOWLIST : PROCESS_ON_DENYLIST;
     }
     int manager_app_id = get_manager();
     if (to_app_id(uid) == manager_app_id) {
         flags |= PROCESS_IS_MAGISK_APP;
     }
     if (denylist_enforced) {
-        flags |= DENYLIST_ENFORCING;
+        flags |= MAGISKHIDE_ENABLED;
+    }
+    if (sulist_enabled){
+        flags |= ALLOWLIST_ENFORCING;
+        // treat "not on sulist" as "on denylist" for zygisk modules
+        if ((flags & PROCESS_ON_ALLOWLIST) != PROCESS_ON_ALLOWLIST)
+            flags |= PROCESS_ON_DENYLIST;
     }
     if (uid_granted_root(uid)) {
         flags |= PROCESS_GRANTED_ROOT;
@@ -151,6 +166,9 @@ static void get_process_info(int client, const sock_cred *cred) {
     if (uid != 1000 || process != "system_server")
         return;
 
+    if (system_server_fd >= 0) close(system_server_fd);
+    system_server_fd = xopen(("/proc/"s + to_string(cred->pid)).data(), O_PATH);
+
     // Collect module status from system_server
     int slots = read_int(client);
     dynamic_bitset bits;
@@ -170,6 +188,19 @@ static void get_process_info(int client, const sock_cred *cred) {
                 close(dirfd);
             }
         }
+    }
+}
+
+static void mount_magisk_to_remote(int client, const sock_cred *cred) {
+    int pid = fork();
+    if (pid == 0) {
+        do_mount_magisk(cred->pid);
+        _exit(0);
+    } else if (pid > 0) {
+        waitpid(pid, nullptr, 0);
+        write_int(client, 0);
+    } else {
+        write_int(client, -1);
     }
 }
 
@@ -198,6 +229,9 @@ void zygisk_handler(int client, const sock_cred *cred) {
         break;
     case ZygiskRequest::GET_MODDIR:
         get_moddir(client);
+        break;
+    case ZygiskRequest::SULIST_ROOT_NS:
+        mount_magisk_to_remote(client, cred);
         break;
     default:
         // Unknown code

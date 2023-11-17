@@ -27,8 +27,7 @@ static bool rec_mount(const std::string_view from, const std::string_view to) {
            !mount(from.data(), to.data(), nullptr, MS_BIND | MS_REC, nullptr);
 }
 
-static void mount_mirrors() {
-    LOGI("* Mounting mirrors\n");
+void mount_mirrors() {
     auto self_mount_info = parse_mount_info("self");
     char path[64];
 
@@ -322,6 +321,7 @@ bool MagiskD::post_fs_data() const {
     LOGI("** post-fs-data mode running\n");
 
     unlock_blocks();
+    LOGI("* Mounting mirrors\n");
     mount_mirrors();
     prune_su_access();
 
@@ -371,7 +371,6 @@ void MagiskD::late_start() const {
     as_rust().setup_logfile();
 
     LOGI("** late_start service mode running\n");
-
     exec_common_scripts("service");
     exec_module_scripts("service");
 }

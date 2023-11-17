@@ -140,6 +140,7 @@ adb_pm_install() {
   local res=$?
   rm -f $tmp
   if [ $res = 0 ]; then
+    ( magisk magiskhide sulist && magisk magiskhide add "$2" ) &
     appops set "$2" REQUEST_INSTALL_PACKAGES allow
   fi
   return $res
@@ -219,6 +220,13 @@ run_migrations() { return; }
 
 grep_prop() { return; }
 
+get_sulist_status(){
+    SULISTMODE=false
+    if magisk magiskhide sulist; then
+        SULISTMODE=true
+    fi
+}
+
 #############
 # Initialize
 #############
@@ -231,6 +239,7 @@ app_init() {
   run_migrations
   SHA1=$(grep_prop SHA1 $MAGISKTMP/.magisk/config)
   check_encryption
+  get_sulist_status
 }
 
 export BOOTMODE=true

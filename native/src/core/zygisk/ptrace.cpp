@@ -11,6 +11,7 @@
 #include <string>
 #include <sys/mman.h>
 #include <sys/wait.h>
+#include <sys/mount.h>
 #include <cstdlib>
 #include <cstdio>
 #include <dlfcn.h>
@@ -22,13 +23,13 @@
 #include <base.hpp>
 #include <selinux.hpp>
 
+using namespace std;
+
 #if defined(__LP64__)
 # define LP_SELECT(lp32, lp64) lp64
 #else
 # define LP_SELECT(lp32, lp64) lp32
 #endif
-
-#define ZYGISK_LIB "/dev/magisk_zygisk" LP_SELECT("32", "64") "_"
 
 #include "zygisk.hpp"
 #include "ptrace_utils.hpp"
@@ -194,7 +195,17 @@ bool trace_zygote(int pid, const char *libpath) {
     }
     WAIT_OR_DIE
     if (STOPPED_WITH(SIGSTOP, PTRACE_EVENT_STOP)) {
-        bool is_injected = inject_on_main(pid, libpath);
+        char rstr[25] = { 0 };
+        sprintf(rstr, "/dev/");
+
+        do {
+            gen_rand_str(rstr + 5, sizeof(rstr) - 5);
+        } while (access(rstr, F_OK) == 0);
+        close(xopen(rstr, O_RDONLY | O_CREAT | O_CLOEXEC, 0));
+        xmount(libpath, rstr, nullptr, MS_BIND, nullptr);
+        bool is_injected = inject_on_main(pid, rstr);
+        umount2(rstr, MNT_DETACH);
+        rm_rf(rstr);
 
         if (!is_injected) {
             ZLOGE("failed to inject\n");

@@ -20,6 +20,9 @@ static map<int, poll_callback> *poll_map;
 static vector<pollfd> *poll_fds;
 static int poll_ctrl;
 
+int magisktmpfs_fd = -1;
+bool HAVE_32 = false;
+
 enum {
     POLL_CTRL_NEW,
     POLL_CTRL_RM,
@@ -225,7 +228,7 @@ static bool is_client(pid_t pid) {
     char path[32];
     sprintf(path, "/proc/%d/exe", pid);
     struct stat st{};
-    return !(stat(path, &st) || st.st_dev != self_st.st_dev || st.st_ino != self_st.st_ino);
+    return !(stat(path, &st) || st.st_size != self_st.st_size);
 }
 
 static void handle_request(pollfd *pfd) {
@@ -355,6 +358,9 @@ static void daemon_entry() {
     // Get self stat
     xstat("/proc/self/exe", &self_st);
 
+    // get magisktmpfs fd
+    magisktmpfs_fd = open(get_magisk_tmp(), O_PATH);
+
     // Get API level
     parse_prop_file("/system/build.prop", [](auto key, auto val) -> bool {
         if (key == "ro.build.version.sdk") {
@@ -371,6 +377,14 @@ static void daemon_entry() {
         }
     }
     LOGI("* Device API level: %d\n", SDK_INT);
+    auto cpu64 = get_prop("ro.product.cpu.abilist64");
+    auto cpu32 = get_prop("ro.product.cpu.abilist32");
+    if (!cpu64.empty())
+        LOGI("* CPU ABI 64-bit: %s\n", cpu64.data());
+    if (!cpu32.empty()) {
+        LOGI("* CPU ABI 32-bit: %s\n", cpu32.data());
+        HAVE_32 = true;
+    }
 
     restore_tmpcon();
 
@@ -378,11 +392,17 @@ static void daemon_entry() {
     const char *tmp = get_magisk_tmp();
     char path[64];
     ssprintf(path, sizeof(path), "%s/" ROOTMNT, tmp);
-    if (access(path, F_OK) == 0) {
-        file_readline(true, path, [](string_view line) -> bool {
-            umount2(line.data(), MNT_DETACH);
-            return true;
-        });
+    {
+        vector<string> targets;
+        auto mount_info = parse_mount_info("self");
+        for (auto &info : mount_info) {
+            if (info.root.starts_with("/" ROOTOVL "/")) {
+                targets.emplace_back(std::move(info.target));
+            }
+        }
+        for (auto &s : targets) {
+            umount2(s.data(), MNT_DETACH);
+        }
     }
     if (getenv("REMOUNT_ROOT")) {
         xmount(nullptr, "/", nullptr, MS_REMOUNT | MS_RDONLY, nullptr);
