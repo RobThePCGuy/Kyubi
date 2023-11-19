@@ -419,6 +419,33 @@ static void collect_modules(bool open_zygisk) {
                 return;
             }
         }
+        if (!open_zygisk) { // Load sepolicy.rule if possible
+            string module_mnt_dir = string(get_magisk_tmp()) + "/" MODULEMNT "/" + entry->d_name;
+            string module_rule = string(get_magisk_tmp()) + "/" PREINITMIRR "/" + entry->d_name;
+            string module_rulefile = module_mnt_dir + "/sepolicy.rule";
+            if (access(module_rulefile.data(), F_OK) == 0){
+                struct stat st_modulemnt;
+                struct stat st_modulerule;
+                // if rule file is not found
+                if (access(string(module_rule + "/sepolicy.rule").data(), F_OK) != 0) {
+                    LOGI("%s: applying [sepolicy.rule]\n", entry->d_name);
+                    char MAGISKPOLICY[PATH_MAX];
+                    sprintf(MAGISKPOLICY, "%s/magiskpolicy", get_magisk_tmp());
+                    auto ret = exec_command_sync(MAGISKPOLICY, "--live", "--apply", module_rulefile.data());
+                    if (ret != 0) LOGW("%s: failed to apply [sepolicy.rule]\n", entry->d_name);
+                }
+                if (stat(module_mnt_dir.data(), &st_modulemnt) == 0 &&
+                    (stat(module_rule.data(), &st_modulerule) != 0 ||
+                     st_modulemnt.st_dev != st_modulerule.st_dev ||
+                     st_modulemnt.st_ino != st_modulerule.st_ino)) {
+                         // refresh rule file
+                         LOGI("%s: refresh [sepolicy.rule]\n", entry->d_name);
+                         rm_rf(module_rule.data());
+                         mkdirs(module_rule.data(), 0755);
+                         cp_afc(module_rulefile.data(), string(module_rule + "/sepolicy.rule").data());
+                }
+            }
+        }
         info.name = entry->d_name;
         module_list->push_back(info);
     });
