@@ -704,6 +704,11 @@ install_module() {
     mktouch $MODPATH$TARGET/.replace
   done
 
+  for TARGET in $REMOVE; do
+    ui_print "- Remove target: $TARGET"
+    mknod $MODPATH$TARGET c 0 0
+  done
+
   if $BOOTMODE; then
     # Update info for Magisk app
     mktouch $NVBASE/modules/$MODID/update
