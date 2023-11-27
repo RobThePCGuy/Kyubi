@@ -206,16 +206,17 @@ public:
             return;
 
         const string dir_name = isa<tmpfs_node>(parent()) ? parent()->worker_path() : parent()->node_path();
-        if (name() == "magisk") {
-            for (int i = 0; applet_names[i]; ++i) {
-                string dest = dir_name + "/" + applet_names[i];
-                VLOGD("create", "./magisk", dest.data());
-                xsymlink("./magisk", dest.data());
-            }
-        } else {
-            string dest = dir_name + "/supolicy";
+        if (name() == "supolicy") {
+            string dest = dir_name + "/" + name();
             VLOGD("create", "./magiskpolicy", dest.data());
             xsymlink("./magiskpolicy", dest.data());
+            return; 
+        }
+        if (name() != "magisk" && name() != "magiskpolicy") {
+            string dest = dir_name + "/" + name();
+            VLOGD("create", "./magisk", dest.data());
+            xsymlink("./magisk", dest.data());
+            return;
         }
         create_and_mount("magisk", src, true);
     }
@@ -235,21 +236,20 @@ private:
     bool is64bit;
 };
 
-static void inject_magisk_bins(root_node *system) {
+static void inject_magisk_bins(dir_node *system) {
     auto bin = system->get_child<inter_node>("bin");
     if (!bin) {
         bin = new inter_node("bin");
         system->insert(bin);
     }
 
-    // Insert binaries
-    bin->insert(new magisk_node("magisk"));
-    bin->insert(new magisk_node("magiskpolicy"));
+    const char *bins[] = { "magisk", "magiskpolicy", "supolicy", nullptr };
 
-    // Also delete all applets to make sure no modules can override it
+    for (int i = 0; bins[i]; ++i)
+        bin->insert(new magisk_node(bins[i]));
+
     for (int i = 0; applet_names[i]; ++i)
-        delete bin->extract(applet_names[i]);
-    delete bin->extract("supolicy");
+        bin->insert(new magisk_node(applet_names[i]));
 }
 
 vector<module_info> *module_list;
@@ -295,12 +295,23 @@ static void load_modules(bool su_mount) {
         system->collect_module_files(module, fd);
         close(fd);
     }
-    if (get_magisk_tmp() != "/sbin"sv || !str_contains(getenv("PATH") ?: "", "/sbin")) {
-        // Need to inject our binaries into /system/bin
-        inject_magisk_bins(system);
+
+    // Need to inject our binaries into PATH
+    auto env_path = split(getenv("PATH"), ":");
+    if (std::find(env_path.begin(), env_path.end(), get_magisk_tmp()) == env_path.end()) {
+        if (std::find(env_path.begin(), env_path.end(), "/apex/com.android.runtime/bin") != env_path.end() &&
+            access("/apex/com.android.runtime/bin", F_OK) == 0) {
+            auto apex = new root_node("apex");
+            root->insert(apex);
+            auto apex_runtime = new inter_node("com.android.runtime");
+            apex->insert(apex_runtime);
+            inject_magisk_bins(apex_runtime);
+        } else {
+            inject_magisk_bins(system);
+        }
     }
 
-    if (!system->is_empty()) {
+    if (!root->is_empty()) {
         // Handle special read-only partitions
         for (const char *part : { "/vendor", "/product", "/system_ext" }) {
             struct stat st{};
