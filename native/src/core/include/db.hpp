@@ -36,6 +36,7 @@ protected:
 
 constexpr const char *DB_SETTING_KEYS[] = {
     "root_access",
+    "su_biometric",
     "multiuser_mode",
     "mnt_ns",
     "magiskhide",
@@ -46,6 +47,7 @@ constexpr const char *DB_SETTING_KEYS[] = {
 // Settings key indices
 enum {
     ROOT_ACCESS = 0,
+    SU_BIOMETRIC,
     SU_MULTIUSER_MODE,
     SU_MNT_NS,
     DENYLIST_CONFIG,
@@ -59,6 +61,13 @@ enum {
     ROOT_ACCESS_APPS_ONLY,
     ROOT_ACCESS_ADB_ONLY,
     ROOT_ACCESS_APPS_AND_ADB
+};
+
+// Values for auth_mode
+enum {
+    BIOMETRIC_DISABLED = 0,
+    BIOMETRIC_SYSTEM,
+    BIOMETRIC_MAGISK
 };
 
 // Values for multiuser_mode
