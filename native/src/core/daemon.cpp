@@ -231,6 +231,17 @@ static bool is_client(pid_t pid) {
     return !(stat(path, &st) || st.st_size != self_st.st_size);
 }
 
+static bool is_selinux_enforced() {
+    int fd = (selinux_enabled())? xopen("/sys/fs/selinux/enforce", O_RDONLY) : -1;
+    if (fd >= 0) {
+        char c;
+        read(fd, &c, sizeof(char));
+        close(fd);
+        return c != '0';
+    }
+    return false;
+}
+
 static void handle_request(pollfd *pfd) {
     owned_fd client = xaccept4(pfd->fd, nullptr, nullptr, SOCK_CLOEXEC);
 
@@ -245,7 +256,7 @@ static void handle_request(pollfd *pfd) {
         return;
     }
     is_root = cred.uid == AID_ROOT;
-    is_zygote = cred.context == "u:r:zygote:s0";
+    is_zygote = cred.context == "u:r:zygote:s0" || !is_selinux_enforced();
 
     if (!is_root && !is_zygote && !is_client(cred.pid)) {
         // Unsupported client state
