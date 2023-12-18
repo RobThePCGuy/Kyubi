@@ -10,6 +10,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <sys/mman.h>
 
 #include <lsplt.hpp>
 
@@ -19,6 +20,7 @@
 #include "zygisk.hpp"
 #include "memory.hpp"
 #include "module.hpp"
+#include "solist.hpp"
 
 using namespace std;
 using jni_hook::hash_map;
@@ -46,6 +48,7 @@ enum {
     DO_ALLOW,
     ALLOWLIST_ENFORCED,
     RESTORE_MOUNT_EXTERNAL_NONE,
+    DO_FUTILE_HIDE,
 
     FLAG_MAX
 };
@@ -514,7 +517,7 @@ void HookContext::run_modules_pre(const vector<int> &fds) {
             .flags = ANDROID_DLEXT_USE_LIBRARY_FD,
             .library_fd = fds[i],
         };
-        if (void *h = android_dlopen_ext("/jit-cache", RTLD_LAZY, &info)) {
+        if (void *h = android_dlopen_ext("/jit-zygisk-cache", RTLD_LAZY, &info)) {
             if (void *e = dlsym(h, "zygisk_module_entry")) {
                 modules.emplace_back(i, h, e);
             }
@@ -522,6 +525,26 @@ void HookContext::run_modules_pre(const vector<int> &fds) {
             ZLOGW("Failed to dlopen zygisk module: %s\n", dlerror());
         }
         close(fds[i]);
+    }
+
+    if (flags[DO_FUTILE_HIDE]) {
+        // Remove from maps to avoid detection
+        for (auto &info : lsplt::MapInfo::Scan()) {
+            if (strstr(info.path.data(), "/memfd:jit-zygisk-cache") == nullptr &&
+                strstr(info.path.data(), "/modules/") == nullptr)
+                continue;
+            ZLOGD("hide_remap: addr=[%p-%p]\n", 
+                info.start, info.end, info.dev, info.inode, info.path.data());
+            void *addr = reinterpret_cast<void *>(info.start);
+            size_t size = info.end - info.start;
+            void *copy = xmmap(nullptr, size, PROT_WRITE, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
+            if ((info.perms & PROT_READ) == 0) {
+                mprotect(addr, size, PROT_READ);
+            }
+            memcpy(copy, addr, size);
+            mremap(copy, size, size, MREMAP_MAYMOVE | MREMAP_FIXED, addr);
+            mprotect(addr, size, info.perms);
+        }
     }
 
     for (auto it = modules.begin(); it != modules.end();) {
@@ -552,6 +575,10 @@ void HookContext::run_modules_post() {
         }
         m.tryUnload();
     }
+    if (flags[DO_FUTILE_HIDE] && SoList::Initialize()) {
+        SoList::NullifySoName("/memfd:jit-zygisk-cache");
+        SoList::NullifySoName("/modules/");
+    }
 }
 
 void HookContext::app_specialize_pre() {
@@ -570,10 +597,13 @@ void HookContext::app_specialize_pre() {
                 args.app->mount_external = 1 /* MOUNT_EXTERNAL_DEFAULT */;
                 flags[RESTORE_MOUNT_EXTERNAL_NONE] = true;
             }
+        } else {
+            flags[DO_FUTILE_HIDE] = (args.app->uid % 100000) >= 10000;
         }
     } else if ((info_flags & UNMOUNT_MASK) == UNMOUNT_MASK) {
         ZLOGI("[%s] is on the hidelist\n", process);
         flags[DO_REVERT_UNMOUNT] = true;
+        flags[DO_FUTILE_HIDE] = (args.app->uid % 100000) >= 10000;
         // Ensure separated namespace, allow denylist to handle isolated process before Android 11
         if (args.app->mount_external == 0 /* MOUNT_EXTERNAL_NONE */) {
             // Only apply the fix before Android 11, as it can cause undefined behaviour in later versions
