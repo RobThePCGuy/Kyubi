@@ -30,6 +30,7 @@ enum class RespondCode : int {
 
 struct module_info {
     std::string name;
+    std::string buf;
     int z32 = -1;
 #if defined(__LP64__)
     int z64 = -1;

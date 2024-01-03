@@ -16,10 +16,8 @@ using namespace std;
 #define VLOGD(tag, from, to) LOGD("%-8s: %s <- %s\n", tag, to, from)
 
 static int bind_mount(const char *reason, const char *from, const char *to) {
-    int ret = xmount(from, to, nullptr, MS_BIND | MS_REC, nullptr);
-    if (ret == 0)
-        VLOGD(reason, from, to);
-    return ret;
+    VLOGD(reason, from, to);
+    return xmount(from, to, nullptr, MS_BIND | MS_REC, nullptr);
 }
 
 /*************************
@@ -142,7 +140,10 @@ void node_entry::create_and_mount(const char *reason, const string &src, bool ro
 }
 
 void module_node::mount() {
-    std::string path = module + (parent()->root()->prefix + node_path());
+    std::string path = module;
+    if (!string(module).ends_with("/root"))
+    	path += parent()->root()->prefix;
+    path += node_path();
     string mnt_src = module_mnt + path;
     {
         string src = MODULEROOT "/" + path;
@@ -250,9 +251,46 @@ static void load_modules(bool su_mount) {
     auto system = new root_node("system");
     root->insert(system);
 
+    // Additional supported partitions without /system/part symlink
+    const char *part_extra[] = {
+        "/odm",
+        "/vendor_dlkm",
+        "/odm_dlkm",
+        "/prism",
+        "/optics",
+        "/oem",
+        "/apex",
+
+        // my_* partitions
+        "/my_custom",
+        "/my_engineering",
+        "/my_heytap",
+        "/my_manifest",
+        "/my_preload",
+        "/my_product",
+        "/my_region",
+        "/my_stock",
+        "/my_version",
+        "/my_company",
+        "/my_carrier",
+        "/my_bigball"
+    };
+
+    map<string, dir_node *> part_map;
+    part_map.insert(make_pair(string("/system"), system));
+
+    for (const char *part : part_extra) {
+        struct stat st{};
+        if (lstat(part, &st) == 0 && S_ISDIR(st.st_mode)) {
+            auto child_node = new root_node(part + 1);
+            root->insert(child_node);
+            part_map.insert(make_pair(string(part), child_node));
+        }
+    }
+
     char buf[4096];
     LOGI("* Loading modules\n");
-    for (const auto &m : *module_list) {
+    for (auto &m : *module_list) {
         const char *module = m.name.data();
         char *b = buf + ssprintf(buf, sizeof(buf), "%s/" MODULEMNT "/%s/", get_magisk_tmp(), module);
 
@@ -284,21 +322,7 @@ static void load_modules(bool su_mount) {
         close(fd);
     }
 
-    // Need to inject our binaries into PATH
-    auto env_path = split(getenv("PATH"), ":");
-    if (std::find(env_path.begin(), env_path.end(), get_magisk_tmp()) == env_path.end()) {
-        if (std::find(env_path.begin(), env_path.end(), "/apex/com.android.runtime/bin") != env_path.end() &&
-            access("/apex/com.android.runtime/bin", F_OK) == 0) {
-            auto apex = new root_node("apex");
-            root->insert(apex);
-            auto apex_runtime = new inter_node("com.android.runtime");
-            apex->insert(apex_runtime);
-            inject_magisk_bins(apex_runtime);
-        } else {
-            inject_magisk_bins(system);
-        }
-    }
-
+    // extract /system/part to /part
     if (!root->is_empty()) {
         // Handle special read-only partitions
         for (const char *part : { "/vendor", "/product", "/system_ext" }) {
@@ -307,9 +331,82 @@ static void load_modules(bool su_mount) {
                 if (auto old = system->extract(part + 1)) {
                     auto new_node = new root_node(old);
                     root->insert(new_node);
+                    part_map.insert(make_pair(string(part), new_node));
+                } else {
+                    // Create new empty root_node
+                    auto child_node = new root_node(part + 1);
+                    root->insert(child_node);
+                    part_map.insert(make_pair(string(part), child_node));
                 }
             }
         }
+    }
+
+    // Load new mount API
+    for (auto &m : *module_list) {
+        const char *module = m.name.data();
+        char *b = buf + ssprintf(buf, sizeof(buf), "%s/" MODULEMNT "/%s/", get_magisk_tmp(), module);
+
+        // Check whether skip mounting
+        strcpy(b, "skip_mount");
+        if (access(buf, F_OK) == 0)
+            continue;
+
+        // Double check whether the root folder exists
+        // new api to mount more partitions: MODDIR/root
+        strcpy(b, "root");
+        if (access(buf, F_OK) != 0)
+            continue;
+
+        LOGI("%s: loading new mount files api\n", module);
+        m.buf = m.name + "/root";
+        module = m.buf.data();
+
+        int fd = xopen(buf, O_RDONLY | O_CLOEXEC);
+        // basic partitions
+        for (const char *part : { "/system", "/vendor", "/product", "/system_ext" }) {
+            if (faccessat(fd, part + 1, F_OK, 0) != 0)
+                continue;
+            auto it = part_map.find(part);
+            if (it != part_map.end())
+                it->second->collect_module_files(module, fd);
+        }
+        // more partitions
+        for (const char *part : part_extra) {
+            if (faccessat(fd, part + 1, F_OK, 0) != 0)
+                continue;
+            if (auto it = part_map.find(part); it != part_map.end()) {
+                it->second->collect_module_files(module, fd);
+            }
+        }
+        close(fd);
+    }
+
+    // Need to inject our binaries into PATH
+    auto env_path = split(getenv("PATH"), ":");
+    auto apex = root->get_child<inter_node>("apex");
+    if (std::find(env_path.begin(), env_path.end(), get_magisk_tmp()) == env_path.end()) {
+        if (apex && std::find(env_path.begin(), env_path.end(), "/apex/com.android.runtime/bin") != env_path.end() &&
+            access("/apex/com.android.runtime/bin", F_OK) == 0) {
+            auto apex_runtime = apex->get_child<inter_node>("com.android.runtime");
+            if (!apex_runtime) {
+                apex_runtime = new inter_node("com.android.runtime");
+                apex->insert(apex_runtime);
+            }
+            inject_magisk_bins(apex_runtime);
+        } else {
+            inject_magisk_bins(system);
+        }
+    }
+
+    // Remove partitions which are not needed by modules
+    for (auto it = part_map.begin(); it != part_map.end(); it++) {
+        if (it->second->is_empty()) {
+            if (auto old = root->extract(it->first.data() + 1)) delete old;
+        }
+    }
+
+    if (!root->is_empty()) {
         root->prepare();
         root->mount();
     }
