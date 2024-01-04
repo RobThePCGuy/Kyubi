@@ -123,8 +123,6 @@ static void switch_root(const string &path) {
     frm_rf(root);
 }
 
-#define PREINITMNT MIRRDIR "/preinit"
-
 static void mount_preinit_dir(string preinit_dev) {
     if (preinit_dev.empty()) return;
     strcpy(blk_info.partname, preinit_dev.data());
@@ -134,13 +132,13 @@ static void mount_preinit_dir(string preinit_dev) {
         LOGE("Cannot find preinit %s, abort!\n", preinit_dev.data());
         return;
     }
-    xmkdir(PREINITMNT, 0);
+    xmkdir(MIRRDIR, 0);
     bool mounted = false;
     // First, find if it is already mounted
     for (auto &info : parse_mount_info("self")) {
         if (info.root == "/" && info.device == dev) {
             // Already mounted, just bind mount
-            xmount(info.target.data(), PREINITMNT, nullptr, MS_BIND, nullptr);
+            xmount(info.target.data(), MIRRDIR, nullptr, MS_BIND, nullptr);
             mounted = true;
             break;
         }
@@ -150,10 +148,10 @@ static void mount_preinit_dir(string preinit_dev) {
     // as read-only, or else the kernel might crash due to crappy drivers.
     // After the device boots up, magiskd will properly bind mount the correct partition
     // on to PREINITMIRR as writable. For more details, check bootstages.cpp
-    if (mounted || mount(PREINITDEV, PREINITMNT, "ext4", MS_RDONLY, nullptr) == 0 ||
-        mount(PREINITDEV, PREINITMNT, "f2fs", MS_RDONLY, nullptr) == 0) {
-        string preinit_dir = resolve_preinit_dir(PREINITMNT);
-        string early_mnt_dir = resolve_early_mount_dir(PREINITMNT);
+    if (mounted || mount(PREINITDEV, MIRRDIR, "ext4", MS_RDONLY, nullptr) == 0 ||
+        mount(PREINITDEV, MIRRDIR, "f2fs", MS_RDONLY, nullptr) == 0) {
+        string preinit_dir = resolve_preinit_dir(MIRRDIR);
+        string early_mnt_dir = resolve_early_mount_dir(MIRRDIR);
         // Create bind mount
         xmkdirs(PREINITMIRR, 0);
         xmkdirs(EARLYMNT, 0);
@@ -173,7 +171,7 @@ static void mount_preinit_dir(string preinit_dev) {
             xmount(EARLYMNTNAME, EARLYMNT, "tmpfs", 0, nullptr);
             cp_afc(early_mnt_dir.data(), EARLYMNT);
         }
-        xumount2(PREINITMNT, MNT_DETACH);
+        xumount2(MIRRDIR, MNT_DETACH);
     } else {
         PLOGE("Failed to mount preinit %s\n", preinit_dev.data());
         unlink(PREINITDEV);
@@ -332,9 +330,7 @@ void MagiskInit::setup_tmp(const char *path) {
     }
 
     xmkdir(INTLROOT, 0711);
-    xmkdir(MIRRDIR, 0);
-    xmkdir(BLOCKDIR, 0);
-    xmkdir(WORKERDIR, 0);
+    xmkdir(DEVICEDIR, 0711);
 
     mount_preinit_dir(preinit_dev);
     early_mount();

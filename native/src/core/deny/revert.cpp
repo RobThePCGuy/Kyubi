@@ -159,13 +159,12 @@ void do_mount_magisk(int pid) {
     xmkdir(INTLROOT, 0755);
     xmount(INTLROOT, INTLROOT, nullptr, MS_BIND, nullptr);
 
-    xmkdir(MIRRDIR, 0);
-    xmkdir(BLOCKDIR, 0);
+    xmkdir(DEVICEDIR, 0);
     xmkdir(WORKERDIR, 0);
 
     struct stat st{};
-    if (fstatat(magisktmpfs_fd, BLOCKDIR "/preinit", &st, 0) == 0 && S_ISBLK(st.st_mode))
-        mknod((MAGISKTMP + "/" BLOCKDIR "/preinit").data(), S_IFBLK, st.st_rdev);
+    if (fstatat(magisktmpfs_fd, PREINITDEV, &st, 0) == 0 && S_ISBLK(st.st_mode))
+        mknod((MAGISKTMP + "/" PREINITDEV).data(), S_IFBLK, st.st_rdev);
 
     char path[PATH_MAX];
 

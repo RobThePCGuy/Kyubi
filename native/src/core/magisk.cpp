@@ -127,9 +127,7 @@ int magisk_main(int argc, char *argv[]) {
         }
         chdir(magisk_tmp);
         xmkdir(INTLROOT, 0755);
-        xmkdir(MIRRDIR, 0);
-        xmkdir(BLOCKDIR, 0);
-        xmkdir(WORKERDIR, 0);
+        xmkdir(DEVICEDIR, 0);
 
 #ifdef __LP64__
         symlink("./magisk64", "./magisk");
