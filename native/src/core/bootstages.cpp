@@ -27,9 +27,10 @@ static bool rec_mount(const std::string_view from, const std::string_view to) {
            !mount(from.data(), to.data(), nullptr, MS_BIND | MS_REC, nullptr);
 }
 
-void mount_mirrors() {
+static void setup_mounts() {
+    LOGI("* Magic Mount Setup\n");
     auto self_mount_info = parse_mount_info("self");
-    char path[64];
+    char path[PATH_MAX];
 
     // Bind remount module root to clear nosuid
     if (access(SECURE_DIR, F_OK) == 0 || SDK_INT < 24) {
@@ -69,7 +70,9 @@ void mount_mirrors() {
                 xmkdir(early_mnt_dir.data(), 0700);
                 xmkdir((early_mnt_dir + "/initrc.d").data(), 0700);
 
-                if ((mounted = rec_mount(preinit_dir, path))) {
+                xmkdirs(path, 0755);
+                mounted = xmount(preinit_dir.data(), path, nullptr, MS_BIND, nullptr) == 0;
+                if (mounted) {
                     xmount(nullptr, path, nullptr, MS_UNBINDABLE, nullptr);
                     // mount the early-mount.d
                     ssprintf(path, sizeof(path), "%s/" EARLYMNT, get_magisk_tmp());
@@ -89,27 +92,6 @@ void mount_mirrors() {
     ssprintf(path, sizeof(path), "%s/" WORKERDIR, get_magisk_tmp());
     xmount("worker", path, "tmpfs", 0, "mode=755");
     xmount(nullptr, path, nullptr, MS_PRIVATE, nullptr);
-    // Recursively bind mount / to mirror dir
-    // Keep mirror shared so that mounting during post-fs-data will be propagated
-    if (auto mirror_dir = get_magisk_tmp() + "/"s MIRRDIR; !rec_mount("/", mirror_dir)) {
-        LOGI("fallback to mount subtree\n");
-        // create new a bind mount for easy make private
-        xmount(mirror_dir.data(), mirror_dir.data(), nullptr, MS_BIND, nullptr);
-        // rootfs may fail, fallback to bind mount each mount point
-        set<string, greater<>> mounted_dirs {{ get_magisk_tmp() }};
-        for (const auto &info: self_mount_info) {
-            if (info.type == "rootfs"sv) continue;
-            // the greatest mount point that less than info.target, which is possibly a parent
-            if (auto last_mount = mounted_dirs.upper_bound(info.target);
-                last_mount != mounted_dirs.end() && info.target.starts_with(*last_mount + '/')) {
-                continue;
-            }
-            if (rec_mount(info.target, mirror_dir + info.target)) {
-                LOGD("%-8s: %s <- %s\n", "rbind", (mirror_dir + info.target).data(), info.target.data());
-                mounted_dirs.insert(info.target);
-            }
-        }
-    }
 }
 
 string find_preinit_device() {
@@ -330,8 +312,7 @@ bool MagiskD::post_fs_data() const {
     LOGI("** post-fs-data mode running\n");
 
     unlock_blocks();
-    LOGI("* Mounting mirrors\n");
-    mount_mirrors();
+    setup_mounts();
     prune_su_access();
 
     bool safe_mode = false;
@@ -364,15 +345,7 @@ bool MagiskD::post_fs_data() const {
     if (zygisk_enabled) start_zygisk();
 
 early_abort:
-    auto mirror_dir = get_magisk_tmp() + "/"s MIRRDIR;
-    // make mirror dir as a private mount so that it won't be affected by magic mount
-    LOGD("make %s private\n", mirror_dir.data());
-    xmount(nullptr, mirror_dir.data(), nullptr, MS_PRIVATE | MS_REC, nullptr);
-    // We still do magic mount because root itself might need it
     load_modules();
-    // make mirror dir as a shared mount to make magisk --stop work for other ns
-    xmount(nullptr, mirror_dir.data(), nullptr, MS_SHARED | MS_REC, nullptr);
-    LOGD("make %s shared\n", mirror_dir.data());
     return safe_mode;
 }
 

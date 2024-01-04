@@ -167,7 +167,23 @@ void do_mount_magisk(int pid) {
     if (fstatat(magisktmpfs_fd, BLOCKDIR "/preinit", &st, 0) == 0 && S_ISBLK(st.st_mode))
         mknod((MAGISKTMP + "/" BLOCKDIR "/preinit").data(), S_IFBLK, st.st_rdev);
 
-    mount_mirrors();
+    char path[PATH_MAX];
+
+    // Bind remount module root to clear nosuid
+    if (access(SECURE_DIR, F_OK) == 0 || SDK_INT < 24) {
+        ssprintf(path, sizeof(path), "%s/" MODULEMNT, get_magisk_tmp());
+        xmkdir(SECURE_DIR, 0700);
+        xmkdir(MODULEROOT, 0755);
+        xmkdir(path, 0755);
+        xmount(MODULEROOT, path, nullptr, MS_BIND, nullptr);
+        xmount(nullptr, path, nullptr, MS_REMOUNT | MS_BIND | MS_RDONLY, nullptr);
+        xmount(nullptr, path, nullptr, MS_PRIVATE, nullptr);
+    }
+
+    // Prepare worker
+    ssprintf(path, sizeof(path), "%s/" WORKERDIR, get_magisk_tmp());
+    xmount("worker", path, "tmpfs", 0, "mode=755");
+    xmount(nullptr, path, nullptr, MS_PRIVATE, nullptr);
 
     chdir("/");
 
