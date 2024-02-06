@@ -50,6 +50,8 @@ static inline int read_ns(const int pid, struct stat *st) {
 }
 
 static bool unmount_zygote(int pid, int fd) {
+    if (su_bin_fd < 0) return false;
+
     struct stat st, init_st;
     if (access(("/proc/self/fd/"s + to_string(fd) + "/cmdline").data(), F_OK) != 0 || read_ns(pid, &st))
         return true;

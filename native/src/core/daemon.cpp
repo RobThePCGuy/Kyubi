@@ -162,6 +162,7 @@ static void handle_request_async(int client, int code, const sock_cred &cred) {
         LOGI("** zygote restarted\n");
         prune_su_access();
         reset_zygisk(false);
+        disable_unmount_su();
         close(client);
         break;
     case +RequestCode::SQLITE_CMD:

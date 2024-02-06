@@ -362,6 +362,7 @@ void MagiskD::boot_complete() const {
     as_rust().setup_logfile();
 
     LOGI("** boot-complete triggered\n");
+    enable_mount_su();
 
     // At this point it's safe to create the folder
     if (access(SECURE_DIR, F_OK) != 0)

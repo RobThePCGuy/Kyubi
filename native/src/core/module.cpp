@@ -382,23 +382,6 @@ static void load_modules(bool su_mount) {
         close(fd);
     }
 
-    // Need to inject our binaries into PATH
-    auto env_path = split(getenv("PATH"), ":");
-    auto apex = root->get_child<inter_node>("apex");
-    if (std::find(env_path.begin(), env_path.end(), get_magisk_tmp()) == env_path.end()) {
-        if (apex && std::find(env_path.begin(), env_path.end(), "/apex/com.android.runtime/bin") != env_path.end() &&
-            access("/apex/com.android.runtime/bin", F_OK) == 0) {
-            auto apex_runtime = apex->get_child<inter_node>("com.android.runtime");
-            if (!apex_runtime) {
-                apex_runtime = new inter_node("com.android.runtime");
-                apex->insert(apex_runtime);
-            }
-            inject_magisk_bins(apex_runtime);
-        } else {
-            inject_magisk_bins(system);
-        }
-    }
-
     // Remove partitions which are not needed by modules
     for (auto it = part_map.begin(); it != part_map.end(); it++) {
         if (it->second->is_empty()) {
@@ -419,8 +402,63 @@ void load_modules() {
     load_modules(false);
 }
 
+static int mount_su() {
+    node_entry::module_mnt =  get_magisk_tmp() + "/"s MODULEMNT "/";
+    char buf[4096];
+    ssprintf(buf, sizeof(buf), "%s/" WORKERDIR, get_magisk_tmp());
+    if (xmount("magisk", buf, "tmpfs", 0, "mode=755"))
+        return -1;
+    xmount(nullptr, buf, nullptr, MS_PRIVATE, nullptr);
+
+    auto root = make_unique<root_node>("");
+    auto system = new root_node("system");
+    root->insert(system);
+
+    // Need to inject our binaries into PATH
+    inject_magisk_bins(system);
+
+    if (!root->is_empty()) {
+        root->prepare();
+        root->mount();
+    }
+
+    struct stat st_src{}, st_dest{};
+    stat(buf, &st_src);
+    stat("/system/bin", &st_dest);
+    umount2(buf, MNT_DETACH);
+
+    int fd = (st_src.st_dev == st_dest.st_dev)?
+        xopen("/system/bin", O_PATH | O_CLOEXEC) : -1;
+
+    ssprintf(buf, sizeof(buf), "/proc/self/fd/%d", fd);
+    xmount(nullptr, buf, nullptr, MS_REMOUNT | MS_RDONLY, nullptr);
+
+    return fd;
+}
+
+int su_bin_fd = -1;
+
+void enable_mount_su() {
+    if (su_bin_fd < 0) {
+        LOGI("* Mount MagiskSU\n");
+        su_bin_fd = mount_su();
+    }
+}
+
+void disable_unmount_su() {
+    if (su_bin_fd >= 0) {
+        LOGI("* Unmount MagiskSU\n");
+        char buf[128];
+        ssprintf(buf, sizeof(buf), "/proc/self/fd/%d", su_bin_fd);
+        umount2(buf, MNT_DETACH);
+        close(su_bin_fd);
+        su_bin_fd = -1;
+    }
+}
+
 void su_mount() {
     load_modules(true);
+    close(mount_su());
 }
 
 

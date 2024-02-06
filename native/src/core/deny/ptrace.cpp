@@ -164,6 +164,8 @@ static bool is_zygote(int pid){
 }
 
 static void check_zygote(){
+    if (su_bin_fd < 0) return;
+
     bool system_server_started = false;
     vector<int> zygote_list;
 

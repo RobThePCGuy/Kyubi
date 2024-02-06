@@ -275,21 +275,24 @@ void zygisk_handler(int client, const sock_cred *cred) {
     case ZygiskRequest::SULIST_ROOT_NS:
         mount_magisk_to_remote(client, cred);
         break;
-    case ZygiskRequest::REVERT_UNMOUNT:
+    case ZygiskRequest::REVERT_UNMOUNT: {
         get_exe(cred->pid, buf, sizeof(buf));
-        int clean_ns;
-        if (str_ends(buf, "64")) {
-            if (clean_ns64 < 0)
-                clean_ns64 = get_clean_ns(cred->pid);
-            clean_ns = clean_ns64;
-        } else {
-            if (clean_ns32 < 0)
-                clean_ns32 = get_clean_ns(cred->pid);
-            clean_ns = clean_ns32;
+        int clean_ns = -1;
+        if (su_bin_fd >= 0) {
+            if (str_ends(buf, "64")) {
+                if (clean_ns64 < 0)
+                    clean_ns64 = get_clean_ns(cred->pid);
+                clean_ns = clean_ns64;
+            } else {
+                if (clean_ns32 < 0)
+                    clean_ns32 = get_clean_ns(cred->pid);
+                clean_ns = clean_ns32;
+            }
         }
         // send path to zygote instead send_fd
         write_string(client, "/proc/"s + to_string(getpid()) + "/fd/" + to_string(clean_ns));
         break;
+    }
     default:
         // Unknown code
         break;
