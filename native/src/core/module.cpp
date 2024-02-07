@@ -160,6 +160,8 @@ void module_node::mount() {
     }
 }
 
+static vector<string> tmpfs_mnt;
+
 void tmpfs_node::mount() {
     if (!is_dir()) {
         create_and_mount("mirror", node_path());
@@ -172,7 +174,8 @@ void tmpfs_node::mount() {
         clone_attr(exist() ? node_path().data() : parent()->node_path().data(), worker_dir.data());
         dir_node::mount();
         VLOGD(replace() ? "replace" : "move", worker_dir.data(), node_path().data());
-        xmount(worker_dir.data(), node_path().data(), nullptr, MS_MOVE, nullptr);
+        if (!xmount(worker_dir.data(), node_path().data(), nullptr, MS_MOVE, nullptr))
+            tmpfs_mnt.push_back(node_path());
     } else {
         const string dest = worker_path();
         // We don't need another layer of tmpfs if parent is tmpfs
@@ -396,6 +399,12 @@ static void load_modules(bool su_mount) {
 
     ssprintf(buf, sizeof(buf), "%s/" WORKERDIR, get_magisk_tmp());
     xmount(nullptr, buf, nullptr, MS_REMOUNT | MS_RDONLY, nullptr);
+
+    for (auto &s : tmpfs_mnt) {
+        xmount(nullptr, s.data(), nullptr, MS_SHARED, nullptr);
+        xmount(nullptr, s.data(), nullptr, MS_REMOUNT | MS_RDONLY, nullptr);
+    }
+    tmpfs_mnt.clear();
 }
 
 void load_modules() {
@@ -433,6 +442,8 @@ static int mount_su() {
     ssprintf(buf, sizeof(buf), "/proc/self/fd/%d", fd);
     xmount(nullptr, buf, nullptr, MS_REMOUNT | MS_RDONLY, nullptr);
 
+    tmpfs_mnt.clear();
+
     return fd;
 }
 
@@ -442,6 +453,10 @@ void enable_mount_su() {
     if (su_bin_fd < 0) {
         LOGI("* Mount MagiskSU\n");
         su_bin_fd = mount_su();
+
+        char buf[128];
+        ssprintf(buf, sizeof(buf), "/proc/self/fd/%d", su_bin_fd);
+        xmount(nullptr, buf, nullptr, MS_SHARED, nullptr);
     }
 }
 
