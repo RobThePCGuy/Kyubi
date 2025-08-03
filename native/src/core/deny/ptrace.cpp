@@ -157,7 +157,7 @@ static bool check_process(int pid, const char *process, const char *context, con
     return true;
 }
 
- static bool is_zygote(int pid){
+static bool is_zygote(int pid){
     if (selinux_enabled()) {
         // SELinux enabled: check both name and context for security
         return check_process(pid, "zygote", "u:r:zygote:s0", nullptr)
