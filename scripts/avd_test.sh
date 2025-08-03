@@ -35,12 +35,13 @@ print_error() {
 cleanup() {
   print_error "! An error occurred when testing $pkg"
 
-  for api in $api_list; do
-    set_api_env $api
+  # Only restore the current API being tested, if variables are set
+  if [ -n "$ramdisk" ] && [ -n "$features" ]; then
     restore_avd
-  done
+  fi
 
-  "$avd" delete avd -n test
+  # Try to delete the test AVD, ignore errors if it doesn't exist
+  "$avd" delete avd -n test 2>/dev/null || true
   pkill -INT -P $$
   wait
   trap - EXIT
@@ -95,10 +96,10 @@ set_api_env() {
 
 restore_avd() {
   if [ -f "${ramdisk}.bak" ]; then
-    cp "${ramdisk}.bak" "$ramdisk"
+    cp "${ramdisk}.bak" "$ramdisk" || echo "Warning: Failed to restore $ramdisk"
   fi
   if [ -f "${features}.bak" ]; then
-    cp "${features}.bak" "$features"
+    cp "${features}.bak" "$features" || echo "Warning: Failed to restore $features"
   fi
 }
 
@@ -169,23 +170,42 @@ run_test() {
   restore_avd
   "$emu" @test $emu_args &
   emu_pid=$!
-  wait_emu wait_for_bootanim
+  if ! wait_emu wait_for_bootanim; then
+    print_error "Failed to boot emulator for $pkg"
+    return 1
+  fi
 
   # Patch and test debug build
-  ./build.py avd_patch -s "$ramdisk"
+  if ! ./build.py avd_patch -s "$ramdisk"; then
+    print_error "Failed to patch ramdisk for debug build"
+    kill -INT $emu_pid 2>/dev/null || true
+    wait $emu_pid 2>/dev/null || true
+    return 1
+  fi
   kill -INT $emu_pid
   wait $emu_pid
-  test_emu debug $api
+  if ! test_emu debug $api; then
+    print_error "Debug build test failed for $pkg"
+    return 1
+  fi
 
   # Re-patch and test release build
-  ./build.py -r avd_patch -s "$ramdisk"
+  if ! ./build.py -r avd_patch -s "$ramdisk"; then
+    print_error "Failed to patch ramdisk for release build"
+    kill -INT $emu_pid 2>/dev/null || true
+    wait $emu_pid 2>/dev/null || true
+    return 1
+  fi
   kill -INT $emu_pid
   wait $emu_pid
-  test_emu release $api
+  if ! test_emu release $api; then
+    print_error "Release build test failed for $pkg"
+    return 1
+  fi
 
   # Cleanup
-  kill -INT $emu_pid
-  wait $emu_pid
+  kill -INT $emu_pid 2>/dev/null || true
+  wait $emu_pid 2>/dev/null || true
   restore_avd
 }
 
@@ -206,17 +226,22 @@ case $(uname -m) in
 esac
 
 yes | "$sdk" --licenses > /dev/null
-curl -L $lsposed_url -o out/lsposed.zip
 "$sdk" --channel=3 tools platform-tools emulator
 
 if [ -n "$1" ]; then
-  run_test $1
+  if ! run_test $1; then
+    print_error "Test failed for API $1"
+    exit 1
+  fi
 else
   for api in $api_list; do
-    run_test $api
+    if ! run_test $api; then
+      print_error "Test failed for API $api"
+      exit 1
+    fi
   done
 fi
 
-"$avd" delete avd -n test
+"$avd" delete avd -n test 2>/dev/null || true
 
 trap - EXIT
