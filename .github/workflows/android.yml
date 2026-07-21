@@ -1,5 +1,8 @@
 # Kyubi CI — builds the emulator-only (x86/x86_64, system-mode) Magisk fork,
 # smoke-tests the APK, and publishes a versioned GitHub Release on kitsune pushes.
+#
+# Third-party actions are pinned to a full commit SHA (supply-chain safety for a
+# root-management tool); the trailing comment is the human-readable version.
 name: Kyubi CI
 
 on:
@@ -13,6 +16,12 @@ on:
 permissions:
   contents: write
 
+env:
+  # SHA-256 of the Kyubi release signing certificate (CN=Kyubi, O=RobThePCGuy).
+  # CI verifies every release APK carries this cert before publishing. If the
+  # release key is rotated, update this pin (and stub DynLoad's pin) in lockstep.
+  KYUBI_CERT_SHA256: "7ad4f68f776d56a9bedfdc02f32cd68ac3bb0531a862817eb17c1c243e482303"
+
 jobs:
   build:
     name: Build Kyubi APKs
@@ -23,7 +32,7 @@ jobs:
       fail-fast: false
     steps:
       - name: Check out
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           submodules: "recursive"
           fetch-depth: 0
@@ -32,8 +41,9 @@ jobs:
         uses: ./.github/actions/setup
 
       # Kyubi release signing: the key lives ONLY in GH secrets (never committed).
-      # Decode it and append the signing config to config.prop so gradle signs
-      # release APKs with the protected Kyubi key. No secret -> debug-signed.
+      # Fail CLOSED on kitsune -- a release must never be debug-signed. Decode the
+      # key and append the signing config to config.prop so gradle signs release
+      # APKs with the protected Kyubi key.
       - name: Set up release signing
         env:
           KEYSTORE_B64: ${{ secrets.KYUBI_KEYSTORE_B64 }}
@@ -41,18 +51,32 @@ jobs:
           KEY_ALIAS: ${{ secrets.KYUBI_KEY_ALIAS }}
           KEY_PASS: ${{ secrets.KYUBI_KEY_PASS }}
         run: |
-          if [ -n "$KEYSTORE_B64" ]; then
-            echo "$KEYSTORE_B64" | base64 -d > kyubi-release.jks
-            {
-              echo "keyStore=kyubi-release.jks"
-              echo "keyStorePass=$KEYSTORE_PASS"
-              echo "keyAlias=$KEY_ALIAS"
-              echo "keyPass=$KEY_PASS"
-            } >> config.prop
-            echo "Release signing configured from secrets."
-          else
-            echo "::warning::No signing secret found -- release will be debug-signed."
+          if [ -z "$KEYSTORE_B64" ]; then
+            if [ "${GITHUB_REF}" = "refs/heads/kitsune" ] && [ "${GITHUB_EVENT_NAME}" = "push" ]; then
+              echo "::error::Release signing secrets are missing on a kitsune push -- refusing to build a debug-signed release." >&2
+              exit 1
+            fi
+            echo "::warning::No signing secret found -- this non-release build will be debug-signed."
+            exit 0
           fi
+          echo "$KEYSTORE_B64" | base64 -d > kyubi-release.jks
+          {
+            echo "keyStore=kyubi-release.jks"
+            echo "keyStorePass=$KEYSTORE_PASS"
+            echo "keyAlias=$KEY_ALIAS"
+            echo "keyPass=$KEY_PASS"
+          } >> config.prop
+          echo "Release signing configured from secrets."
+
+      # Every rolling build must be self-identifying: keep the Kitsune core lineage
+      # in the version name but append the build's short SHA so the APK reports a
+      # distinct, verifiable version that matches its release tag. versionCode stays
+      # 31000 (Magisk feature gates depend on it) -- the SHA carries build identity.
+      - name: Embed build commit in version name
+        run: |
+          SHA="$(git rev-parse --short=8 HEAD)"
+          sed -i "s/^version=.*/version=31.0-kitsune.${SHA}/" config.prop
+          grep '^version=' config.prop
 
       - name: Build release
         run: ./build.py -vr all
@@ -60,18 +84,35 @@ jobs:
       - name: Build debug
         run: ./build.py -v all
 
+      # Certificate pinning gate: refuse to go further if the release APKs are not
+      # signed by the exact Kyubi key (catches a missing/replaced key or a
+      # debug-signed fallback slipping through).
+      - name: Verify release signing certificate
+        if: github.ref == 'refs/heads/kitsune' && github.event_name == 'push'
+        run: |
+          APKSIGNER="$(ls "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -1)"
+          for apk in out/app-release.apk out/stub-release.apk; do
+            got="$("$APKSIGNER" verify --print-certs "$apk" 2>/dev/null \
+              | grep -iE 'certificate SHA-256 digest' | head -1 | awk '{print $NF}')"
+            if [ "$got" != "$KYUBI_CERT_SHA256" ]; then
+              echo "::error::$apk signing cert $got != pinned Kyubi cert $KYUBI_CERT_SHA256" >&2
+              exit 1
+            fi
+            echo "$apk signing cert OK: $got"
+          done
+
       - name: Stop gradle daemon
         run: ./gradlew --stop
 
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ${{ github.sha }}
           path: out
           compression-level: 9
 
       - name: Upload mapping and native debug symbols
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: ${{ github.sha }}-symbols
           path: app/build/outputs
@@ -89,10 +130,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: ${{ github.sha }}
           path: out
@@ -109,7 +150,7 @@ jobs:
           sudo udevadm trigger --name-match=kvm
 
       - name: Install + launch on emulator
-        uses: reactivecircus/android-emulator-runner@v2
+        uses: reactivecircus/android-emulator-runner@a421e43855164a8197daf9d8d40fe71c6996bb0d # v2.38.0
         with:
           api-level: 34
           arch: x86_64
@@ -121,6 +162,10 @@ jobs:
 
   # Publish ONLY on a kitsune push, and ONLY after build + smoke both pass. The
   # APKs are the ones built (and signed) in `build` -- downloaded, not rebuilt.
+  # Rolling per-commit builds are marked prerelease: CI cannot validate the
+  # offline system-mode root install, so a build is only a candidate until it
+  # passes the real BlueStacks system-mode test on an emulator instance. Promote
+  # a validated commit to a full release by tagging a stable kyubi-x.y.z.
   release:
     name: Publish release
     needs: [build, smoke]
@@ -128,29 +173,34 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download build artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: ${{ github.sha }}
           path: out
 
       # Tag = v31.0-<short commit>: v31.0 tracks magisk.versionCode=31000, and the
-      # short SHA is exactly the version string the APK reports (build.py: git
-      # rev-parse --short=8).
+      # short SHA is the build suffix embedded in the APK's version name
+      # (31.0-kitsune.<sha>), so the tag and the reported version agree.
       - name: Compute version tag
         id: ver
         run: echo "tag=v31.0-$(echo '${{ github.sha }}' | cut -c1-8)" >> "$GITHUB_OUTPUT"
 
       - name: Publish release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
         with:
           tag_name: ${{ steps.ver.outputs.tag }}
           name: Kyubi ${{ steps.ver.outputs.tag }}
-          prerelease: false
+          prerelease: true
           fail_on_unmatched_files: false
           body: |
-            **Kyubi** v31.0 (versionCode 31000) — commit `${{ github.sha }}`.
+            **Kyubi** rolling build — commit `${{ github.sha }}` (versionCode 31000).
             Emulator-only Magisk (Magisk Delta / Kitsune lineage), system-mode install.
-            The short hash in the tag is the exact version this APK reports.
+            The APK's version name is `31.0-kitsune.<short-sha>`, ending with the same
+            short commit SHA as this tag, so the tag and the installed version agree.
+
+            Prerelease: CI verifies the build shape and that it installs/launches, but
+            does NOT run the offline system-mode root install (BlueStacks-specific).
+            Treat as a candidate until validated on a real emulator instance.
 
             x86 + x86_64 only — no ARM, no `magiskboot`/boot-image path. Built-in
             Zygisk is removed for security; use ReZygisk (Kyubi's DenyList feeds it).
