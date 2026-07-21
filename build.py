@@ -68,11 +68,9 @@ if shutil.which("ccache") is not None:
 cpu_count = multiprocessing.cpu_count()
 os_name = platform.system().lower()
 
-archs = ["armeabi-v7a", "x86", "arm64-v8a", "x86_64"]
+archs = ["x86", "x86_64"]  # Kyubi: emulators are x86; ARM binaries are dead weight
 triples = [
-    "armv7a-linux-androideabi",
     "i686-linux-android",
-    "aarch64-linux-android",
     "x86_64-linux-android",
 ]
 default_targets = ["magisk", "magiskinit", "magiskboot", "magiskpolicy", "busybox"]
@@ -252,7 +250,7 @@ def run_ndk_build(flags):
             mv(source, target)
 
 
-def run_cargo(cmds, triple="aarch64-linux-android"):
+def run_cargo(cmds, triple="x86_64-linux-android"):
     env = os.environ.copy()
     env["PATH"] = f'{rust_bin}{os.pathsep}{env["PATH"]}'
     env["CARGO_BUILD_RUSTC"] = op.join(rust_bin, "rustc" + EXE_EXT)
@@ -557,7 +555,7 @@ def setup_ndk(args):
     mv(ondk_path, ndk_path)
 
     header("* Patching static libs")
-    for target in ["arm-linux-androideabi", "i686-linux-android"]:
+    for target in ["i686-linux-android"]:
         arch = target.split("-")[0]
         lib_dir = op.join(
             ndk_path,
