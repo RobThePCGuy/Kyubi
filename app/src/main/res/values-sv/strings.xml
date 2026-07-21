@@ -37,12 +37,7 @@
     <string name="install_next">Nästa</string>
     <string name="install_start">Nu kör vi!</string>
     <string name="manager_download_install">Tryck för att ladda ned och installera install</string>
-    <string name="direct_install">Direkt installation (Rekommenderas)</string>
-    <string name="install_inactive_slot">Installera till inaktiv Slot (Efter OTA)</string>
-    <string name="install_inactive_slot_msg">Din enhet kommer att bli TVINGAD att starta till den nuvarande inaktiva slot efter omstart!\nAnvänd endast detta alternativ efter att en OTA uppdatering är utförd.\nFortsätt??</string>
     <string name="setup_title">Ytterligare installation</string>
-    <string name="select_patch_file">Välj och patcha en fil</string>
-    <string name="patch_file_msg">Välj en rå avbildningsfil (*.img) eller en ODIN tar-fil (*.tar)</string>
     <string name="reboot_delay_toast">Omstart om 5 sekunder…</string>
     <string name="flash_screen_title">Installation</string>
 
@@ -195,8 +190,6 @@
     <string name="complete_uninstall">Komplett avinstallation</string>
     <string name="restore_img">Återställ avbilder</string>
     <string name="restore_img_msg">Återställer…</string>
-    <string name="restore_done">Återställning slutförd!</string>
-    <string name="restore_fail">Orörd backup hittades inte!</string>
     <string name="setup_fail">Installation misslyckades</string>
     <string name="env_fix_title">Kräver ytterligare installation</string>
     <string name="env_fix_msg">Din enhet behöver ytterligare installation för att Magisk ska fungera korrekt. Vill du fortsätta och starta om enheten?</string>

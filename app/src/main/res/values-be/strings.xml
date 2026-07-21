@@ -35,12 +35,7 @@
     <string name="install_next">Далей</string>
     <string name="install_start">Усталяваць</string>
     <string name="manager_download_install">Націсніце, каб спампаваць і ўсталяваць</string>
-    <string name="direct_install">Непасрэдная ўсталёўка (рэкамендуецца)</string>
-    <string name="install_inactive_slot">Усталяваць у неактыўны слот (пасля OTA)</string>
-    <string name="install_inactive_slot_msg">Ваша прылада ПРЫМУСОВА перазапусціцца ў неактыўны слот!\nВыкарыстоўвайце гэты параметр толькі пасля завяршэння OTA.\nПрацягнуць?</string>
     <string name="setup_title">Дадатковая ўсталёўка</string>
-    <string name="select_patch_file">Абраць файл і ўжыць да яго патч</string>
-    <string name="patch_file_msg">Абярыце файл вобраза (*.img) альбо архіў ODIN (*.tar)</string>
     <string name="reboot_delay_toast">Перазапуск праз 5 секунд…</string>
     <string name="flash_screen_title">Усталёўка</string>
     <!--Superuser-->
@@ -181,8 +176,6 @@
     <string name="complete_uninstall">Поўнае выдаленне</string>
     <string name="restore_img">Аднавіць раздзелы</string>
     <string name="restore_img_msg">Аднаўленне…</string>
-    <string name="restore_done">Аднаўленне завершана!</string>
-    <string name="restore_fail">Рэзервовая копія адсутнічае!</string>
     <string name="setup_fail">Усталяваць не атрымалася</string>
     <string name="env_fix_title">Патрабуецца дадатковая ўсталёўка</string>
     <string name="env_fix_msg">Для карэктнай працы на вашай прыладзе спатрэбіцца ўсталяваць дадатковыя кампаненты. Хочаце працягнуць?</string>

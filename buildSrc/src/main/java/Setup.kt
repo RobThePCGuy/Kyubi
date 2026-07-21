@@ -276,16 +276,11 @@ fun Project.setupApp() {
             inputs.property("version", Config.version)
             inputs.property("versionCode", Config.versionCode)
             into("src/${this@all.name}/assets")
+            // Kyubi system-mode only: no boot_patch.sh, no bootctl (OTA/second
+            // slot), no chromeos boot-signing tools.
             from(rootProject.file("scripts")) {
-                include("util_functions.sh", "boot_patch.sh", "addon.d.sh")
+                include("util_functions.sh", "addon.d.sh")
                 include("uninstaller.sh", "module_installer.sh")
-            }
-            from(rootProject.file("tools/bootctl"))
-            into("chromeos") {
-                from(rootProject.file("tools/futility"))
-                from(rootProject.file("tools/keys")) {
-                    include("kernel_data_key.vbprivk", "kernel.keyblock")
-                }
             }
             from(stubApk) {
                 rename { "stub.apk" }

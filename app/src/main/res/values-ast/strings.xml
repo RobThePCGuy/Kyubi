@@ -38,12 +38,7 @@
     <string name="install_next">Siguiente</string>
     <string name="install_start">Siguir</string>
     <string name="manager_download_install">Primi equí pa baxalu ya instalalu</string>
-    <string name="direct_install">Instalación direuta (aconséyase)</string>
-    <string name="install_inactive_slot">Instalar na ralura inactiva (darréu del OTA)</string>
-    <string name="install_inactive_slot_msg">¡El preséu va arrincar OBLIGATORIAMENTE na ralura inactiva darréu de reaniciar!\nUsa esta opción namás dempués d\'acabar l\'anovamientu per OTA.\n¿Quies siguir?</string>
     <string name="setup_title">Configuración adicional</string>
-    <string name="select_patch_file">Seleicionar y parchiar un ficheru</string>
-    <string name="patch_file_msg">Seleiciona una imaxe en bruto (*.img) o un archivu d\'ODIN (*.tar)</string>
     <string name="reboot_delay_toast">Reaniciando en 5 segundos…</string>
     <string name="flash_screen_title">Instalación</string>
     <!--Superuser-->
@@ -197,8 +192,6 @@
     <string name="complete_uninstall">Desinstalar dafechu</string>
     <string name="restore_img">Restaurar les imáxenes</string>
     <string name="restore_img_msg">Restaurando…</string>
-    <string name="restore_done">¡Restauración fecha!</string>
-    <string name="restore_fail">¡La copia de seguranza de la imaxe de fábrica nun esiste!</string>
     <string name="setup_fail">La configuración falló</string>
     <string name="env_fix_title">Configuración adicional</string>
     <string name="env_fix_msg">El preséu precisa una configuración adicional pa que Magisk funcione afayadizamente. ¿Quies siguir y reaniciar?</string>

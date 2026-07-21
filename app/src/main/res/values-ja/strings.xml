@@ -41,12 +41,7 @@
     <string name="install_next">次へ</string>
     <string name="install_start">はじめる</string>
     <string name="manager_download_install">タップしてダウンロード＆インストールします</string>
-    <string name="direct_install">直接インストール (推奨)</string>
-    <string name="install_inactive_slot">別のスロットにインストール (OTA 後)</string>
-    <string name="install_inactive_slot_msg">お使いのデバイスは再起動後に現在とは別のスロットで強制的に起動されます！\nこのオプションは OTA の完了後にのみ使用してください。\n続行しますか？</string>
     <string name="setup_title">追加セットアップ</string>
-    <string name="select_patch_file">パッチするファイルの選択</string>
-    <string name="patch_file_msg">イメージファイル (*.img) または ODIN tar ファイル (*.tar) を選択してください</string>
     <string name="reboot_delay_toast">5秒後に再起動します…</string>
     <string name="flash_screen_title">インストール</string>
 
@@ -214,8 +209,6 @@
     <string name="complete_uninstall">完全にアンインストール</string>
     <string name="restore_img">イメージのリストア</string>
     <string name="restore_img_msg">リストア中…</string>
-    <string name="restore_done">リストア完了！</string>
-    <string name="restore_fail">Stock のバックアップがありません！</string>
     <string name="setup_fail">セットアップに失敗しました</string>
     <string name="env_fix_title">追加のセットアップが必要です</string>
     <string name="env_fix_msg">Magisk を正常に動作させるためには追加のセットアップが必要です。今すぐ再起動しますか？</string>

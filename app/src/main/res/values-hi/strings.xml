@@ -41,12 +41,7 @@
     <string name="install_next">आगे</string>
     <string name="install_start">तो चलिए शुरू करते हैं!</string>
     <string name="manager_download_install">डाउनलोड और इंस्टॉल करने के लिए दबाएं</string>
-    <string name="direct_install">प्रत्यक्ष इंस्टॉल (अनुशंसित)</string>
-    <string name="install_inactive_slot">निष्क्रिय स्लॉट में इंस्टॉल करें (OTA के बाद)</string>
-    <string name="install_inactive_slot_msg">आपका डिवाइस रीबूट होने के बाद वर्तमान निष्क्रिय स्लॉट में बूट करने के लिए मजबूर किया जाएगा!\n इस विकल्प का उपयोग सिर्फ OTA हो जाने के बाद करें।\n जारी रखें?</string>
     <string name="setup_title">अतिरिक्त सेटअप</string>
-    <string name="select_patch_file">एक फ़ाइल का चयन और पैच करें</string>
-    <string name="patch_file_msg">एक रॉ छवि (* .img) या एक ODIN tarfile (* .tar) का चयन करें</string>
     <string name="reboot_delay_toast">5 सेकंड में रिबूट हो रहा है...</string>
     <string name="flash_screen_title">इंस्टॉलेशन</string>
 
@@ -211,8 +206,6 @@
     <string name="complete_uninstall">पूर्ण रूप से अनइंस्टॉल करें</string>
     <string name="restore_img">इमेज रिस्टोर करें</string>
     <string name="restore_img_msg">रिस्टोर हो रहा है...</string>
-    <string name="restore_done">रिस्टोर सफल हुआ!</string>
-    <string name="restore_fail">स्टॉक बैकअप मौजूद नहीं है!</string>
     <string name="setup_fail">सेटअप असफल हुआ</string>
     <string name="env_fix_title">अतिरिक्त सेटअप की आवश्यकता</string>
     <string name="env_fix_msg">मैजिस्क के ठीक से काम करने के लिए आपके डिवाइस को अतिरिक्त सेटअप की आवश्यकता है। क्या आप आगे बढ़ना और रिबूट करना चाहते हैं?</string>

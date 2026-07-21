@@ -36,12 +36,7 @@
     <string name="install_next">التالي</string>
     <string name="install_start">هيا، بنا</string>
     <string name="manager_download_install">اضغط للتنزيل و التثبيت</string>
-    <string name="direct_install">تثبيت مباشر (موصى بها)</string>
-    <string name="install_inactive_slot">التثبيت على المنطقة الغير نشطة (بعد OTA)</string>
-    <string name="install_inactive_slot_msg">سيُجبر جهازك للاقلاع على المنطقة الغير النشطة بعد إعادة التشغيل!\n استخدم هذا الخيار فقط بعد الانتهاء من OTA. استمرار؟</string>
     <string name="setup_title">إعدادات إضافية</string>
-    <string name="select_patch_file">حدد و عدل ملفاً</string>
-    <string name="patch_file_msg">اختر ملف (*.img) أو ملف odin (*.tar)</string>
     <string name="reboot_delay_toast">إعادة التشغيل بعد ٥ ثواني…</string>
     <string name="flash_screen_title">التثبيت</string>
 
@@ -180,8 +175,6 @@
     <string name="complete_uninstall">إلغاء التثبيت بالكامل</string>
     <string name="restore_img">استعادة الصور</string>
     <string name="restore_img_msg">جار الأستعادة…</string>
-    <string name="restore_done">تم الأستعادة</string>
-    <string name="restore_fail">النسخة الاحتياطية الأصلية غير موجودة!</string>
     <string name="setup_fail">فشل التضبيط</string>
     <string name="env_fix_title"> الإعداد الأضافي مطلوب</string>
     <string name="setup_msg">جار تضبيت البيئة</string>

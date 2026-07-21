@@ -37,12 +37,7 @@
     <string name="install_next">Dalje</string>
     <string name="install_start">Krenimo</string>
     <string name="manager_download_install">Dodirnite za preuzimanje i instalaciju</string>
-    <string name="direct_install">Izravna instalacija (preporučeno)</string>
-    <string name="install_inactive_slot">Instaliraj u neaktivni utor (Nakon OTA)</string>
-    <string name="install_inactive_slot_msg">Vaš će se uređaj prisiliti pokrenuti s trenutnog neaktivnog mjesta nakon ponovnog pokretanja!\nKoristite tu opciju samo nakon što je OTA dovršena.\nContinue?</string>
     <string name="setup_title">Dodatno postavljanje</string>
-    <string name="select_patch_file">Odaberite patch datoteku</string>
-    <string name="patch_file_msg">Odaberite raw (*.img) ili ODIN tarfile (*.tar)</string>
     <string name="reboot_delay_toast">Ponovno pokretanje za 5 sekundi…</string>
     <string name="flash_screen_title">Instalacija</string>
 
@@ -184,8 +179,6 @@
     <string name="complete_uninstall">Dovršite deinstalaciju</string>
     <string name="restore_img">Vrati Images</string>
     <string name="restore_img_msg">Vraćanje…</string>
-    <string name="restore_done">Vraćanje je dovršeno!</string>
-    <string name="restore_fail">Izvorna Sig. kopija ne postoji!</string>
     <string name="setup_fail">Postavljanje nije uspjelo</string>
     <string name="env_fix_title">Zahtijeva dodatno postavljanje</string>
     <string name="setup_msg">Postavljanje okruženja za pokretanje…</string>

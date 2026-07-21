@@ -41,12 +41,7 @@
     <string name="install_next">Avanti</string>
     <string name="install_start">Andiamo!</string>
     <string name="manager_download_install">Apri questa notifica per scaricare e installare</string>
-    <string name="direct_install">Installazione diretta (raccomandata)</string>
-    <string name="install_inactive_slot">Installa nello slot inattivo (dopo un aggiornamento OTA)</string>
-    <string name="install_inactive_slot_msg">Questo dispositivo verrà FORZATO ad avviarsi usando lo slot inattivo!\nUsa questo metodo solo dopo che un aggiornamento OTA è stato installato.\nVuoi continuare?</string>
     <string name="setup_title">Configurazione aggiuntiva</string>
-    <string name="select_patch_file">Seleziona e aggiorna un file</string>
-    <string name="patch_file_msg">Seleziona un\'immagine in formato .img, un file .tar di ODIN o un file payload.bin</string>
     <string name="reboot_delay_toast">Riavvio fra 5 secondi…</string>
     <string name="flash_screen_title">Installazione</string>
 
@@ -214,8 +209,6 @@
     <string name="complete_uninstall">Disinstalla completamente</string>
     <string name="restore_img">Ripristina immagini</string>
     <string name="restore_img_msg">Ripristino…</string>
-    <string name="restore_done">Ripristino completato!</string>
-    <string name="restore_fail">Non esiste un backup dell\'immagine di boot originale!</string>
     <string name="setup_fail">Configurazione fallita</string>
     <string name="env_fix_title">Configurazione aggiuntiva richiesta</string>
     <string name="env_fix_msg">Il tuo dispositivo necessita di una configurazione aggiuntiva per far funzionare Magisk correttamente. Vuoi procedere e riavviare il dispositivo?</string>

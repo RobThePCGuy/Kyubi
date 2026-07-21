@@ -41,12 +41,7 @@
     <string name="install_next">Sonraki</string>
     <string name="install_start">Hadi gidelim</string>
     <string name="manager_download_install">İndirmek ve yüklemek için basın</string>
-    <string name="direct_install">Doğrudan Kurulum (Önerilir)</string>
-    <string name="install_inactive_slot">Etkin Olmayan Yuvaya Kur (OTA\'dan Sonra)</string>
-    <string name="install_inactive_slot_msg">Yeniden başlatmanın ardından cihazınız mevcut etkin olmayan yuvaya önyükleme yapmaya ZORLANACAK!\nBu seçeneği yalnızca OTA tamamlandıktan sonra kullanın.\nDevam edilsin mi?</string>
     <string name="setup_title">Ek Kurulum</string>
-    <string name="select_patch_file">Bir Dosya Seçin ve Yamalayın</string>
-    <string name="patch_file_msg">Bir ham görüntü (*.img) veya bir ODIN tar dosyası (*.tar) seçin</string>
     <string name="reboot_delay_toast">5 saniye içinde yeniden başlatılıyor…</string>
     <string name="flash_screen_title">Yükleniyor</string>
 
@@ -213,8 +208,6 @@
     <string name="complete_uninstall">Kaldırmayı Tamamla</string>
     <string name="restore_img">Görüntüleri Geri Yükle</string>
     <string name="restore_img_msg">Geri yükleniyor…</string>
-    <string name="restore_done">Geri yükleme tamamlandı!</string>
-    <string name="restore_fail">Stok yedeği mevcut değil!</string>
     <string name="setup_fail">Kurulum başarısız oldu</string>
     <string name="env_fix_title">Ek Kurulum Gerekiyor</string>
     <string name="env_fix_msg">Magisk\'in düzgün çalışması için cihazınızın ek kuruluma ihtiyacı var. Devam etmek ve yeniden başlatmak istiyor musunuz?</string>

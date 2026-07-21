@@ -48,14 +48,9 @@
     <string name="manager_download_install">แตะเพื่อดาวน์โหลดและติดตั้ง</string>
     <string name="flashing">กำลังแฟลช</string>
     <string name="open_link_failed_toast">ไม่พบแอปพลิเคชันสำหรับเปิดลิ้งค์</string>
-    <string name="direct_install">การติดตั้งโดยตรง (แนะนำ)</string>
-    <string name="install_inactive_slot">ติดตั้งไปยัง Slot ที่ไม่ใช้งาน (หลังจาก OTA)</string>
-    <string name="install_inactive_slot_msg">อุปกรณ์ของคุณจะถูกบังคับให้บู๊ตไป Slot ที่ไม่ใช่งานหลังจากรีบูต!\nใช้ตัวเลือกนี้หลังจาก OTA เสร็จเท่านั้น\nดำเนินการต่อ?</string>
     <string name="complete_uninstall">ถอนการติดตั้งแบบสมบูรณ์</string>
     <string name="restore_img">กู้คืน Images</string>
     <string name="restore_img_msg">กำลังกู้คืน…</string>
-    <string name="restore_done">การกู้คืนสำเร็จ!</string>
-    <string name="restore_fail">ไม่มีไฟล์แบ็คอัพ!</string>
     <string name="setup_fail">การตั้งค่าล้มเหลว</string>
     <string name="env_fix_title">ต้องมีการตั้งค่าเพิ่มเติม</string>
     <string name="setup_title">การตั้งค่าเพิ่มเติม</string>

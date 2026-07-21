@@ -41,12 +41,7 @@
     <string name="install_next">Напред</string>
     <string name="install_start">Начало</string>
     <string name="manager_download_install">За да изтеглите и инсталирате, докоснете</string>
-    <string name="direct_install">Директно инсталиране (препоръчително)</string>
-    <string name="install_inactive_slot">Инсталиране в неактивен дял (след OTA)</string>
-    <string name="install_inactive_slot_msg">Устройство ЗАДЪЛЖИТЕЛНО ще зареди от текущия неактивен дял при следващия рестарт.\nИзползвайте само при приключила инсталация на OTA.\nПродължаване?</string>
     <string name="setup_title">Допълнителни настройки</string>
-    <string name="select_patch_file">Избор и закърпване на файл</string>
-    <string name="patch_file_msg">Изберете образ (*.img) или архив на ODIN (*.tar)</string>
     <string name="reboot_delay_toast">Рестартиране след 5 секунди…</string>
     <string name="flash_screen_title">Инсталиране</string>
 
@@ -213,8 +208,6 @@
     <string name="complete_uninstall">Премахване</string>
     <string name="restore_img">Възстановяване на образи</string>
     <string name="restore_img_msg">Възстановяване…</string>
-    <string name="restore_done">Възстановяването е успешно!</string>
-    <string name="restore_fail">На устройството липсва резервно копие на заводския образ!</string>
     <string name="setup_fail">Грешка при първоначална настройка</string>
     <string name="env_fix_title">Необходима е допълнителна настройка</string>
     <string name="env_fix_msg">За да работи Magisk нормално, устройството се нуждае от допълнителна настройка. Да бъде ли продължено след рестарт?</string>

@@ -66,22 +66,12 @@ class FlashViewModel : BaseViewModel() {
                     MagiskInstaller.Uninstall(outItems, logItems).exec()
                 }
                 Const.Value.FLASH_MAGISK -> {
-                    if (Info.isEmulator)
-                        MagiskInstaller.Emulator(outItems, logItems).exec()
-                    else
-                        MagiskInstaller.Direct(outItems, logItems).exec()
+                    // Kyubi is emulator/system-mode only: the boot-image direct
+                    // install is gone, so this is always the environment fix-up.
+                    MagiskInstaller.Emulator(outItems, logItems).exec()
                 }
                 Const.Value.FLASH_MAGISK_SYSTEM -> {
                     MagiskInstaller.Direct_system(outItems, logItems).exec()
-                }
-                Const.Value.FLASH_INACTIVE_SLOT -> {
-                    showReboot = false
-                    MagiskInstaller.SecondSlot(outItems, logItems).exec()
-                }
-                Const.Value.PATCH_FILE -> {
-                    uri ?: return@launch
-                    showReboot = false
-                    MagiskInstaller.Patch(uri, outItems, logItems).exec()
                 }
                 else -> {
                     back()

@@ -41,12 +41,7 @@
     <string name="install_next">Další</string>
     <string name="install_start">Spustit</string>
     <string name="manager_download_install">Stiskněte pro stažení a instalaci</string>
-    <string name="direct_install">Přímá instalace (doporučeno)</string>
-    <string name="install_inactive_slot">Instalace do druhého slotu (po OTA)</string>
-    <string name="install_inactive_slot_msg">Vaše zařízení bude po restartu VYNUCENĚ spuštěno do aktuálního neaktivního slotu!\nTuto možnost použijte pouze po dokončení OTA.\nChcete pokračovat?</string>
     <string name="setup_title">Další nastavení</string>
-    <string name="select_patch_file">Vybrat a opravit soubor</string>
-    <string name="patch_file_msg">Vyberte soubor RAW (*.img) nebo soubor TAR pro ODIN (*.tar)</string>
     <string name="reboot_delay_toast">Restartování za 5 sekund…</string>
     <string name="flash_screen_title">Instalace</string>
 
@@ -216,8 +211,6 @@
     <string name="complete_uninstall">Kompletní odinstalace</string>
     <string name="restore_img">Obnovit obrazy</string>
     <string name="restore_img_msg">Obnovování…</string>
-    <string name="restore_done">Proces obnovování dokončen!</string>
-    <string name="restore_fail">Původní záloha neexistuje!</string>
     <string name="setup_fail">Nastavení selhalo</string>
     <string name="env_fix_title">Vyžadováno dodatečné nastavení</string>
     <string name="env_fix_msg">Aby mohl Magisk správně fungovat, je třeba zařízení dodatečně nastavit. Chcete pokračovat a restartovat zařízení?</string>

@@ -41,12 +41,7 @@
     <string name="install_next">Ďalej</string>
     <string name="install_start">Poďme na to</string>
     <string name="manager_download_install">Stlačte pre stiahnutie a inštaláciu</string>
-    <string name="direct_install">Priama inštalácia (Odporúča sa)</string>
-    <string name="install_inactive_slot">Inštalovať na neaktívny slot (Po OTA)</string>
-    <string name="install_inactive_slot_msg">Vaše zariadenie bude po reštarte PRINÚTENÉ nabootovať do aktuálne neaktívneho slotu!\nTúto voľbu použite iba po skončení OTA.\nPokračovať?</string>
     <string name="setup_title">Ďalšie nastavenia</string>
-    <string name="select_patch_file">Vybrať a zaplátať súbor</string>
-    <string name="patch_file_msg">Vyberte raw súbor (*.img) alebo tar súbor ODIN (*.tar) alebo payload.bin (*.bin)</string>
     <string name="reboot_delay_toast">Reštart o 5 sekúnd…</string>
     <string name="flash_screen_title">Inštalácia</string>
 
@@ -219,8 +214,6 @@
     <string name="complete_uninstall">Úplne odinštalovať</string>
     <string name="restore_img">Obnoviť obrazy</string>
     <string name="restore_img_msg">Obnovovanie…</string>
-    <string name="restore_done">Obnovovanie ukončené!</string>
-    <string name="restore_fail">Stock záloha neexistuje!</string>
     <string name="setup_fail">Nastavenie zlyhalo</string>
     <string name="env_fix_title">Vyžaduje sa ďalšie nastavenie</string>
     <string name="env_fix_msg">Aby Magisk fungoval správne, vaše zariadenie potrebuje ďalšie nastavenie. Chcete pokračovať a reštartovať?</string>

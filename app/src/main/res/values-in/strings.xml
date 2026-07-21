@@ -41,12 +41,7 @@
     <string name="install_next">Berikutnya</string>
     <string name="install_start">Mulai</string>
     <string name="manager_download_install">Sentuh untuk unduh dan pasang</string>
-    <string name="direct_install">Langsung pasang (Disarankan)</string>
-    <string name="install_inactive_slot">Pasang pada slot nonaktif (Setelah OTA)</string>
-    <string name="install_inactive_slot_msg">Perangkat Anda akan DIPAKSA boot ke slot yang saat ini tidak aktif setelah perangkat dinyalakan ulang!\nGunakan opsi ini hanya setelah proses OTA selesai.\nLanjutkan?</string>
     <string name="setup_title">Penyiapan tambahan</string>
-    <string name="select_patch_file">Pilih dan tambal file</string>
-    <string name="patch_file_msg">Pilih mentahan image (*.img) atau file tar ODIN (*.tar)</string>
     <string name="reboot_delay_toast">Memulai ulang dalam 5 detik…</string>
     <string name="flash_screen_title">Instalasi</string>
 
@@ -213,8 +208,6 @@
     <string name="complete_uninstall">Pencopotan penuh</string>
     <string name="restore_img">Pulihkan image</string>
     <string name="restore_img_msg">Memulihkan…</string>
-    <string name="restore_done">Pemulihan selesai!</string>
-    <string name="restore_fail">Cadangan stock tidak ada!</string>
     <string name="setup_fail">Penyiapan gagal</string>
     <string name="env_fix_title">Perlu penyiapan tambahan</string>
     <string name="env_fix_msg">Perangkat Anda membutuhkan pengaturan tambahan untuk Magisk agar berfungsi dengan benar. Apakah Anda ingin melanjutkan dan Menyalakan ulang?</string>

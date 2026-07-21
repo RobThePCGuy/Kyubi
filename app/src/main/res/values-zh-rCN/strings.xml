@@ -41,12 +41,7 @@
     <string name="install_next">下一步</string>
     <string name="install_start">开始</string>
     <string name="manager_download_install">立即安装</string>
-    <string name="direct_install">直接安装（推荐）</string>
-    <string name="install_inactive_slot">安装到未使用的槽位（OTA 后）</string>
-    <string name="install_inactive_slot_msg">将在重启后强制切换到另一个槽位！注意只能在 OTA 更新完成后的重启之前使用。</string>
     <string name="setup_title">修复安装</string>
-    <string name="select_patch_file">选择并修补一个文件</string>
-    <string name="patch_file_msg">选择一个原始映像文件（*.img）、Odin 包（*.tar）或 payload.bin（*.bin）</string>
     <string name="reboot_delay_toast">设备将在 5 秒后重启</string>
     <string name="flash_screen_title">安装</string>
 
@@ -222,8 +217,6 @@
     <string name="complete_uninstall">完全卸载</string>
     <string name="restore_img">还原原厂映像</string>
     <string name="restore_img_msg">正在还原</string>
-    <string name="restore_done">已还原</string>
-    <string name="restore_fail">原厂 Boot 映像的备份不存在</string>
     <string name="setup_fail">安装失败</string>
     <string name="env_fix_title">需要修复运行环境</string>
     <string name="env_fix_msg">需要一些额外的安装才能使 Magisk 正常工作。完成后自动重启，是否继续？</string>

@@ -41,12 +41,7 @@
     <string name="install_next">下一步</string>
     <string name="install_start">開始執行</string>
     <string name="manager_download_install">點選以下載並安裝</string>
-    <string name="direct_install">直接安裝（建議）</string>
-    <string name="install_inactive_slot">安裝到非使用中的槽位（在 OTA 更新後）</string>
-    <string name="install_inactive_slot_msg">您的裝置將在下次重新啟動後強制切換到非使用中的槽位！\n這個選項僅在 OTA 更新完畢後使用。\n請問是否繼續？</string>
     <string name="setup_title">修復安裝</string>
-    <string name="select_patch_file">選擇並修補檔案</string>
-    <string name="patch_file_msg">請選取未修改過的映像檔 (*.img) 或 Odin 的 TAR 檔案 (*.tar) 或 payload.bin (*.bin)</string>
     <string name="reboot_delay_toast">將在 5 秒後重新啟動……</string>
     <string name="flash_screen_title">安裝</string>
 
@@ -219,8 +214,6 @@
     <string name="complete_uninstall">完全解除安裝</string>
     <string name="restore_img">還原原始映像檔</string>
     <string name="restore_img_msg">正在還原……</string>
-    <string name="restore_done">還原完成！</string>
-    <string name="restore_fail">不存在原始備份的映像檔！</string>
     <string name="setup_fail">安裝失敗</string>
     <string name="env_fix_title">需要修復執行環境</string>
     <string name="env_fix_msg">缺少讓 Magisk 正常執行所需的檔案。請您同意讓 Magisk 額外下載安裝包進行修復安裝，修復完成後將自動重新啟動。請問您是否繼續？</string>

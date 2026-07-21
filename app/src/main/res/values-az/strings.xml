@@ -41,12 +41,7 @@
     <string name="install_next">Sonrakı</string>
     <string name="install_start">Getdik</string>
     <string name="manager_download_install">Endirib quraşdırmaq üçün bas</string>
-    <string name="direct_install">Birbaşa Quraşdır (Tövsiyyə olunur)</string>
-    <string name="install_inactive_slot">Fəal olmayan Slot\'a quraşdır (OTA\'dan sonra)</string>
-    <string name="install_inactive_slot_msg">Cihazınız yenidən başladıqdan sonra fəal olmayan slotda başlamağa MƏCBUR ediləcək!\nBu seçimi ancaq OTA bitdikdən sonra tətbiq edin.\nDavam edilsin?</string>
     <string name="setup_title">Əlavə Sazlamalar</string>
-    <string name="select_patch_file">Fayl seç və yamaqla</string>
-    <string name="patch_file_msg">(*.img) yaxud ODIN (*.tar) seç</string>
     <string name="reboot_delay_toast">5 saniyəyə yenidən başlayacaq…</string>
     <string name="flash_screen_title">Quraşdırılma</string>
 
@@ -211,8 +206,6 @@
     <string name="complete_uninstall">Tamamilə sil</string>
     <string name="restore_img">Nüsxələri Qaytar</string>
     <string name="restore_img_msg">Qaytarılır…</string>
-    <string name="restore_done">Qaytarıldı!</string>
-    <string name="restore_fail">Hazır nüsxələr mövcud deyil!</string>
     <string name="setup_fail">Qurma alınmadı</string>
     <string name="env_fix_title">Əlavə qurmaya ethiyac var</string>
     <string name="env_fix_msg">Cihazınız Magiskin düzgün işləməsi üçün əlavə qurmaya ehtiyac duyur. Yenidən başlatmaq istəyirsiniz?</string>

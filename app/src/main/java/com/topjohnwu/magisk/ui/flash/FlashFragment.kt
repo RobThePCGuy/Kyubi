@@ -110,22 +110,16 @@ class FlashFragment : BaseFragment<FragmentFlashMd2Binding>(), MenuProvider {
                 .setArguments(args.toBundle())
                 .createPendingIntent()
 
-        private fun flashType(isSecondSlot: Int) =
-            if (isSecondSlot == 1) Const.Value.FLASH_INACTIVE_SLOT
-            else if (isSecondSlot == 2) Const.Value.FLASH_MAGISK_SYSTEM
+        // Kyubi: system-mode install (2) or the emulator environment fix-up.
+        // Boot-image direct install and inactive-slot are removed.
+        private fun flashType(systemMode: Int) =
+            if (systemMode == 2) Const.Value.FLASH_MAGISK_SYSTEM
             else Const.Value.FLASH_MAGISK
 
         /* Flashing is understood as installing / flashing magisk itself */
 
-        fun flash(isSecondSlot: Int) = MainDirections.actionFlashFragment(
-            action = flashType(isSecondSlot)
-        )
-
-        /* Patching is understood as injecting img files with magisk */
-
-        fun patch(uri: Uri) = MainDirections.actionFlashFragment(
-            action = Const.Value.PATCH_FILE,
-            additionalData = uri
+        fun flash(systemMode: Int) = MainDirections.actionFlashFragment(
+            action = flashType(systemMode)
         )
 
         /* Uninstalling is understood as removing magisk entirely */

@@ -38,12 +38,7 @@
     <string name="install_next">Neste</string>
     <string name="install_start">Start</string>
     <string name="manager_download_install">Trykk for å laste ned og installere</string>
-    <string name="direct_install">Direkte installasjon (anbefalt)</string>
-    <string name="install_inactive_slot">Installer til inaktiv plass (etter OTA)</string>
-    <string name="install_inactive_slot_msg">Din enhet vil bli tvunget til å starte opp i inaktiv plass etter omstart!\nKun bruk dette etter at OTA er ferdig.\Fortsett?</string>
     <string name="setup_title">Ytterligere oppsett</string>
-    <string name="select_patch_file">Velg og utfør programfiks av en fil</string>
-    <string name="patch_file_msg">Velg et rå-avtrykk (*.img) eller en ODIN-tjæreballfil (*.tar)</string>
     <string name="reboot_delay_toast">Starter på ny om 5 sek …</string>
     <string name="flash_screen_title">Installasjon</string>
 
@@ -195,8 +190,6 @@
     <string name="complete_uninstall">Fullfør avinstallasjon</string>
     <string name="restore_img">Gjenopprett avtrykk</string>
     <string name="restore_img_msg">Gjenoppretter …</string>
-    <string name="restore_done">Gjenoppretting fullført.</string>
-    <string name="restore_fail">Fabrikk-sikkerhetskopi finnes ikke!</string>
     <string name="setup_fail">Oppsett mislyktes</string>
     <string name="env_fix_title">Krever ytterligere oppsett</string>
     <string name="env_fix_msg">Enheten din krever ytterligere oppsett for at Magisk skal fungere rett. Fortsett med omstart?</string>

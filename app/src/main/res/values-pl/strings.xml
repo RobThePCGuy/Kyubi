@@ -41,12 +41,7 @@
     <string name="install_next">Dalej</string>
     <string name="install_start">Zaczynajmy</string>
     <string name="manager_download_install">Kliknij, aby pobrać i zainstalować</string>
-    <string name="direct_install">Bezpośrednia instalacja (zalecana)</string>
-    <string name="install_inactive_slot">Zainstaluj w nieaktywnym slocie (po OTA)</string>
-    <string name="install_inactive_slot_msg">Po ponownym uruchomieniu twoje urządzenie zostanie ZMUSZONE do rozruchu z aktualnie nieaktywnego slotu!\nUżywaj tej opcji tylko po ukończeniu aktualizacji OTA.\nKontynuować?</string>
     <string name="setup_title">Dodatkowa konfiguracja</string>
-    <string name="select_patch_file">Wybierz i załataj plik</string>
-    <string name="patch_file_msg">Wybierz obraz raw (*.img) lub plik tar ODIN (*.tar) lub payload.bin (*.bin)</string>
     <string name="reboot_delay_toast">Ponowne uruchomienie za 5 sekund…</string>
     <string name="flash_screen_title">Instalacja</string>
 
@@ -219,8 +214,6 @@
     <string name="complete_uninstall">Odinstaluj całkowicie</string>
     <string name="restore_img">Przywróć obrazy</string>
     <string name="restore_img_msg">Przywracanie…</string>
-    <string name="restore_done">Przywracanie zakończone!</string>
-    <string name="restore_fail">Kopia zapasowa nie istnieje!</string>
     <string name="setup_fail">Konfiguracja nieudana</string>
     <string name="env_fix_title">Wymagana dodatkowa konfiguracja</string>
     <string name="env_fix_msg">Twoje urządzenie wymaga dodatkowej konfiguracji, aby Magisk działał poprawnie. Czy chcesz kontynuować i uruchomić ponownie?</string>

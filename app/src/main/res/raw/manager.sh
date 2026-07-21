@@ -11,7 +11,7 @@ env_check() {
   # boot image) and no preinit partition (emulators have none). Check only the
   # binaries Kyubi actually ships, so a healthy offline install reports env-OK
   # instead of nagging "additional setup" on every launch.
-  for file in busybox magiskinit util_functions.sh boot_patch.sh; do
+  for file in busybox magiskinit util_functions.sh; do
     [ -f "$MAGISKBIN/$file" ] || return 1
   done
   if [ "$2" -ge 25000 ]; then
@@ -80,7 +80,6 @@ install_addond(){
     else
         mkdir -p $addond/magisk
         cp -prLf "$installDir"/. $addond/magisk || { ui_print "! Failed to install addon.d"; return; }
-        mv $addond/magisk/boot_patch.sh $addond/magisk/boot_patch.sh.in
         mv $addond/magisk/addon.d.sh $addond/99-magisk.sh
         cp "$AppApkPath" $addond/magisk/magisk.apk
     fi
@@ -88,69 +87,11 @@ install_addond(){
     mount -o ro,remount /system
 }
 
-direct_install() {
-  echo "- Flashing new boot image"
-  flash_image $1/new-boot.img $2
-  case $? in
-    1)
-      echo "! Insufficient partition size"
-      return 1
-      ;;
-    2)
-      echo "! $2 is read only"
-      return 2
-      ;;
-  esac
-
-  rm -f $1/new-boot.img
-  fix_env $1
-  run_migrations
-  copy_preinit_files
-  install_addond "$3"
-  return 0
-}
-
 run_uninstaller() {
   rm -rf /dev/tmp
   mkdir -p /dev/tmp/install
   unzip -o "$1" "assets/*" "lib/*" -d /dev/tmp/install
   INSTALLER=/dev/tmp/install sh /dev/tmp/install/assets/uninstaller.sh dummy 1 "$1"
-}
-
-restore_imgs() {
-  [ -z $SHA1 ] && return 1
-  local BACKUPDIR=/data/magisk_backup_$SHA1
-  [ -d $BACKUPDIR ] || return 1
-
-  get_flags
-  find_boot_image
-
-  for name in dtb dtbo; do
-    [ -f $BACKUPDIR/${name}.img.gz ] || continue
-    local IMAGE=$(find_block $name$SLOT)
-    [ -z $IMAGE ] && continue
-    flash_image $BACKUPDIR/${name}.img.gz $IMAGE
-  done
-  [ -f $BACKUPDIR/boot.img.gz ] || return 1
-  flash_image $BACKUPDIR/boot.img.gz $BOOTIMAGE
-}
-
-post_ota() {
-  cd $NVBASE
-  cp -f $1 bootctl
-  rm -f $1
-  chmod 755 bootctl
-  ./bootctl hal-info || return
-  SLOT_NUM=0
-  [ $(./bootctl get-current-slot) -eq 0 ] && SLOT_NUM=1
-  ./bootctl set-active-boot-slot $SLOT_NUM
-  cat << EOF > post-fs-data.d/post_ota.sh
-/data/adb/bootctl mark-boot-successful
-rm -f /data/adb/bootctl
-rm -f /data/adb/post-fs-data.d/post_ota.sh
-EOF
-  chmod 755 post-fs-data.d/post_ota.sh
-  cd /
 }
 
 add_hosts_module() {

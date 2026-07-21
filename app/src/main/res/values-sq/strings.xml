@@ -41,12 +41,7 @@
     <string name="install_next">Tjetër</string>
     <string name="install_start">Shkojme</string>
     <string name="manager_download_install">Shtypni për ta shkarkuar dhe instaluarl</string>
-    <string name="direct_install">Instalimi i direkt (Rekomandohet)</string>
-    <string name="install_inactive_slot">Instaloni në slotin joaktiv(Pas OTA)</string>
-    <string name="install_inactive_slot_msg">Pajisja juaj do të detyrohet të fillojë në folenë aktuale joaktive pas një rindezje!\nPërdoreni këtë opsion vetëm pasi të keni përfunduar OTA.\nVazhdo?</string>
     <string name="setup_title">Konfigurimet shtesë</string>
-    <string name="select_patch_file">Zgjidhni dhe Patch një skader</string>
-    <string name="patch_file_msg">Zgjidhni një imazh të papërpunuar (*.img) ose një skedar ODIN (*.tar) ose një payload.bin (*.bin)</string>
     <string name="reboot_delay_toast">Rinisje pas 5 sekondash…</string>
     <string name="flash_screen_title">Instalimi</string>
 
@@ -217,8 +212,6 @@
     <string name="complete_uninstall">Çinstalimi i plotë</string>
     <string name="restore_img">Rivendosni imazhet</string>
     <string name="restore_img_msg">Duke rivendosur…</string>
-    <string name="restore_done">Rivendosja u krye!</string>
-    <string name="restore_fail">Rezervimi i aksioneve nuk ekziston!</string>
     <string name="setup_fail">Konfigurimi dështoi</string>
     <string name="env_fix_title">Kërkon Konfigurim shtesë</string>
     <string name="env_fix_msg">Pajisja juaj ka nevojë për konfigurim shtesë që Magisk të funksionojë siç duhet.  Dëshironi të vazhdoni dhe rindizni?</string>

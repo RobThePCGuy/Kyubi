@@ -43,12 +43,7 @@
 
     <!-- Installation -->
     <string name="manager_download_install">Притисни за преземање и инсталирање.</string>
-    <string name="direct_install">Директна инсталација (Препорачано)</string>
-    <string name="install_inactive_slot">Инсталирај во неактивен слот (по ОТА)</string>
-    <string name="install_inactive_slot_msg">Вашиот уред ќе биде ПРИНУДЕН да се подигне на тековниот неактивен слот по рестартирањето!\nОваа опција користете ја само откако OTA ажурирање е направено.\nПродолжи?</string>
     <string name="setup_title">Дополнителни подесувања</string>
-    <string name="select_patch_file">Избери и обнови ја датотеката</string>
-    <string name="patch_file_msg">Избери само image датотека (*.img) или ODIN tar датотека (*.tar)</string>
     <string name="reboot_delay_toast">Рестартирање за 5 секунди…</string>
 
     <!--Toasts, Dialogs-->
@@ -62,8 +57,6 @@
     <string name="complete_uninstall">Целосно деинсталирање</string>
     <string name="restore_img">Врати image датотеки</string>
     <string name="restore_img_msg">Враќање…</string>
-    <string name="restore_done">Враќањето заврши!</string>
-    <string name="restore_fail">Не постои оригинална резервна копија!</string>
     <string name="setup_fail">Поставувањето е неуспешно.</string>
     <string name="env_fix_title">Потребни е дополнително поставување</string>
     <string name="setup_msg">Надградба на работната околина…</string>

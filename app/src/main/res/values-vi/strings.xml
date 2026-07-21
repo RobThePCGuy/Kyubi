@@ -40,12 +40,7 @@
     <string name="install_next">Kế tiếp</string>
     <string name="install_start">Đi nào</string>
     <string name="manager_download_install">Nhấn để tải xuống và cài đặt</string>
-    <string name="direct_install">Cài đặt trực tiếp (Khuyến nghị)</string>
-    <string name="install_inactive_slot">Cài đặt vào vùng không hoạt động (Sau OTA)</string>
-    <string name="install_inactive_slot_msg">Thiết bị của bạn sẽ bị BUỘC khởi động vào vị trí không hoạt động hiện tại sau khi khởi động lại!\nChỉ sử dụng tùy chọn này sau khi hoàn tất OTA.\nTiếp tục chứ?</string>
     <string name="setup_title">Thiết lập bổ sung</string>
-    <string name="select_patch_file">Chọn và vá tệp</string>
-    <string name="patch_file_msg">Chọn đĩa ảnh (*.img) hoặc tệp tarfile ODIN (*.tar)</string>
     <string name="reboot_delay_toast">Khởi động lại sau 5 giây…</string>
     <string name="flash_screen_title">Cài đặt</string>
 
@@ -217,8 +212,6 @@
     <string name="complete_uninstall">Hoàn thành Gỡ cài đặt</string>
     <string name="restore_img">Khôi phục đĩa ảnh boot (boot image)</string>
     <string name="restore_img_msg">Đang khôi phục…</string>
-    <string name="restore_done">Đã khôi phục xong!</string>
-    <string name="restore_fail">Bản sao lưu gốc không tồn tại!</string>
     <string name="setup_fail">Thiết lập không thành công</string>
     <string name="env_fix_title">Yêu cầu thiết lập bổ sung</string>
     <string name="env_fix_msg">Thiết bị của bạn cần thiết lập bổ sung để Magisk hoạt động bình thường. Bạn có muốn tiếp tục và khởi động lại không?</string>

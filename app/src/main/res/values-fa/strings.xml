@@ -36,12 +36,7 @@
     <string name="install_next">بعدی</string>
     <string name="install_start">بزن بریم</string>
     <string name="manager_download_install">برای دانلود و نصب فشار دهید</string>
-    <string name="direct_install">نصب مستقیم (توصیه می شود)</string>
-    <string name="install_inactive_slot">نصب در حافظه غیر فعال (بعد OTA)</string>
-    <string name="install_inactive_slot_msg">بعد از راه اندازی مجدد دستگاه شما مجبور به راه اندازی در حافظه غیرفعال فعلی می شود! \nفقط پس از انجام OTA از این گزینه استفاده کنید. \nادامه می دهید؟</string>
     <string name="setup_title">تنظیمات اضافی</string>
-    <string name="select_patch_file">یک فایل را انتخاب و پچ کنید</string>
-    <string name="patch_file_msg">یک تصویر خام (*.img) یا یک فایل (ODIN (*.tar انتخاب کنید</string>
     <string name="reboot_delay_toast">راه اندازی مجدد در 5 ثانیه…</string>
     <string name="flash_screen_title">نصب و راه اندازی</string>
 
@@ -177,8 +172,6 @@
     <string name="complete_uninstall">کامل کردن حذف</string>
     <string name="restore_img">بازیابی تصاویر</string>
     <string name="restore_img_msg">درحال بازیابی…</string>
-    <string name="restore_done">بازیابی انجام شد!</string>
-    <string name="restore_fail">نسخه پشتیبان استک موجود نیست!</string>
     <string name="setup_fail">نصب انجام نشد</string>
     <string name="env_fix_title">به تنظیمات اضافی نیاز دارد</string>
     <string name="setup_msg">راه اندازی محیط نصب…</string>

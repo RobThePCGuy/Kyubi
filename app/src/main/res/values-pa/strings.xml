@@ -36,12 +36,7 @@
     <string name="install_next">ਅੱਗੇ</string>
     <string name="install_start">ਤਾਂ ਆਓ ਸ਼ੁਰੂ ਕਰੀਏ!</string>
     <string name="manager_download_install">ਡਾਊਨਲੋਡ ਅਤੇ ਇੰਸਟੌਲ ਕਰਨ ਲਈ ਦਬਾਓ</string>
-    <string name="direct_install">ਸਿੱਦਾ ਇੰਸਟਾਲ (ਸਿਫਾਰਸ਼ੀ)</string>
-    <string name="install_inactive_slot">ਨਾ-ਸਰਗਰਮ ਸਲਾਟ ਵਿੱਚ ਇੰਸਟਾਲ ਕਰੋ (OTA ਤੋਂ ਬਾਅਦ)</string>
-    <string name="install_inactive_slot_msg">ਤੁਹਾਡੀ ਡਿਵਾਈਸ ਨੂੰ ਮੁੜ ਚਾਲੂ ਹੋਣ ਤੋਂ ਬਾਅਦ ਮੌਜੂਦਾ ਨਿਸ਼ਕਿਰਿਆ ਨੰਬਰ ਤੇ ਬੂਟ ਕਰਨ ਲਈ ਮਜਬੂਰ ਕੀਤਾ ਜਾਏਗਾ!\n OTA ਪੂਰਾ ਹੋਣ ਤੋਂ ਬਾਅਦ ਹੀ ਇਸ ਵਿਕਲਪ ਦੀ ਵਰਤੋਂ ਕਰੋ।\n ਜਾਰੀ ਰੱਖਣਾ ਹੈ?</string>
     <string name="setup_title">ਅਤਿਰਿਕਤ ਸੈਟਅਪ</string>
-    <string name="select_patch_file">ਇੱਕ ਫਾਈਲ ਚੁਣੋ ਅਤੇ ਪੈਚ ਕਰੋ</string>
-    <string name="patch_file_msg">ਇੱਕ ਰੋ ਛੱਞੀ ਨੂੰ (* .img) ਜਾਂ ਇੱਕ Odin tarfile (* .tar) ਦੀ ਚੋਣ ਕਰੋ</string>
     <string name="reboot_delay_toast">5 ਸਕਿੰਟਾਂ ਵਿੱਚ ਰੀਬੂਟ ਹੋ ਰਿਹਾ ਹੈ …</string>
     <string name="flash_screen_title">ਇੰਸਟਾਲੇਸ਼ਨ</string>
 
@@ -185,8 +180,6 @@
     <string name="complete_uninstall">ਪੂਰੀ ਤਰ੍ਹਾਂ ਅਣਇੰਸਟੌਲ ਕਰੋ</string>
     <string name="restore_img">ਇਮੇਜ ਰਿਸਟੋਰ ਕਰੋ</string>
     <string name="restore_img_msg">ਰਿਸਟੋਰ ਹੋ ਰਿਹਾ ਹੈ …</string>
-    <string name="restore_done">रिस्टोर ਸਫਲ ਹੋਇਆ!</string>
-    <string name="restore_fail">ਸਟਾਕ ਬੈਕਅਪ ਮੌਜੂਦ ਨਹੀਂ ਹੈ!</string>
     <string name="setup_fail">ਸੈਟਅਪ ਅਸਫਲ ਹੋਇਆ</string>
     <string name="env_fix_title">ਵਾਧੂ ਸੈਟਅਪ ਚਾਹੀਦਾ ਹੈ</string>
     <string name="setup_msg">ਵਾਤਾਵਰਣ ਸੈਟਅਪ ਚੱਲ ਰਿਹਾ ਹੈ …</string>

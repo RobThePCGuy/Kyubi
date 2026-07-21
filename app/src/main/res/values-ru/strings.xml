@@ -41,12 +41,7 @@
     <string name="install_next">Далее</string>
     <string name="install_start">Установить</string>
     <string name="manager_download_install">Нажмите для установки</string>
-    <string name="direct_install">Автоматическая установка (рекомендуется)</string>
-    <string name="install_inactive_slot">Установка во второй слот (после OTA-обновления)</string>
-    <string name="install_inactive_slot_msg">Ваше устройство будет принудительно перезагружено в неактивный (противоположный) слот!\nИспользуйте эту опцию только при интеграции Magisk после OTA-обновления!\nПродолжить?</string>
     <string name="setup_title">Расширенная установка</string>
-    <string name="select_patch_file">Пропатчить boot-образ</string>
-    <string name="patch_file_msg">Выберите файл образа (*.img) или архив ODIN (*.tar)</string>
     <string name="reboot_delay_toast">Перезагрузка через 5 секунд…</string>
     <string name="flash_screen_title">Установка</string>
 
@@ -221,8 +216,6 @@
     <string name="complete_uninstall">Полное удаление</string>
     <string name="restore_img">Восстановить разделы</string>
     <string name="restore_img_msg">Восстановление…</string>
-    <string name="restore_done">Восстановление завершено!</string>
-    <string name="restore_fail">Резервная копия отсутствует!</string>
     <string name="setup_fail">Ошибка установки</string>
     <string name="env_fix_title">Требуется расширенная установка</string>
     <string name="env_fix_msg">Требуется расширенная установка Magisk для корректной работы. Продолжить и выполнить перезагрузку?</string>
