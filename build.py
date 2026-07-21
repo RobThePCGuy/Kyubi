@@ -73,9 +73,9 @@ triples = [
     "i686-linux-android",
     "x86_64-linux-android",
 ]
-default_targets = ["magisk", "magiskinit", "magiskboot", "magiskpolicy", "busybox"]
+default_targets = ["magisk", "magiskinit", "magiskpolicy", "busybox"]  # Kyubi: no magiskboot (system-mode, no boot image)
 support_targets = default_targets + ["resetprop"]
-rust_targets = ["magisk", "magiskinit", "magiskboot", "magiskpolicy"]
+rust_targets = ["magisk", "magiskinit", "magiskpolicy"]  # Kyubi: no boot crate
 
 sdk_path = os.environ["ANDROID_SDK_ROOT"]
 ndk_root = op.join(sdk_path, "ndk")
