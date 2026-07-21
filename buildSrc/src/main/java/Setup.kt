@@ -232,19 +232,19 @@ fun Project.setupApp() {
         // Kyubi: x86 emulators only -- ARM ABIs dropped.
         into("x86") {
             from(rootProject.file("native/out/x86")) {
-                include("busybox", "magiskboot", "magiskinit", "magiskpolicy", "magisk")
+                include("busybox", "magiskinit", "magiskpolicy", "magisk")
                 rename { if (it == "magisk") "libmagisk32.so" else "lib$it.so" }
             }
         }
         into("x86_64") {
             from(rootProject.file("native/out/x86_64")) {
-                include("busybox", "magiskboot", "magiskinit", "magiskpolicy", "magisk")
+                include("busybox", "magiskinit", "magiskpolicy", "magisk")
                 rename { if (it == "magisk") "libmagisk64.so" else "lib$it.so" }
             }
         }
         onlyIf {
-            // 2 ABIs x 5 binaries = 10 (was 20 for the 4-ABI phone build)
-            if (inputs.sourceFiles.files.size != 10)
+            // 2 ABIs x 4 binaries = 8 (Kyubi: x86 only, no magiskboot)
+            if (inputs.sourceFiles.files.size != 8)
                 throw StopExecutionException("Please build binaries first! (./build.py binary)")
             true
         }
