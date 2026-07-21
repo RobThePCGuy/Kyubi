@@ -19,13 +19,77 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.security.MessageDigest;
 import java.util.HashMap;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class DynLoad {
 
+    // SHA-256 of the Kyubi release signing certificate (CN=Kyubi, O=RobThePCGuy).
+    // A dynamically loaded APK executes in-process, so Android's install-time
+    // signature check never runs for it -- we MUST pin the certificate here and
+    // refuse to load anything that isn't the genuine Kyubi key. If the release key
+    // is rotated, update this pin (and the CI KYUBI_CERT_SHA256) in lockstep.
+    private static final String KYUBI_CERT_SHA256 =
+            "7ad4f68f776d56a9bedfdc02f32cd68ac3bb0531a862817eb17c1c243e482303";
+
     static Object componentFactory;
     static ClassLoader activeClassLoader = DynLoad.class.getClassLoader();
+
+    private static String sha256Hex(byte[] data) {
+        try {
+            byte[] d = MessageDigest.getInstance("SHA-256").digest(data);
+            StringBuilder sb = new StringBuilder(d.length * 2);
+            for (byte b : d) sb.append(String.format("%02x", b));
+            return sb.toString();
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    // True only if EVERY signer of the APK at `apk` is the pinned Kyubi cert.
+    @SuppressWarnings({"deprecation", "PackageManagerGetSignatures"})
+    private static boolean isKyubiSigned(Context context, File apk) {
+        try {
+            PackageManager pm = context.getPackageManager();
+            byte[][] certs;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                PackageInfo info = pm.getPackageArchiveInfo(apk.getPath(),
+                        PackageManager.GET_SIGNING_CERTIFICATES);
+                if (info == null || info.signingInfo == null) return false;
+                var signers = info.signingInfo.getApkContentsSigners();
+                certs = new byte[signers.length][];
+                for (int i = 0; i < signers.length; i++) certs[i] = signers[i].toByteArray();
+            } else {
+                PackageInfo info = pm.getPackageArchiveInfo(apk.getPath(),
+                        PackageManager.GET_SIGNATURES);
+                if (info == null || info.signatures == null) return false;
+                certs = new byte[info.signatures.length][];
+                for (int i = 0; i < info.signatures.length; i++) certs[i] = info.signatures[i].toByteArray();
+            }
+            if (certs.length == 0) return false;
+            for (byte[] cert : certs) {
+                if (!KYUBI_CERT_SHA256.equals(sha256Hex(cert))) return false;
+            }
+            return true;
+        } catch (Exception e) {
+            Log.e(DynLoad.class.getSimpleName(), "signature verification failed", e);
+            return false;
+        }
+    }
+
+    // Only trust an APK we can positively attribute to the Kyubi key before we
+    // dynamically execute its code. DEBUG builds skip the check so a dev-signed
+    // APK can be side-loaded during development.
+    private static AppClassLoader trustedLoader(Context context, File apk) {
+        if (!BuildConfig.DEBUG && !isKyubiSigned(context, apk)) {
+            Log.e(DynLoad.class.getSimpleName(),
+                    "refusing to dynamically load an APK not signed by the Kyubi key");
+            apk.delete();
+            return null;
+        }
+        return new AppClassLoader(apk);
+    }
 
     static StubApk.Data createApkData() {
         var data = new StubApk.Data();
@@ -82,7 +146,7 @@ public class DynLoad {
 
         if (apk.exists()) {
             apk.setReadOnly();
-            return new AppClassLoader(apk);
+            return trustedLoader(context, apk);
         }
 
         // If no APK is loaded, attempt to copy from previous app
@@ -96,7 +160,7 @@ public class DynLoad {
                 try (src; out) {
                     APKInstall.transfer(src, out);
                 }
-                return new AppClassLoader(apk);
+                return trustedLoader(context, apk);
             } catch (PackageManager.NameNotFoundException ignored) {
             } catch (IOException e) {
                 Log.e(DynLoad.class.getSimpleName(), "", e);
