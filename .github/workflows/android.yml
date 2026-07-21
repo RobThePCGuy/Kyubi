@@ -1,6 +1,6 @@
 # Kyubi baseline CI (unmodified Magisk build from the GPL Kitsune source).
 name: Magisk CI
-# Builds release + debug APKs for all ABIs and publishes a versioned GitHub Release.
+# Builds release + debug APKs for x86/x86_64 (emulator-only) and publishes a versioned GitHub Release.
 
 on:
   push:
@@ -72,7 +72,7 @@ jobs:
           body: |
             Kitsune Magisk **v31.0** (versionCode 31000) — commit `${{ github.sha }}`.
             The short hash in the tag is the exact version this APK reports.
-            Universal APKs (armeabi-v7a, arm64-v8a, x86, x86_64).
+            x86 + x86_64 only (emulator-native; ARM and the magiskboot boot-image toolchain stripped).
 
             - `app-release.apk` — release build
             - `app-debug.apk` — debug build (verbose logging)
@@ -84,38 +84,7 @@ jobs:
             out/stub-release.apk
             out/stub-debug.apk
 
-
-  test:
-    name: Test on API ${{ matrix.api }}
-    runs-on: ubuntu-latest
-    needs: build
-    strategy:
-      fail-fast: false
-      matrix:
-        api: [23, 29, 35]
-
-    steps:
-      - name: Check out
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Set up Python 3
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.x"
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ github.sha }}
-          path: out
-
-      - name: Enable KVM group perms
-        run: |
-          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
-          sudo udevadm control --reload-rules
-          sudo udevadm trigger --name-match=kvm
-
-      - name: AVD test
-        run: scripts/avd_test.sh ${{ matrix.api }}
+  # Kyubi note: the upstream AVD test job (scripts/avd_test.sh) was removed. It
+  # patches a boot ramdisk with magiskboot on a stock emulator -- a phone-style
+  # boot-image install that Kyubi (system-mode only, no magiskboot) doesn't do,
+  # so the test exercises a deliberately-removed code path.
