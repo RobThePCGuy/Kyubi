@@ -7,14 +7,15 @@ run_delay() {
 }
 
 env_check() {
-  for file in busybox magiskboot magiskinit util_functions.sh boot_patch.sh; do
+  # Kyubi is stripped for emulators: no magiskboot (system-mode never patches a
+  # boot image) and no preinit partition (emulators have none). Check only the
+  # binaries Kyubi actually ships, so a healthy offline install reports env-OK
+  # instead of nagging "additional setup" on every launch.
+  for file in busybox magiskinit util_functions.sh boot_patch.sh; do
     [ -f "$MAGISKBIN/$file" ] || return 1
   done
   if [ "$2" -ge 25000 ]; then
     [ -f "$MAGISKBIN/magiskpolicy" ] || return 1
-  fi
-  if [ "$2" -ge 25210 ] && [ -f "$MAGISKTMP/.magisk/config" ]; then
-    [ -b "$MAGISKTMP/.magisk/device/preinit" ] || [ -b "$MAGISKTMP/.magisk/block/preinit" ] || return 2
   fi
   grep -xqF "MAGISK_VER='$1'" "$MAGISKBIN/util_functions.sh" || return 3
   grep -xqF "MAGISK_VER_CODE=$2" "$MAGISKBIN/util_functions.sh" || return 3
