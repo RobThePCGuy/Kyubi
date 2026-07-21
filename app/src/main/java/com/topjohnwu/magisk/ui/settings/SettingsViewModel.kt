@@ -63,7 +63,10 @@ class SettingsViewModel : BaseViewModel(), BaseSettingsItem.Handler {
         // Magisk
         if (Info.env.isActive) {
             list.addAll(listOf(
-                Magisk, Zygisk,
+                // Kyubi: no built-in Zygisk (removed as outdated/vulnerable); ReZygisk
+                // provides Zygisk externally, so a built-in Zygisk toggle here would be
+                // a control that does nothing. DenyList below still works via ReZygisk.
+                Magisk,
                 SystemlessHosts
             ))
             if (Const.Version.atLeast_24_0()) {

@@ -39,7 +39,11 @@ class InstallViewModel(svc: NetworkService, markwon: Markwon) : BaseViewModel() 
     val isRooted get() = Info.isRooted
     val skipOptions = Info.isEmulator || (Info.isSAR && !Info.isFDE && Info.ramdisk)
     val noSecondSlot = !isRooted || !Info.isAB || Info.isEmulator
-    val allowSystemInstall = isRooted && !Info.isBootPatched 
+    val allowSystemInstall = isRooted && !Info.isBootPatched
+    // Kyubi is stripped for emulators: no magiskboot, so boot-image install
+    // methods (patch-file / direct / inactive-slot) can't work -- hide them and
+    // expose only the supported system-mode install.
+    val allowBootPatch = false
 
     @get:Bindable
     var step = if (skipOptions) 1 else 0

@@ -186,6 +186,7 @@
                         <RadioButton
                             android:id="@+id/method_patch"
                             style="@style/WidgetFoundation.RadioButton"
+                            gone="@{!viewModel.allowBootPatch}"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/select_patch_file" />
@@ -193,7 +194,7 @@
                         <RadioButton
                             android:id="@+id/method_direct"
                             style="@style/WidgetFoundation.RadioButton"
-                            gone="@{!viewModel.rooted}"
+                            gone="@{!viewModel.allowBootPatch}"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/direct_install" />
@@ -209,7 +210,7 @@
                         <RadioButton
                             android:id="@+id/method_inactive_slot"
                             style="@style/WidgetFoundation.RadioButton"
-                            gone="@{viewModel.noSecondSlot}"
+                            gone="@{viewModel.noSecondSlot || !viewModel.allowBootPatch}"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/install_inactive_slot" />

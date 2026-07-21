@@ -17,7 +17,10 @@ enum class Theme(
         themeRes = R.style.ThemeFoundationMD2_KyubiAmoled
     );
 
-    val isSelected get() = Config.themeOrdinal == ordinal
+    // Compare against the resolved `selected` (which falls back to Kyubi for an
+    // out-of-range stored ordinal from the pruned theme set), not the raw ordinal
+    // -- otherwise an upgrading user with an old ordinal shows nothing selected.
+    val isSelected get() = selected == this
 
     fun select() {
         Config.themeOrdinal = ordinal
