@@ -12,13 +12,19 @@ that snapshot so a future maintainer can tell Kyubi's deltas from upstream.
   are all trimmed to the two x86 ABIs. No `armeabi-v7a`, no `arm64-v8a`. Output
   APKs are **not** universal.
 - **No `magiskboot` / no boot-image path.** The `magiskboot` native module is
-  dropped from the build, and Kyubi installs **system-mode only** — it never
-  patches a boot image. The boot-patch install routes are hidden in the app
-  (`InstallViewModel.allowBootPatch = false`), and `manager.sh`'s `env_check`
-  no longer requires `magiskboot`/preinit (so a healthy offline install shows no
-  "additional setup" nag). The upstream AVD boot-patch dev scripts
-  (`scripts/avd_patch.sh`, `scripts/avd_test.sh`) exercise that removed path and
-  are **not** run by CI.
+  dropped from the build (load-bearing: without it boot-image patching literally
+  cannot run), and Kyubi installs **system-mode only**. The boot-patch install
+  routes are both **hidden** (`InstallViewModel.allowBootPatch = false`) and
+  **blocked** (`InstallViewModel.install()` always runs the system-mode flash and
+  never navigates into a boot-image flow). `manager.sh`'s `env_check` no longer
+  requires `magiskboot`/preinit (so a healthy offline install shows no "additional
+  setup" nag). **Not yet stripped (tracked dead code):** `MagiskInstaller`'s
+  `Patch`/`Direct`/`SecondSlot` + `patchBoot()`, and the ChromeOS boot-signing
+  assets, are unreachable but still present; `boot_patch.sh` is deliberately kept
+  because the addon.d survival path (`install_addond`) still consumes it. Removing
+  that plumbing is a build-verified follow-up, not a quick delete. The upstream
+  AVD boot-patch dev scripts (`scripts/avd_patch.sh`, `scripts/avd_test.sh`)
+  exercise the removed path and are **not** run by CI.
 - **Built-in Zygisk removed** (upstream commit `2ef8f00`, security). The dead
   Zygisk settings toggle is removed from the app. Use
   **[ReZygisk](https://github.com/PerformanC/ReZygisk)** for the Zygisk API;

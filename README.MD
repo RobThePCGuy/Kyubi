@@ -16,9 +16,13 @@ smaller, faster to build, and has less surface to go wrong:
 
 - **x86 / x86_64 only.** No ARM ABIs. Emulator guests are x86; ARM builds were
   dead weight (the APK is ~42% smaller for it).
-- **No `magiskboot`, no boot-image patching.** Kyubi installs in **system mode**
-  only — it writes into the guest's system partition, it never unpacks or repacks
-  a boot image. The entire boot-patch toolchain and its UI are gone.
+- **No `magiskboot`, no boot-image patching.** The `magiskboot` native tool — the
+  thing that unpacks and repacks a boot image — is stripped from the build, so
+  boot-image patching cannot run. Kyubi installs in **system mode** only, writing
+  into the guest's system partition, and the boot-patch install options are
+  disabled in the app. (Some higher-level boot-patch plumbing still exists but is
+  unreachable; `boot_patch.sh` is retained only for the addon.d survival path.
+  Removing that dead code is tracked, not yet done.)
 - **No built-in Zygisk.** The built-in Zygisk was removed upstream (commit
   `2ef8f00`) over security vulnerabilities. Use
   **[ReZygisk](https://github.com/PerformanC/ReZygisk)** for the Zygisk API;

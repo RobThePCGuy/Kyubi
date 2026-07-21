@@ -95,13 +95,11 @@ class InstallViewModel(svc: NetworkService, markwon: Markwon) : BaseViewModel() 
     }
 
     fun install() {
-        when (method) {
-            R.id.method_patch -> FlashFragment.patch(data.value!!).navigate(true)
-            R.id.method_direct -> FlashFragment.flash(0).navigate(true)
-            R.id.method_inactive_slot -> FlashFragment.flash(1).navigate(true)
-            R.id.method_direct_system -> FlashFragment.flash(2).navigate(true)
-            else -> error("Unknown value")
-        }
+        // Kyubi is system-mode only: magiskboot is stripped, so the boot-image
+        // install methods (patch-file / direct / inactive-slot) cannot work and are
+        // not reachable. Always run the system-mode install regardless of any stale
+        // stored method -- never navigate into a boot-image flash flow.
+        FlashFragment.flash(2).navigate(true)
     }
 
     override fun onSaveState(state: Bundle) {
