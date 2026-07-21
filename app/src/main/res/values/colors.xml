@@ -1,8 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="ic_launcher_background">#FF004C</color>
+    <!-- Kyubi adaptive launcher background: night indigo (was Magisk red #FF004C) -->
+    <color name="ic_launcher_background">#1B1730</color>
     <color name="dark">#00796B</color>
     <color name="light">#e0e0e0</color>
     <color name="su_request_background">#e0e0e0</color>
     <color name="splash_background">@color/ic_launcher_background</color>
+
+    <!-- Kyubi brand tokens (from the design kit / brand-spec) -->
+    <color name="kyubi_bg">#1B1730</color>
+    <color name="kyubi_bg_2">#161326</color>
+    <color name="kyubi_surface">#221C3D</color>
+    <color name="kyubi_surface_2">#2A2348</color>
+    <color name="kyubi_fg">#F4EEE2</color>
+    <color name="kyubi_fg_bright">#FDF3E3</color>
+    <color name="kyubi_muted">#8A8598</color>
+    <color name="kyubi_dim">#6F6B7D</color>
+    <color name="kyubi_fox">#EF7F33</color>
+    <color name="kyubi_amber">#F2913A</color>
+    <color name="kyubi_ember">#E8563A</color>
 </resources>
