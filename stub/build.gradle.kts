@@ -18,7 +18,7 @@ android {
     else "https://huskydg.github.io/download/magisk/${Config.version}.apk"
 
     defaultConfig {
-        applicationId = "io.github.huskydg.magisk"
+        applicationId = "io.github.robthepcguy.kyubi"
         versionCode = 1
         versionName = "1.0"
         buildConfigField("String", "APK_URL", url?.let { "\"$it\"" } ?: "null" )
