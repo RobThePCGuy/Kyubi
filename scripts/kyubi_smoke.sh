@@ -11,6 +11,11 @@
 # install-and-launch check that CAN run in CI).
 #
 # Usage: ./scripts/kyubi_smoke.sh out/app-release.apk
+#
+# Note: matches are done with bash string tests, not `... | grep -q`. Under
+# `set -o pipefail`, grep -q exiting early on a match sends SIGPIPE to the
+# writer, whose 141 exit then fails the pipeline -- a false negative. Pure-bash
+# `[[ $var == *needle* ]]` has no such trap.
 #####################################################################
 set -euo pipefail
 
@@ -24,11 +29,11 @@ fail() { echo "SMOKE FAIL: $*" >&2; exit 1; }
 unzip -l "$APK" >/dev/null 2>&1 || fail "$APK is not a valid APK/zip"
 listing="$(unzip -l "$APK")"
 
-echo "$listing" | grep -q 'lib/x86/'    || fail "missing lib/x86/ (x86 ABI)"
-echo "$listing" | grep -q 'lib/x86_64/' || fail "missing lib/x86_64/ (x86_64 ABI)"
-echo "$listing" | grep -q 'lib/armeabi' && fail "armeabi ABI present -- Kyubi is x86-only"
-echo "$listing" | grep -q 'lib/arm64'   && fail "arm64 ABI present -- Kyubi is x86-only"
-echo "$listing" | grep -qi 'magiskboot' && fail "magiskboot present -- must be stripped (system-mode only)"
+[[ "$listing" == *"lib/x86/"*      ]] || fail "missing lib/x86/ (x86 ABI)"
+[[ "$listing" == *"lib/x86_64/"*   ]] || fail "missing lib/x86_64/ (x86_64 ABI)"
+[[ "$listing" == *"lib/armeabi"*   ]] && fail "armeabi ABI present -- Kyubi is x86-only"
+[[ "$listing" == *"lib/arm64"*     ]] && fail "arm64 ABI present -- Kyubi is x86-only"
+[[ "${listing,,}" == *"magiskboot"* ]] && fail "magiskboot present -- must be stripped (system-mode only)"
 
 # package id (aapt if the runner has build-tools; otherwise skip with a warning)
 aapt=""
@@ -36,7 +41,8 @@ for c in "${ANDROID_HOME:-}"/build-tools/*/aapt "${ANDROID_SDK_ROOT:-}"/build-to
   [ -x "$c" ] && aapt="$c"
 done
 if [ -n "$aapt" ]; then
-  "$aapt" dump badging "$APK" | grep -q "package: name='$PKG'" || fail "package id is not $PKG"
+  badging="$("$aapt" dump badging "$APK" 2>/dev/null || true)"
+  [[ "$badging" == *"package: name='$PKG'"* ]] || fail "package id is not $PKG"
   echo "  package id OK: $PKG"
 else
   echo "  WARN: aapt not found -- skipping package-id assertion"
