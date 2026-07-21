@@ -42,24 +42,26 @@
 
     <!--1st party themes-->
 
+    <!-- Kyubi: night indigo surfaces, fox-orange accent, bone text (brand-spec).
+         Retheme of the default (Piplup) style; children inherit this dark base. -->
     <style name="ThemeFoundationMD2.Piplup">
-        <item name="colorPrimary">#4EAFF5</item>
-        <item name="colorPrimaryVariant">#804EAFF5</item>
-        <item name="colorSecondary">#3E78AF</item>
-        <item name="colorSecondaryVariant">#803E78AF</item>
-        <item name="colorSurface">#F9F9F9</item>
-        <item name="colorSurfaceVariant">#EEEEEE</item>
-        <item name="colorSurfaceSurfaceVariant">?colorSurface</item>
-        <item name="colorOnPrimary">#F9F9F9</item>
-        <item name="colorOnPrimaryVariant">#D9E6E6E6</item>
-        <item name="colorOnSecondary">#F9F9F9</item>
+        <item name="colorPrimary">#EF7F33</item>          <!-- fox orange: brand + primary action -->
+        <item name="colorPrimaryVariant">#80EF7F33</item>
+        <item name="colorSecondary">#F2913A</item>        <!-- amber: highlights -->
+        <item name="colorSecondaryVariant">#80F2913A</item>
+        <item name="colorSurface">#1B1730</item>          <!-- night indigo: page ground -->
+        <item name="colorSurfaceVariant">#221C3D</item>   <!-- raised card surface -->
+        <item name="colorSurfaceSurfaceVariant">#2A2348</item>
+        <item name="colorOnPrimary">#1B1730</item>        <!-- indigo text on orange -->
+        <item name="colorOnPrimaryVariant">#D9F4EEE2</item>
+        <item name="colorOnSecondary">#1B1730</item>
         <item name="colorOnBackground">?colorOnSurface</item>
-        <item name="colorError">#CC0047</item>
-        <item name="colorOnError">#F9F9F9</item>
-        <item name="colorOnSurface">#444444</item>
-        <item name="colorOnSurfaceVariant">#BF444444</item>
-        <item name="colorDisabled">#808080</item>
-        <item name="colorDisabledVariant">#66808080</item>
+        <item name="colorError">#E8563A</item>            <!-- ember red: alert only -->
+        <item name="colorOnError">#F4EEE2</item>
+        <item name="colorOnSurface">#F4EEE2</item>        <!-- bone white: primary text -->
+        <item name="colorOnSurfaceVariant">#BFF4EEE2</item>
+        <item name="colorDisabled">#6F6B7D</item>         <!-- dim gray -->
+        <item name="colorDisabledVariant">#666F6B7D</item>
     </style>
 
     <style name="ThemeFoundationMD2.Amoled" parent="ThemeFoundationMD2.Piplup">
