@@ -15,10 +15,10 @@ version=31.0-kitsune
 #####################################################
 
 # Path to keystore file
-keyStore=TestKey-2024.jks
+#keyStore=TestKey-2024.jks   # Kyubi: signing config moved to CI secrets (do NOT commit keys)
 # Keystore password
-keyStorePass=123456
+#keyStorePass=123456   # Kyubi: signing config moved to CI secrets (do NOT commit keys)
 # The desired key alias in the keystore
-keyAlias=123456
+#keyAlias=123456   # Kyubi: signing config moved to CI secrets (do NOT commit keys)
 # Password of specified key alias
-keyPass=123456
+#keyPass=123456   # Kyubi: signing config moved to CI secrets (do NOT commit keys)

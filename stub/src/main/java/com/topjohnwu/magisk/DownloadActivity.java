@@ -47,8 +47,8 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class DownloadActivity extends Activity {
 
-    private static final String APP_NAME = "Kitsune Mask";
-    private static final String JSON_URL = "https://1q23lyc45.github.io/canary.json";
+    private static final String APP_NAME = "Kyubi";
+    private static final String JSON_URL = "https://robthepcguy.github.io/canary.json";
 
     private String apkLink = BuildConfig.APK_URL;
     private Context themed;

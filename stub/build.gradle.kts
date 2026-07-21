@@ -14,8 +14,7 @@ android {
 
     val canary = !Config.version.contains(".")
 
-    val url = if (canary) null
-    else "https://huskydg.github.io/download/magisk/${Config.version}.apk"
+    val url: String? = null  // Kyubi: never bake a foreign release host into the stub
 
     defaultConfig {
         applicationId = "io.github.robthepcguy.kyubi"

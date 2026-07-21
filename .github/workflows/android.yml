@@ -30,6 +30,29 @@ jobs:
       - name: Setup environment
         uses: ./.github/actions/setup
 
+      # Kyubi release signing: the key lives ONLY in GH secrets (never committed).
+      # Decode it and append the signing config to config.prop so gradle signs
+      # release APKs with the protected Kyubi key. No secret -> debug-signed.
+      - name: Set up release signing
+        env:
+          KEYSTORE_B64: ${{ secrets.KYUBI_KEYSTORE_B64 }}
+          KEYSTORE_PASS: ${{ secrets.KYUBI_KEYSTORE_PASS }}
+          KEY_ALIAS: ${{ secrets.KYUBI_KEY_ALIAS }}
+          KEY_PASS: ${{ secrets.KYUBI_KEY_PASS }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > kyubi-release.jks
+            {
+              echo "keyStore=kyubi-release.jks"
+              echo "keyStorePass=$KEYSTORE_PASS"
+              echo "keyAlias=$KEY_ALIAS"
+              echo "keyPass=$KEY_PASS"
+            } >> config.prop
+            echo "Release signing configured from secrets."
+          else
+            echo "::warning::No signing secret found -- release will be debug-signed."
+          fi
+
       - name: Build release
         run: ./build.py -vr all
 

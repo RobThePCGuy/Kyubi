@@ -41,14 +41,14 @@ object Const {
 
     object Url {
         const val PATREON_URL = "https://www.patreon.com/topjohnwu"
-        const val SOURCE_CODE_URL = "https://github.com/topjohnwu/Magisk"
+        const val SOURCE_CODE_URL = "https://github.com/RobThePCGuy/Kyubi"
 
         val CHANGELOG_URL = if (APP_IS_CANARY) Info.remote.magisk.note
-        else "https://topjohnwu.github.io/Magisk/releases/${BuildConfig.VERSION_CODE}.md"
+        else "https://github.com/RobThePCGuy/Kyubi/releases"
 
         const val GITHUB_RAW_URL = "https://raw.githubusercontent.com/"
         const val GITHUB_API_URL = "https://api.github.com/"
-        const val GITHUB_PAGE_URL = "https://1q23lyc45.github.io/"
+        const val GITHUB_PAGE_URL = "https://robthepcguy.github.io/"  // Kyubi feed host (404 = no update until one exists; never upstream)
         const val JS_DELIVR_URL = "https://cdn.jsdelivr.net/gh/"
     }
 
