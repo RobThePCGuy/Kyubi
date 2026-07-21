@@ -1,12 +1,13 @@
-# Kyubi baseline CI (unmodified Magisk build from the GPL Kitsune source).
-name: Magisk CI
-# Builds release + debug APKs for x86/x86_64 (emulator-only) and publishes a versioned GitHub Release.
+# Kyubi CI — builds the emulator-only (x86/x86_64, system-mode) Magisk fork,
+# smoke-tests the APK, and publishes a versioned GitHub Release on kitsune pushes.
+name: Kyubi CI
 
 on:
   push:
-    branches: 
+    branches:
       - dev
       - kitsune
+  pull_request:
   workflow_dispatch:
 
 permissions:
@@ -14,7 +15,7 @@ permissions:
 
 jobs:
   build:
-    name: Build Magisk artifacts
+    name: Build Kyubi APKs
     runs-on: ubuntu-latest
     env:
       SCCACHE_DIRECT: false
@@ -76,38 +77,88 @@ jobs:
           path: app/build/outputs
           compression-level: 9
 
-      # Publish a real, versioned GitHub Release on every kitsune push — one permanent
-      # full release per commit (the Magisk "canary" model, shipped as legit releases).
-      # Tag = v31.0-<short commit>: v31.0 tracks magisk.versionCode=31000, and the short
-      # SHA is exactly the version string the APK reports (build.py: git rev-parse --short=8).
+  # Gate: assert Kyubi's build invariants on the release APK, then install and
+  # launch it on a stock x86_64 emulator. Both must pass before a release ships.
+  # This does NOT test the offline system-mode root install (BlueStacks-VHD
+  # specific, not reproducible on a stock AVD) -- that is validated on real
+  # instances. It catches ARM/magiskboot/rename/feed regressions and a
+  # broken-or-insta-crashing APK.
+  smoke:
+    name: Smoke test (APK shape + emulator launch)
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ github.sha }}
+          path: out
+
+      - name: Assert Kyubi build invariants
+        run: |
+          chmod +x scripts/kyubi_smoke.sh scripts/kyubi_emulator_smoke.sh
+          ./scripts/kyubi_smoke.sh out/app-release.apk
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Install + launch on emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
+          disable-animations: true
+          script: ./scripts/kyubi_emulator_smoke.sh
+
+  # Publish ONLY on a kitsune push, and ONLY after build + smoke both pass. The
+  # APKs are the ones built (and signed) in `build` -- downloaded, not rebuilt.
+  release:
+    name: Publish release
+    needs: [build, smoke]
+    if: github.ref == 'refs/heads/kitsune' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ github.sha }}
+          path: out
+
+      # Tag = v31.0-<short commit>: v31.0 tracks magisk.versionCode=31000, and the
+      # short SHA is exactly the version string the APK reports (build.py: git
+      # rev-parse --short=8).
       - name: Compute version tag
         id: ver
         run: echo "tag=v31.0-$(echo '${{ github.sha }}' | cut -c1-8)" >> "$GITHUB_OUTPUT"
 
       - name: Publish release
-        if: github.ref == 'refs/heads/kitsune' && github.event_name != 'pull_request'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.ver.outputs.tag }}
-          name: Kitsune Magisk ${{ steps.ver.outputs.tag }}
+          name: Kyubi ${{ steps.ver.outputs.tag }}
           prerelease: false
           fail_on_unmatched_files: false
           body: |
-            Kitsune Magisk **v31.0** (versionCode 31000) — commit `${{ github.sha }}`.
+            **Kyubi** v31.0 (versionCode 31000) — commit `${{ github.sha }}`.
+            Emulator-only Magisk (Magisk Delta / Kitsune lineage), system-mode install.
             The short hash in the tag is the exact version this APK reports.
-            x86 + x86_64 only (emulator-native; ARM and the magiskboot boot-image toolchain stripped).
 
-            - `app-release.apk` — release build
+            x86 + x86_64 only — no ARM, no `magiskboot`/boot-image path. Built-in
+            Zygisk is removed for security; use ReZygisk (Kyubi's DenyList feeds it).
+
+            - `app-release.apk` — Kyubi manager (install this)
             - `app-debug.apk` — debug build (verbose logging)
-
-            Built-in Zygisk is removed for security (commit 2ef8f00); use ReZygisk or NeoZygisk.
           files: |
             out/app-release.apk
             out/app-debug.apk
             out/stub-release.apk
             out/stub-debug.apk
-
-  # Kyubi note: the upstream AVD test job (scripts/avd_test.sh) was removed. It
-  # patches a boot ramdisk with magiskboot on a stock emulator -- a phone-style
-  # boot-image install that Kyubi (system-mode only, no magiskboot) doesn't do,
-  # so the test exercises a deliberately-removed code path.
