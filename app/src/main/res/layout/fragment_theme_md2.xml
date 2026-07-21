@@ -29,15 +29,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingTop="@dimen/l1"
-            android:useDefaultMargins="true">
-
-            <include
-                android:id="@+id/theme_card_dark"
-                item="@{viewModel.themeHeadline}"
-                layout="@layout/item_tappable_headline"
-                listener="@{viewModel}" />
-
-        </LinearLayout>
+            android:useDefaultMargins="true" />
 
     </androidx.core.widget.NestedScrollView>
 

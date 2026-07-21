@@ -45,7 +45,6 @@
                 android:layout_marginStart="@dimen/l1"
                 android:text="@string/home_app_title"
                 android:textAppearance="@style/AppearanceFoundation.Title"
-                android:textColor="?colorPrimary"
                 android:maxLines="1"
                 android:ellipsize="end"
                 app:layout_constraintBottom_toBottomOf="@+id/home_manager_icon"
@@ -159,7 +158,7 @@
                                 android:id="@+id/home_manager_extra_connection_value"
                                 style="@style/W.Home.ItemContent.Right"
                                 android:text="@{context.packageName}"
-                                tools:text="com.topjohnwu.magisk" />
+                                tools:text="io.github.robthepcguy.kyubi" />
 
                         </LinearLayout>
 

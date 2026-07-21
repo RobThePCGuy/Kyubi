@@ -76,7 +76,6 @@
                         android:maxLines="2"
                         android:text="@{item.packageName}"
                         android:textAppearance="@style/AppearanceFoundation.Caption.Variant"
-                        android:textColor="@android:color/tertiary_text_dark"
                         android:textIsSelectable="false"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="@id/policy_app_name"

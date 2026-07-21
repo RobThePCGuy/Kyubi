@@ -4,17 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <import type="com.topjohnwu.magisk.core.Info" />
-
-        <import type="com.topjohnwu.magisk.ui.home.DeveloperItem" />
-
         <import type="com.topjohnwu.magisk.ui.home.IconLink" />
-
         <variable
             name="viewModel"
             type="com.topjohnwu.magisk.ui.home.HomeViewModel" />
-
     </data>
 
     <androidx.core.widget.NestedScrollView
@@ -29,24 +23,12 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingTop="@dimen/l1">
 
-            <Button
-                style="@style/WidgetFoundation.Button"
-                gone="@{!viewModel.showTest}"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:onClick="@{() -> viewModel.onTestPressed()}"
-                android:text="TEST"
-                android:textAllCaps="false"
-                tools:visibility="gone" />
-
             <com.google.android.material.card.MaterialCardView
-                style="@style/WidgetFoundation.Card.Primary"
+                style="@style/WidgetFoundation.Card"
                 goneUnless="@{viewModel.noticeVisible}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -65,25 +47,23 @@
                         android:layout_height="wrap_content"
                         android:padding="@dimen/l1"
                         android:text="@string/home_notice_unofficial_magisk"
-                        android:textAppearance="@style/AppearanceFoundation.Caption.OnPrimary"
+                        android:textAppearance="@style/AppearanceFoundation.Caption.Variant"
                         app:layout_constraintEnd_toStartOf="@+id/home_notice_hide"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <Button
                         android:id="@+id/home_notice_hide"
-                        style="@style/WidgetFoundation.Button.Text.OnPrimary"
+                        style="@style/WidgetFoundation.Button.Text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:onClick="@{() -> viewModel.hideNotice()}"
                         android:text="@string/hide"
-                        android:textAllCaps="false"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
-
             </com.google.android.material.card.MaterialCardView>
 
             <include
@@ -93,8 +73,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/l1"
-                android:layout_marginEnd="@dimen/l1"
-                app:layout_constraintTop_toBottomOf="@+id/home_device_wrapper" />
+                android:layout_marginEnd="@dimen/l1" />
 
             <include
                 android:id="@+id/home_manager_wrapper"
@@ -103,14 +82,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/l1"
-                android:layout_marginTop="@dimen/l1"
-                android:layout_marginEnd="@dimen/l1"
-                app:layout_constraintTop_toBottomOf="@+id/home_magisk_wrapper" />
-
-            <Space
-                goneUnless="@{Info.env.isActive}"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/l1" />
+                android:layout_marginTop="@dimen/l_75"
+                android:layout_marginEnd="@dimen/l1" />
 
             <Button
                 style="@style/WidgetFoundation.Button.Outlined.Error"
@@ -118,81 +91,56 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/l1"
+                android:layout_marginTop="@dimen/l_75"
                 android:layout_marginEnd="@dimen/l1"
                 android:onClick="@{() -> viewModel.onDeletePressed()}"
                 android:text="@string/uninstall_magisk_title"
-                android:textAllCaps="false"
                 android:textSize="12sp"
-                app:cornerRadius="@dimen/r1"
+                app:cornerRadius="@dimen/kyubi_button_radius"
                 app:icon="@drawable/ic_delete_md2" />
 
             <com.google.android.material.card.MaterialCardView
                 style="@style/WidgetFoundation.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
                 android:layout_marginStart="@dimen/l1"
-                android:layout_marginEnd="@dimen/l1"
                 android:layout_marginTop="@dimen/l1"
+                android:layout_marginEnd="@dimen/l1"
                 android:focusable="false">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingTop="@dimen/l1"
-                    android:paddingBottom="@dimen/l1">
+                    android:padding="@dimen/l1">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/l1"
-                        android:layout_marginEnd="@dimen/l1"
                         android:text="@string/home_support_title"
                         android:textAppearance="@style/AppearanceFoundation.Title" />
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/l1"
                         android:layout_marginTop="@dimen/l_50"
-                        android:layout_marginEnd="@dimen/l1"
                         android:text="@string/home_support_content"
                         android:textAppearance="@style/AppearanceFoundation.Caption.Variant" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <include
+                        item="@{IconLink.Github.Project.INSTANCE}"
+                        layout="@layout/item_icon_link"
+                        viewModel="@{viewModel}"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:paddingTop="@dimen/l_50" >
-
-                        <include
-                            item="@{IconLink.Patreon.INSTANCE}"
-                            layout="@layout/item_icon_link"
-                            viewModel="@{viewModel}"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1" />
-
-                        <include
-                            item="@{IconLink.PayPal.Project.INSTANCE}"
-                            layout="@layout/item_icon_link"
-                            viewModel="@{viewModel}"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1" />
-
-                    </LinearLayout>
-
+                        android:layout_marginTop="@dimen/l_50" />
                 </LinearLayout>
-
             </com.google.android.material.card.MaterialCardView>
 
             <com.google.android.material.card.MaterialCardView
                 style="@style/WidgetFoundation.Card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
                 android:layout_margin="@dimen/l1"
                 android:focusable="false">
 
@@ -200,70 +148,23 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingTop="@dimen/l1">
+                    android:padding="@dimen/l1">
 
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/l1"
-                        android:layout_marginEnd="@dimen/l1"
                         android:text="@string/home_follow_title"
                         android:textAppearance="@style/AppearanceFoundation.Title" />
 
-                    <include
-                        item="@{DeveloperItem.John.INSTANCE}"
-                        layout="@layout/item_developer"
-                        viewModel="@{viewModel}"
-                        android:layout_width="wrap_content"
+                    <TextView
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/l_50" />
-
-                    <include
-                        item="@{DeveloperItem.Vvb.INSTANCE}"
-                        layout="@layout/item_developer"
-                        viewModel="@{viewModel}"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/l_50" />
-
-                    <include
-                        item="@{DeveloperItem.YU.INSTANCE}"
-                        layout="@layout/item_developer"
-                        viewModel="@{viewModel}"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/l_50" />
-
-                    <include
-                        item="@{DeveloperItem.Rikka.INSTANCE}"
-                        layout="@layout/item_developer"
-                        viewModel="@{viewModel}"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/l_50" />
-
-                    <include
-                        item="@{DeveloperItem.Canyie.INSTANCE}"
-                        layout="@layout/item_developer"
-                        viewModel="@{viewModel}"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/l_50" />
-
-                    <include
-                        item="@{DeveloperItem.Husky.INSTANCE}"
-                        layout="@layout/item_developer"
-                        viewModel="@{viewModel}"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/l_50" />
-
+                        android:layout_marginTop="@dimen/l_50"
+                        android:text="@string/home_kyubi_credit"
+                        android:textAppearance="@style/AppearanceFoundation.Caption.Variant" />
                 </LinearLayout>
-
             </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
-
     </androidx.core.widget.NestedScrollView>
-
 </layout>

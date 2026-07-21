@@ -18,18 +18,21 @@
     <string name="not_available">N/A</string>
     <string name="hide">Hide</string>
     <string name="home_package">Package</string>
-    <string name="home_app_title">App</string>
+    <string name="home_app_title">Manager</string>
 
-    <string name="home_notice_content">Download Magisk ONLY from the official GitHub page. Files from unknown sources can be malicious!</string>
-    <string name="home_support_title">Support Us</string>
-    <string name="home_follow_title">Follow Us</string>
+    <string name="home_notice_content">Download Kyubi only from the official GitHub repository. Files from unknown sources can be malicious.</string>
+    <string name="home_support_title">Open source</string>
+    <string name="home_follow_title">Project credits</string>
     <string name="home_item_source">Source</string>
-    <string name="home_support_content">Magisk is, and always will be, free, and open source. You can however show us that you care by making a donation.</string>
+    <string name="home_support_content">Kyubi is free and open source. Review the source, release notes, and license on GitHub.</string>
+    <string name="home_kyubi_credit">Based on Magisk (GPLv3) by topjohnwu and contributors.</string>
+    <string name="home_mode">Mode</string>
+    <string name="home_system_mode">System mode</string>
     <string name="home_installed_version">Installed</string>
     <string name="home_latest_version">Latest</string>
     <string name="invalid_update_channel">Invalid Update Channel</string>
-    <string name="uninstall_magisk_title">Uninstall Magisk</string>
-    <string name="uninstall_magisk_msg">All modules will be disabled/removed!\nRoot will be removed!\nAny internal storage unencrypted through the use of Magisk will be re-encrypted!</string>
+    <string name="uninstall_magisk_title">Uninstall Kyubi</string>
+    <string name="uninstall_magisk_msg">All modules will be disabled or removed.\nRoot will be removed.\nAny internal storage unencrypted through Kyubi will be re-encrypted.</string>
 
     <!--Install-->
     <string name="keep_force_encryption">Preserve force encryption</string>
@@ -52,7 +55,7 @@
 
     <!--Superuser-->
     <string name="su_request_title">Superuser Request</string>
-    <string name="touch_filtered_warning">Because an app is obscuring a Superuser request, Magisk can\'t verify your response</string>
+    <string name="touch_filtered_warning">Because another app is obscuring this Superuser request, Kyubi can\'t verify your response</string>
     <string name="deny">Deny</string>
     <string name="prompt">Prompt</string>
     <string name="grant">Grant</string>
@@ -82,7 +85,7 @@
 
     <!--Logs-->
     <string name="log_data_none">You\'re log-free, try using your root apps more</string>
-    <string name="log_data_magisk_none">Magisk logs are empty, that\'s weird</string>
+    <string name="log_data_magisk_none">Kyubi engine logs are empty</string>
     <string name="menuSaveLog">Save log</string>
     <string name="menuClearLog">Clear log now</string>
     <string name="logs_cleared">Log successfully cleared</string>
@@ -94,7 +97,7 @@
 
     <!--SafetyNet-->
 
-    <!--MagiskHide-->
+    <!-- DenyList -->
     <string name="show_system_app">Show system apps</string>
     <string name="show_os_app">Show OS apps</string>
     <string name="hide_filter_hint">Filter by name</string>
@@ -128,9 +131,9 @@
     <string name="settings_dark_mode_dark">Always Dark</string>
     <string name="settings_download_path_title">Download path</string>
     <string name="settings_download_path_message">Files will be saved to %1$s</string>
-    <string name="settings_hide_app_title">Hide the Magisk app</string>
+    <string name="settings_hide_app_title">Hide the Kyubi app</string>
     <string name="settings_hide_app_summary">Install a proxy app with a random package ID and custom app label</string>
-    <string name="settings_restore_app_title">Restore the Magisk app</string>
+    <string name="settings_restore_app_title">Restore the Kyubi app</string>
     <string name="settings_restore_app_summary">Unhide the app and restore the original APK</string>
     <string name="language">Language</string>
     <string name="system_default">(System Default)</string>
@@ -141,9 +144,10 @@
     <string name="settings_update_beta">Beta</string>
     <string name="settings_update_custom">Custom</string>
     <string name="settings_update_custom_msg">Insert a custom channel URL</string>
-    <string name="settings_zygisk_summary">Run parts of Magisk in the zygote daemon</string>
+    <string name="settings_zygisk_summary">Run Kyubi modules inside the Android zygote</string>
     <string name="settings_denylist_title">Enforce DenyList</string>
-    <string name="settings_denylist_summary">Processes on the denylist will have all Magisk modifications reverted</string>
+    <string name="settings_denylist_summary">Hide Kyubi modifications from selected processes</string>
+    <string name="settings_logs_summary">Review superuser access and manager diagnostics</string>
     <string name="settings_denylist_error">This feature requires %1$s to be enabled</string>
     <string name="settings_denylist_config_title">Configure DenyList</string>
     <string name="settings_denylist_config_summary">Select the processes to be included on the denylist</string>
@@ -177,7 +181,7 @@
     <string name="su_biometric">Authentication Mode</string>
     <string name="settings_biometric_disabled">Auth Disabled</string>
     <string name="settings_biometric_system">System Provide</string>
-    <string name="settings_biometric_magisk">Magisk Provide</string>
+    <string name="settings_biometric_magisk">Kyubi provided</string>
     <string name="settings_customization">Customization</string>
     <string name="setting_add_shortcut_summary">Add a pretty shortcut to the home screen in case the name and icon are difficult to recognize after hiding the app</string>
     <string name="settings_doh_title">DNS over HTTPS</string>
@@ -200,13 +204,13 @@
     <string name="isolate_summary">Each root session will have its own isolated namespace</string>
 
     <!--Notifications-->
-    <string name="update_channel">Magisk Updates</string>
+    <string name="update_channel">Kyubi updates</string>
     <string name="progress_channel">Progress Notifications</string>
     <string name="updated_channel">Update Complete</string>
     <string name="download_complete">Download complete</string>
     <string name="download_file_error">Error downloading file</string>
-    <string name="magisk_update_title">Magisk Update Available!</string>
-    <string name="updated_title">Magisk Updated</string>
+    <string name="magisk_update_title">Kyubi update available</string>
+    <string name="updated_title">Kyubi updated</string>
     <string name="updated_text">Tap to open app</string>
 
     <!--Toasts, Dialogs-->
@@ -222,7 +226,7 @@
     <string name="done">Done!</string>
     <string name="done_action">Done running action of %1$s</string>
     <string name="failure">Failed!</string>
-    <string name="hide_app_title">Hiding the Magisk app…</string>
+    <string name="hide_app_title">Hiding the Kyubi app…</string>
     <string name="open_link_failed_toast">No app found to open the link</string>
     <string name="complete_uninstall">Complete Uninstall</string>
     <string name="restore_img">Restore Images</string>
@@ -231,17 +235,17 @@
     <string name="restore_fail">Stock backup does not exist!</string>
     <string name="setup_fail">Setup failed</string>
     <string name="env_fix_title">Requires Additional Setup</string>
-    <string name="env_fix_msg">Your device needs additional setup for Magisk to work properly. Do you want to proceed and reboot?</string>
-    <string name="env_full_fix_msg">Your device needs reflash Magisk to work properly. Please reinstall Magisk within app, recovery mode cannot get correct device info.</string>
+    <string name="env_fix_msg">This emulator needs additional setup for Kyubi to work properly. Proceed and reboot?</string>
+    <string name="env_full_fix_msg">This emulator needs Kyubi to be reflashed. Reinstall from the manager; recovery mode cannot provide the required environment details.</string>
     <string name="setup_msg">Running environment setup…</string>
     <string name="authenticate">Authenticate</string>
-    <string name="unsupport_magisk_title">Unsupported Magisk Version</string>
-    <string name="unsupport_magisk_msg">This version of the app does not support Magisk versions lower than %1$s.\n\nThe app will behave as if no Magisk is installed, please upgrade Magisk as soon as possible.</string>
+    <string name="unsupport_magisk_title">Unsupported Kyubi version</string>
+    <string name="unsupport_magisk_msg">This manager does not support engine versions lower than %1$s.\n\nUpgrade Kyubi to restore manager features.</string>
     <string name="unsupport_general_title">Abnormal State</string>
     <string name="unsupport_system_app_msg">Running this app as a system app is not supported. Please revert the app to a user app.</string>
-    <string name="unsupport_other_su_msg">A \"su\" binary not from Magisk has been detected. Please remove any competing root solution and/or reinstall Magisk.</string>
-    <string name="unsupport_external_storage_msg">Magisk is installed to external storage. Please move the app to internal storage.</string>
-    <string name="unsupport_nonroot_stub_msg">The hidden Magisk app cannot continue to work because root was lost. Please restore the original APK.</string>
+    <string name="unsupport_other_su_msg">A competing \"su\" binary was detected. Remove the other root solution or reinstall Kyubi.</string>
+    <string name="unsupport_external_storage_msg">Kyubi is installed on external storage. Move the manager to internal storage.</string>
+    <string name="unsupport_nonroot_stub_msg">The hidden Kyubi app cannot continue because root was lost. Restore the original APK.</string>
     <string name="unsupport_nonroot_stub_title">@string/settings_restore_app_title</string>
     <string name="external_rw_permission_denied">Grant storage permission to enable this functionality</string>
     <string name="post_notifications_denied">Grant notifications permission to enable this functionality</string>
@@ -254,17 +258,17 @@
 
 <!--Delta-->
     <string name="direct_install_system">Direct Install (modify /system directly)</string>
-    <string name="settings_hidelist_config_title">Configure MagiskHide</string>
+    <string name="settings_hidelist_config_title">Configure DenyList</string>
     <string name="settings_hidelist_config_summary">Select the processes to be included on the hidelist</string>
-    <string name="settings_magiskhide_title">MagiskHide</string>
-    <string name="settings_magiskhide_summary">Magisk modifications are reverted for processes on hidelist</string>
+    <string name="settings_magiskhide_title">DenyList</string>
+    <string name="settings_magiskhide_summary">Kyubi modifications are hidden from selected processes</string>
     <string name="settings_sulist_title">Enforce SuList</string>
     <string name="settings_sulist">SuList</string>
-    <string name="settings_sulist_summary">Only processes on sulist can invoke Magisk root access</string>
+    <string name="settings_sulist_summary">Only processes on SuList can invoke root access</string>
     <string name="settings_sulist_config_title">Configure SuList</string>
     <string name="settings_sulist_config_summary">Select the processes to be included on the sulist</string>
     <string name="settings_sulist_enforced">SuList is enforced</string>
-    <string name="settings_sulist_error_magiskhide">This feature need MagiskHide to be enabled</string>
-    <string name="home_notice_unofficial_magisk">WARNING! You are using an unofficial version of Magisk that is not officially supported by the Magisk author. This version may contain unstable modifications that could harm your device or compromise your security. Do not report any issues or request any help from official Magisk channels. If you use this version but do not know this is an unofficial version, please switch to the official Magisk at github.com/topjohnwu/Magisk</string>
+    <string name="settings_sulist_error_magiskhide">This feature requires DenyList to be enabled</string>
+    <string name="home_notice_unofficial_magisk">Kyubi is a specialized emulator distribution based on Magisk. Support and issue reports belong in the Kyubi repository, not upstream Magisk channels.</string>
 
 </resources>

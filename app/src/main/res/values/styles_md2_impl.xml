@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="WidgetFoundation.Appbar" parent="Widget.MaterialComponents.AppBarLayout.Surface" />
+    <style name="WidgetFoundation.Appbar" parent="Widget.MaterialComponents.AppBarLayout.Surface">
+        <item name="android:background">?colorSurface</item>
+        <item name="elevation">0dp</item>
+    </style>
 
     <style name="WidgetFoundation.Toolbar" parent="Widget.MaterialComponents.Toolbar.Surface">
         <item name="titleTextAppearance">@style/AppearanceFoundation.Title</item>
@@ -18,9 +21,11 @@
     <style name="WidgetFoundation.Card" parent="Widget.MaterialComponents.CardView">
         <item name="android:focusable">auto</item>
         <item name="cardBackgroundColor">?colorSurfaceVariant</item>
-        <item name="cardCornerRadius">@dimen/l_50</item>
+        <item name="cardCornerRadius">@dimen/kyubi_card_radius</item>
         <item name="cardElevation">0dp</item>
         <item name="cardPreventCornerOverlap">false</item>
+        <item name="strokeColor">@color/kyubi_border</item>
+        <item name="strokeWidth">1dp</item>
     </style>
 
     <style name="WidgetFoundation.Card.Primary">
@@ -29,19 +34,25 @@
 
     <style name="WidgetFoundation.Card.Elevated">
         <item name="cardBackgroundColor">?colorSurfaceSurfaceVariant</item>
-        <item name="cardCornerRadius">@dimen/l_50</item>
-        <item name="cardElevation">@dimen/l_125</item>
+        <item name="cardCornerRadius">@dimen/kyubi_card_radius</item>
+        <item name="cardElevation">0dp</item>
     </style>
 
 
     <style name="WidgetFoundation.Button" parent="Widget.MaterialComponents.Button">
-        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/space_grotesk_medium</item>
+        <item name="fontFamily">@font/space_grotesk_medium</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="cornerRadius">@dimen/kyubi_button_radius</item>
         <item name="iconGravity">textStart</item>
         <item name="iconPadding">@dimen/l_50</item>
     </style>
 
     <style name="WidgetFoundation.Button.Outlined" parent="Widget.MaterialComponents.Button.OutlinedButton">
-        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/space_grotesk_medium</item>
+        <item name="fontFamily">@font/space_grotesk_medium</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="cornerRadius">@dimen/kyubi_button_radius</item>
         <item name="iconGravity">textStart</item>
         <item name="iconPadding">@dimen/l_50</item>
         <item name="strokeColor">?colorPrimary</item>
@@ -56,7 +67,9 @@
     </style>
 
     <style name="WidgetFoundation.Button.Text" parent="Widget.MaterialComponents.Button.TextButton">
-        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/space_grotesk_medium</item>
+        <item name="fontFamily">@font/space_grotesk_medium</item>
+        <item name="android:textAllCaps">false</item>
         <item name="iconGravity">textStart</item>
         <item name="iconPadding">@dimen/l_50</item>
     </style>

@@ -15,15 +15,15 @@
         tools:showAsAction="always" />
 
     <item
-        android:id="@+id/logFragment"
-        android:icon="@drawable/ic_bug_md2"
-        android:title="@string/logs"
-        tools:showAsAction="always" />
-
-    <item
         android:id="@+id/modulesFragment"
         android:icon="@drawable/ic_module_md2"
         android:title="@string/modules"
+        tools:showAsAction="always" />
+
+    <item
+        android:id="@+id/denyFragment"
+        android:icon="@drawable/ic_denylist_md2"
+        android:title="@string/denylist"
         tools:showAsAction="always" />
 
 </menu>

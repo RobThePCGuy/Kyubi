@@ -32,11 +32,12 @@
 
             <ImageView
                 android:id="@+id/home_magisk_icon"
-                style="@style/WidgetFoundation.Icon.Primary"
-                android:padding="@dimen/l_25"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:contentDescription="@string/magisk"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_magisk_outline" />
+                app:srcCompat="@drawable/ic_kyubi_mask" />
 
             <TextView
                 android:id="@+id/home_magisk_title"
@@ -44,8 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/l1"
                 android:text="@string/magisk"
-                android:textAppearance="@style/AppearanceFoundation.Title"
-                android:textColor="?colorPrimary"
+                android:textAppearance="@style/AppearanceFoundation.Brand"
                 android:maxLines="1"
                 android:ellipsize="end"
                 app:layout_constraintBottom_toBottomOf="@+id/home_magisk_icon"
@@ -152,12 +152,12 @@
 
                             <TextView
                                 style="@style/W.Home.ItemContent"
-                                android:text="Ramdisk" />
+                                android:text="@string/home_mode" />
 
                             <TextView
                                 style="@style/W.Home.ItemContent.Right"
-                                android:text="@{Info.ramdisk ? @string/yes : @string/no }"
-                                tools:text="Yes" />
+                                android:text="@string/home_system_mode"
+                                tools:text="System mode" />
 
                         </LinearLayout>
 

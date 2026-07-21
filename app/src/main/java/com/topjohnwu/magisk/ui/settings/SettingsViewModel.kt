@@ -7,6 +7,7 @@ import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.lifecycle.viewModelScope
 import com.topjohnwu.magisk.BR
 import com.topjohnwu.magisk.BuildConfig
+import com.topjohnwu.magisk.MainDirections
 import com.topjohnwu.magisk.R
 import com.topjohnwu.magisk.arch.BaseViewModel
 import com.topjohnwu.magisk.core.Const
@@ -52,7 +53,7 @@ class SettingsViewModel : BaseViewModel(), BaseSettingsItem.Handler {
 
         // Manager
         list.addAll(listOf(
-            AppSettings,
+            AppSettings, Logs,
             UpdateChannel, UpdateChannelUrl, DoHToggle, UpdateChecker, DownloadPath
         ))
         if (Info.env.isActive && Const.USER_ID == 0) {
@@ -62,7 +63,7 @@ class SettingsViewModel : BaseViewModel(), BaseSettingsItem.Handler {
         // Magisk
         if (Info.env.isActive) {
             list.addAll(listOf(
-                Magisk,
+                Magisk, Zygisk,
                 SystemlessHosts
             ))
             if (Const.Version.atLeast_24_0()) {
@@ -96,6 +97,7 @@ class SettingsViewModel : BaseViewModel(), BaseSettingsItem.Handler {
             UpdateChecker -> withPostNotificationPermission(andThen)
             Authentication -> if (ServiceLocator.biometrics.isEnabled) authenticate(andThen) else AuthEvent(andThen).publish()
             Theme -> SettingsFragmentDirections.actionSettingsFragmentToThemeFragment().navigate()
+            Logs -> MainDirections.actionLogFragment().navigate()
             DenyListConfig -> SettingsFragmentDirections.actionSettingsFragmentToDenyFragment().navigate()
             SystemlessHosts -> createHosts()
             Hide, Restore -> withInstallPermission(andThen)

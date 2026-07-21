@@ -76,7 +76,7 @@
                         android:text="@{viewModel.title}"
                         android:textAppearance="@style/AppearanceFoundation.Body"
                         android:textStyle="bold"
-                        tools:text="Magisk" />
+                        tools:text="Kyubi" />
 
                     <TextView
                         android:id="@+id/package_name"

@@ -80,6 +80,12 @@ object AppSettings : BaseSettingsItem.Section() {
     override val title = R.string.home_app_title.asText()
 }
 
+object Logs : BaseSettingsItem.Blank() {
+    override val icon = R.drawable.ic_bug_md2
+    override val title = R.string.logs.asText()
+    override val description = R.string.settings_logs_summary.asText()
+}
+
 object Hide : BaseSettingsItem.Input() {
     override val title = R.string.settings_hide_app_title.asText()
     override val description = R.string.settings_hide_app_summary.asText()
@@ -237,10 +243,10 @@ object Zygisk : BaseSettingsItem.Toggle() {
 }
 
 object DenyList : BaseSettingsItem.Toggle() {
-    override val title = R.string.settings_magiskhide_title.asText()
+    override val title = R.string.settings_denylist_title.asText()
     override val description get() =
         if (Info.sulist) R.string.settings_sulist_enforced.asText()
-        else R.string.settings_magiskhide_summary.asText()
+        else R.string.settings_denylist_summary.asText()
 
     override var value = Config.denyList
         set(value) {
@@ -295,10 +301,10 @@ object DenyListConfig : BaseSettingsItem.Blank() {
 
     override val title get() =
         if (Info.sulist) R.string.settings_sulist_config_title.asText()
-        else R.string.settings_hidelist_config_title.asText()
+        else R.string.settings_denylist_config_title.asText()
     override val description get() =
         if (Info.sulist) R.string.settings_sulist_config_summary.asText()
-        else R.string.settings_hidelist_config_summary.asText()
+        else R.string.settings_denylist_config_summary.asText()
 
 
     override fun refresh() {

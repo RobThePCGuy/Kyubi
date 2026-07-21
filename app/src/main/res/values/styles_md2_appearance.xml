@@ -3,29 +3,42 @@
 
     <!--region Display-->
     <style name="AppearanceFoundation.Large" parent="TextAppearance.AppCompat.Large">
+        <item name="android:fontFamily">@font/space_grotesk_medium</item>
+        <item name="fontFamily">@font/space_grotesk_medium</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
 
     <style name="AppearanceFoundation.Large.Secondary">
-        <item name="android:textColor">?colorSecondary</item>
+        <item name="android:textColor">?colorOnSurfaceVariant</item>
+        <item name="android:textSize">16sp</item>
     </style>
 
     <!--endregion-->
 
     <!--region Title-->
     <style name="AppearanceFoundation.Title" parent="TextAppearance.AppCompat.Title">
+        <item name="android:fontFamily">@font/space_grotesk_medium</item>
+        <item name="fontFamily">@font/space_grotesk_medium</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
-        <item name="android:textStyle">bold</item>
     </style>
 
     <style name="AppearanceFoundation.Title.OnPrimary">
         <item name="android:textColor">?attr/colorOnPrimary</item>
     </style>
 
+    <style name="AppearanceFoundation.Brand" parent="TextAppearance.AppCompat.Title">
+        <item name="android:fontFamily">@font/space_grotesk_bold</item>
+        <item name="fontFamily">@font/space_grotesk_bold</item>
+        <item name="android:textColor">?attr/colorPrimary</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
     <!--endregion-->
 
     <!--region Body-->
     <style name="AppearanceFoundation.Body" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:fontFamily">@font/space_grotesk_regular</item>
+        <item name="fontFamily">@font/space_grotesk_regular</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
 
@@ -33,6 +46,8 @@
 
     <!--region Caption-->
     <style name="AppearanceFoundation.Caption" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:fontFamily">@font/space_grotesk_regular</item>
+        <item name="fontFamily">@font/space_grotesk_regular</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
     </style>
 
@@ -52,12 +67,15 @@
 
     <!--region Tiny-->
     <style name="AppearanceFoundation.Tiny" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:fontFamily">@font/space_grotesk_regular</item>
+        <item name="fontFamily">@font/space_grotesk_regular</item>
         <item name="android:textColor">?attr/colorOnSurface</item>
         <item name="android:textSize">11sp</item>
     </style>
 
     <style name="AppearanceFoundation.Tiny.Bold">
-        <item name="android:textStyle">bold</item>
+        <item name="android:fontFamily">@font/space_grotesk_medium</item>
+        <item name="fontFamily">@font/space_grotesk_medium</item>
     </style>
 
     <style name="AppearanceFoundation.Tiny.Variant">

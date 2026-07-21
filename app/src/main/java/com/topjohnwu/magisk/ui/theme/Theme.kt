@@ -8,37 +8,13 @@ enum class Theme(
     val themeRes: Int
 ) {
 
-    Piplup(
+    Kyubi(
         themeName = "Kyubi",
-        themeRes = R.style.ThemeFoundationMD2_Piplup
+        themeRes = R.style.ThemeFoundationMD2_Kyubi
     ),
-    PiplupAmoled(
-        themeName = "AMOLED",
-        themeRes = R.style.ThemeFoundationMD2_Amoled
-    ),
-    Rayquaza(
-        themeName = "Rayquaza",
-        themeRes = R.style.ThemeFoundationMD2_Rayquaza
-    ),
-    Zapdos(
-        themeName = "Zapdos",
-        themeRes = R.style.ThemeFoundationMD2_Zapdos
-    ),
-    Charmeleon(
-        themeName = "Charmeleon",
-        themeRes = R.style.ThemeFoundationMD2_Charmeleon
-    ),
-    Mew(
-        themeName = "Mew",
-        themeRes = R.style.ThemeFoundationMD2_Mew
-    ),
-    Salamence(
-        themeName = "Salamence",
-        themeRes = R.style.ThemeFoundationMD2_Salamence
-    ),
-    Fraxure(
-        themeName = "Fraxure (Legacy)",
-        themeRes = R.style.ThemeFoundationMD2_Fraxure
+    KyubiAmoled(
+        themeName = "Kyubi AMOLED",
+        themeRes = R.style.ThemeFoundationMD2_KyubiAmoled
     );
 
     val isSelected get() = Config.themeOrdinal == ordinal
@@ -48,7 +24,7 @@ enum class Theme(
     }
 
     companion object {
-        val selected get() = values().getOrNull(Config.themeOrdinal) ?: Piplup
+        val selected get() = values().getOrNull(Config.themeOrdinal) ?: Kyubi
     }
 
 }

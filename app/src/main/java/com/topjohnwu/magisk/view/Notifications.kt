@@ -52,10 +52,10 @@ object Notifications {
             val pending = PendingIntent.getActivity(this, 0, selfLaunchIntent(), flag)
             val builder = if (SDK_INT >= Build.VERSION_CODES.O) {
                 Notification.Builder(this, UPDATED_CHANNEL)
-                    .setSmallIcon(getBitmap(R.drawable.ic_magisk_outline).toIcon())
+                    .setSmallIcon(getBitmap(R.drawable.ic_kyubi_mask).toIcon())
             } else {
                 Notification.Builder(this).setPriority(Notification.PRIORITY_HIGH)
-                    .setSmallIcon(R.drawable.ic_magisk_outline)
+                    .setSmallIcon(R.drawable.ic_kyubi_mask)
             }
                 .setContentIntent(pending)
                 .setContentTitle(getText(R.string.updated_title))
@@ -68,13 +68,13 @@ object Notifications {
     fun updateAvailable() {
         AppContext.apply {
             val intent = DownloadEngine.getPendingIntent(this, Subject.App())
-            val bitmap = getBitmap(R.drawable.ic_magisk_outline)
+            val bitmap = getBitmap(R.drawable.ic_kyubi_mask)
             val builder = if (SDK_INT >= Build.VERSION_CODES.O) {
                 Notification.Builder(this, UPDATE_CHANNEL)
                     .setSmallIcon(bitmap.toIcon())
             } else {
                 Notification.Builder(this)
-                    .setSmallIcon(R.drawable.ic_magisk_outline)
+                    .setSmallIcon(R.drawable.ic_kyubi_mask)
             }
                 .setLargeIcon(bitmap)
                 .setContentTitle(getString(R.string.magisk_update_title))

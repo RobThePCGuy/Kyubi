@@ -88,7 +88,7 @@ class LogViewModel(
                 file.write("\n\n---System MountInfo---\n\n")
                 FileInputStream("/proc/self/mountinfo").reader().use { it.copyTo(file) }
 
-                file.write("\n---Magisk Logs---\n")
+                file.write("\n---Kyubi Engine Logs---\n")
                 file.write("${Info.env.versionString} (${Info.env.versionCode})\n\n")
                 if (Info.env.isActive) file.write(magiskLogRaw)
 

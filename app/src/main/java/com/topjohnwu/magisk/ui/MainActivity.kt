@@ -73,7 +73,7 @@ class MainActivity : SplashActivity<ActivityMainMd2Binding>() {
                 R.id.homeFragment,
                 R.id.modulesFragment,
                 R.id.superuserFragment,
-                R.id.logFragment -> true
+                R.id.denyFragment -> true
                 else -> false
             }
 
@@ -99,6 +99,7 @@ class MainActivity : SplashActivity<ActivityMainMd2Binding>() {
         binding.mainNavigation.menu.apply {
             findItem(R.id.superuserFragment)?.isEnabled = Info.showSuperUser
             findItem(R.id.modulesFragment)?.isEnabled = Info.env.isActive && LocalModule.loaded()
+            findItem(R.id.denyFragment)?.isEnabled = Info.env.isActive
         }
 
         val section =
@@ -159,7 +160,7 @@ class MainActivity : SplashActivity<ActivityMainMd2Binding>() {
             R.id.homeFragment -> MainDirections.actionHomeFragment()
             R.id.modulesFragment -> MainDirections.actionModuleFragment()
             R.id.superuserFragment -> MainDirections.actionSuperuserFragment()
-            R.id.logFragment -> MainDirections.actionLogFragment()
+            R.id.denyFragment -> MainDirections.actionDenyFragment()
             else -> null
         }
     }
