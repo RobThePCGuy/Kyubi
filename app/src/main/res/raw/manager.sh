@@ -369,8 +369,8 @@ installer_cleanup(){
 }
 
 direct_install_system(){
-    print_title "Magisk Delta (System Mode)" "by HuskyDG"
-    print_title "Powered by Magisk"
+    print_title "Kyubi (System Mode)"
+    print_title "Magisk Delta lineage · powered by Magisk"
     api_level_arch_detect
     local INSTALLDIR="$1"
 
