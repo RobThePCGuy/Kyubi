@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Kyubi fox mask - full-frame vector for IN-APP use (app bar logo, status ring,
+  about screen). No safe-zone scale: it sits on Kyubi surfaces, not under a
+  launcher mask. Transparent ground - place it on an indigo (#1B1730) surface so
+  the indigo eye cutouts read. Caller sets the size via layout width/height.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+
+  <path android:fillColor="#F4EEE2" android:pathData="M150,200 L212,178 L166,84 Z"/>
+  <path android:fillColor="#F4EEE2" android:pathData="M362,200 L300,178 L346,84 Z"/>
+
+  <path android:pathData="M170,178 L202,166 L176,108 Z">
+    <aapt:attr name="android:fillColor">
+      <gradient android:type="linear" android:startX="256" android:startY="84" android:endX="256" android:endY="412">
+        <item android:offset="0" android:color="#F2913A"/>
+        <item android:offset="1" android:color="#E8563A"/>
+      </gradient>
+    </aapt:attr>
+  </path>
+  <path android:pathData="M342,178 L310,166 L336,108 Z">
+    <aapt:attr name="android:fillColor">
+      <gradient android:type="linear" android:startX="256" android:startY="84" android:endX="256" android:endY="412">
+        <item android:offset="0" android:color="#F2913A"/>
+        <item android:offset="1" android:color="#E8563A"/>
+      </gradient>
+    </aapt:attr>
+  </path>
+
+  <path android:fillColor="#F4EEE2" android:pathData="M256,172 C316,168 368,208 392,268 C372,320 320,372 256,412 C192,372 140,320 120,268 C144,208 196,168 256,172 Z"/>
+
+  <path android:pathData="M256,188 C240,208 240,232 256,258 C272,232 272,208 256,188 Z">
+    <aapt:attr name="android:fillColor">
+      <gradient android:type="linear" android:startX="256" android:startY="84" android:endX="256" android:endY="412">
+        <item android:offset="0" android:color="#F2913A"/>
+        <item android:offset="1" android:color="#E8563A"/>
+      </gradient>
+    </aapt:attr>
+  </path>
+
+  <path android:fillColor="#1B1730" android:pathData="M162,272 C186,260 214,268 226,288 C206,296 178,292 162,272 Z"/>
+  <path android:fillColor="#1B1730" android:pathData="M350,272 C326,260 298,268 286,288 C306,296 334,292 350,272 Z"/>
+
+  <path android:pathData="M230,312 C194,336 160,330 130,300 C162,316 196,318 226,302 Z">
+    <aapt:attr name="android:fillColor">
+      <gradient android:type="linear" android:startX="256" android:startY="84" android:endX="256" android:endY="412">
+        <item android:offset="0" android:color="#F2913A"/>
+        <item android:offset="1" android:color="#E8563A"/>
+      </gradient>
+    </aapt:attr>
+  </path>
+  <path android:pathData="M282,312 C318,336 352,330 382,300 C350,316 316,318 286,302 Z">
+    <aapt:attr name="android:fillColor">
+      <gradient android:type="linear" android:startX="256" android:startY="84" android:endX="256" android:endY="412">
+        <item android:offset="0" android:color="#F2913A"/>
+        <item android:offset="1" android:color="#E8563A"/>
+      </gradient>
+    </aapt:attr>
+  </path>
+
+  <path android:pathData="M256,356 L240,332 L272,332 Z">
+    <aapt:attr name="android:fillColor">
+      <gradient android:type="linear" android:startX="256" android:startY="84" android:endX="256" android:endY="412">
+        <item android:offset="0" android:color="#F2913A"/>
+        <item android:offset="1" android:color="#E8563A"/>
+      </gradient>
+    </aapt:attr>
+  </path>
+</vector>
