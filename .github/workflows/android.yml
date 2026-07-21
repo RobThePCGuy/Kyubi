@@ -1,3 +1,4 @@
+# Kyubi baseline CI (unmodified Magisk build from the GPL Kitsune source).
 name: Magisk CI
 # Builds release + debug APKs for all ABIs and publishes a versioned GitHub Release.
 
