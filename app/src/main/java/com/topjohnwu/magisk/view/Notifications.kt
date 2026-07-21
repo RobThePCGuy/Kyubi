@@ -8,7 +8,6 @@ import android.app.PendingIntent
 import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import androidx.core.content.getSystemService
-import androidx.core.graphics.drawable.toIcon
 import com.topjohnwu.magisk.R
 import com.topjohnwu.magisk.core.di.AppContext
 import com.topjohnwu.magisk.core.download.DownloadEngine
@@ -52,10 +51,10 @@ object Notifications {
             val pending = PendingIntent.getActivity(this, 0, selfLaunchIntent(), flag)
             val builder = if (SDK_INT >= Build.VERSION_CODES.O) {
                 Notification.Builder(this, UPDATED_CHANNEL)
-                    .setSmallIcon(getBitmap(R.drawable.ic_kyubi_mask).toIcon())
+                    .setSmallIcon(R.drawable.ic_notification)
             } else {
                 Notification.Builder(this).setPriority(Notification.PRIORITY_HIGH)
-                    .setSmallIcon(R.drawable.ic_kyubi_mask)
+                    .setSmallIcon(R.drawable.ic_notification)
             }
                 .setContentIntent(pending)
                 .setContentTitle(getText(R.string.updated_title))
@@ -71,10 +70,10 @@ object Notifications {
             val bitmap = getBitmap(R.drawable.ic_kyubi_mask)
             val builder = if (SDK_INT >= Build.VERSION_CODES.O) {
                 Notification.Builder(this, UPDATE_CHANNEL)
-                    .setSmallIcon(bitmap.toIcon())
+                    .setSmallIcon(R.drawable.ic_notification)
             } else {
                 Notification.Builder(this)
-                    .setSmallIcon(R.drawable.ic_kyubi_mask)
+                    .setSmallIcon(R.drawable.ic_notification)
             }
                 .setLargeIcon(bitmap)
                 .setContentTitle(getString(R.string.magisk_update_title))

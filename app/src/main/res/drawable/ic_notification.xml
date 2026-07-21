@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Kyubi status-bar / notification small-icon. MUST be a single-color alpha mask:
+  Android takes only the alpha channel of a small icon and tints it white (or the
+  accent) on the status bar, so a multicolor drawable would flatten to a shapeless
+  blob. This is the fox-mask silhouette (ears + face) in solid white on transparent;
+  the colorful ic_kyubi_mask stays as the large icon, which IS full-color.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512"
+    android:tint="#FFFFFFFF">
+
+  <path android:fillColor="#FFFFFFFF" android:pathData="M150,200 L212,178 L166,84 Z"/>
+  <path android:fillColor="#FFFFFFFF" android:pathData="M362,200 L300,178 L346,84 Z"/>
+  <path android:fillColor="#FFFFFFFF" android:pathData="M256,172 C316,168 368,208 392,268 C372,320 320,372 256,412 C192,372 140,320 120,268 C144,208 196,168 256,172 Z"/>
+</vector>
