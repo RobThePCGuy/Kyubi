@@ -9,7 +9,7 @@ enum class Theme(
 ) {
 
     Piplup(
-        themeName = "Piplup",
+        themeName = "Kyubi",
         themeRes = R.style.ThemeFoundationMD2_Piplup
     ),
     PiplupAmoled(
