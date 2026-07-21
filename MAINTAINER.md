@@ -22,9 +22,9 @@ that snapshot so a future maintainer can tell Kyubi's deltas from upstream.
   `Patch`/`Direct`/`SecondSlot` + `patchBoot()`, and the ChromeOS boot-signing
   assets, are unreachable but still present; `boot_patch.sh` is deliberately kept
   because the addon.d survival path (`install_addond`) still consumes it. Removing
-  that plumbing is a build-verified follow-up, not a quick delete. The upstream
-  AVD boot-patch dev scripts (`scripts/avd_patch.sh`, `scripts/avd_test.sh`)
-  exercise the removed path and are **not** run by CI.
+  that plumbing is a build-verified follow-up, not a quick delete. The obsolete
+  AVD boot/root developer scripts and their `build.py` commands have been removed,
+  along with the dormant native `B_BOOT` build wiring.
 - **Built-in Zygisk removed** (upstream commit `2ef8f00`, security). The dead
   Zygisk settings toggle is removed from the app. Use
   **[ReZygisk](https://github.com/PerformanC/ReZygisk)** for the Zygisk API;
@@ -85,8 +85,9 @@ the build falls back to debug-signed.
   the offline system-mode root install, which is BlueStacks-VHD-specific and
   can't be reproduced on a stock AVD — that validation happens on real emulator
   instances.
-- **`release`** — publishes only on a `kitsune` push, and **only if `build` and
-  `smoke` both pass**. Tag `v31.0-<short-commit>`; the short hash is the exact
+- **`release`** — publishes only the cert-verified release manager/stub APKs on a
+  `kitsune` push, and **only if `build` and `smoke` both pass**. Debug APKs remain
+  private CI artifacts. Tag `v31.0-<short-commit>`; the short hash is the exact
   version the APK reports. Releases never expire (unlike CI artifacts); prune old
   ones whenever.
 

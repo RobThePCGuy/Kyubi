@@ -86,31 +86,6 @@ include $(BUILD_EXECUTABLE)
 
 endif
 
-ifdef B_BOOT
-
-include $(CLEAR_VARS)
-LOCAL_MODULE := magiskboot
-LOCAL_STATIC_LIBRARIES := \
-    libbase \
-    libcompat \
-    liblzma \
-    liblz4 \
-    libbz2 \
-    libz \
-    libzopfli \
-    libboot-rs
-
-LOCAL_SRC_FILES := \
-    boot/main.cpp \
-    boot/bootimg.cpp \
-    boot/compress.cpp \
-    boot/format.cpp \
-    boot/boot-rs.cpp
-
-include $(BUILD_EXECUTABLE)
-
-endif
-
 ifdef B_POLICY
 
 include $(CLEAR_VARS)

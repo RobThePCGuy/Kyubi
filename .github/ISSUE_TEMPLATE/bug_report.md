@@ -10,15 +10,15 @@ assignees: ""
 
 ## READ BEFORE OPENING ISSUES
 
-All bug reports require you to **USE DEBUG BUILDS**. Please include the version name and version code in the bug report.
+Please include Kyubi's full version name (including the commit suffix) and version code in the bug report. Debug builds are development artifacts and are not distributed in releases.
 
-If you experience a bootloop, attach a `dmesg` (kernel logs) when the device refuse to boot. This may very likely require a custom kernel on some devices as `last_kmsg` or `pstore ramoops` are usually not enabled by default. In addition, please also upload the result of `cat /proc/mounts` when your device is working correctly **WITHOUT MAGISK**.
+If the emulator fails to boot after a system-mode installation, attach its console output, `dmesg` or other available kernel log, and the result of `cat /proc/mounts` from the same emulator image before Kyubi is installed.
 
-If you experience issues during installation, in recovery, upload the recovery logs, or in Magisk, upload the install logs. Please also upload the `boot.img` or `recovery.img` that you are using for patching.
+If system-mode installation fails, upload Kyubi's install log and identify the emulator product, Android version, and whether its system partition is writable.
 
-If you experience a crash of Magisk app, dump the full `logcat` **when the crash happens**.
+If the Kyubi app crashes, capture the full `logcat` **when the crash happens**.
 
-If you experience other issues related to Magisk, upload `magisk.log`, and preferably also include a boot `logcat` (start dumping `logcat` when the device boots up)
+For other Kyubi issues, upload `magisk.log` and, when relevant, a boot `logcat` captured from emulator startup.
 
 **DO NOT** open issues regarding any non-free modules.
 
@@ -32,5 +32,5 @@ Without following the rules above, your issue will be closed without explanation
 
 Device:
 Android version:
-Magisk version name:
-Magisk version code:
+Kyubi version name:
+Kyubi version code:

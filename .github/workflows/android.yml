@@ -206,9 +206,7 @@ jobs:
             Zygisk is removed for security; use ReZygisk (Kyubi's DenyList feeds it).
 
             - `app-release.apk` — Kyubi manager (install this)
-            - `app-debug.apk` — debug build (verbose logging)
+            - `stub-release.apk` — cert-pinned hidden-manager stub
           files: |
             out/app-release.apk
-            out/app-debug.apk
             out/stub-release.apk
-            out/stub-debug.apk

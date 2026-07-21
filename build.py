@@ -13,7 +13,6 @@ import sys
 import tarfile
 import textwrap
 import urllib.request
-from zipfile import ZipFile
 
 
 def color_print(code, str):
@@ -87,7 +86,6 @@ llvm_bin = op.join(
 )
 cargo = op.join(rust_bin, "cargo" + EXE_EXT)
 gradlew = op.join(".", "gradlew" + (".bat" if is_windows else ""))
-adb_path = op.join(sdk_path, "platform-tools", "adb" + EXE_EXT)
 native_gen_path = op.realpath(op.join("native", "out", "generated"))
 
 # Global vars
@@ -405,9 +403,6 @@ def build_binary(args):
     if "resetprop" in args.target:
         flag += " B_PROP=1"
 
-    if "magiskboot" in args.target:
-        flag += " B_BOOT=1"
-
     if flag:
         run_ndk_build(flag)
 
@@ -576,81 +571,6 @@ def setup_ndk(args):
         shutil.copytree(src_dir, lib_dir, copy_function=cp, dirs_exist_ok=True)
 
 
-def push_files(args, script):
-    abi = cmd_out([adb_path, "shell", "getprop", "ro.product.cpu.abi"])
-    apk = config["outdir"] + ("/app-release.apk" if args.release else "/app-debug.apk")
-
-    # Extract busybox from APK
-    busybox = f'{config["outdir"]}/busybox'
-    with ZipFile(apk) as zf:
-        with zf.open(f"lib/{abi}/libbusybox.so") as libbb:
-            with open(busybox, "wb") as bb:
-                bb.write(libbb.read())
-
-    try:
-        proc = execv([adb_path, "push", busybox, script, "/data/local/tmp"])
-        if proc.returncode != 0:
-            error("adb push failed!")
-    finally:
-        rm_rf(busybox)
-
-    proc = execv([adb_path, "push", apk, "/data/local/tmp/magisk.apk"])
-    if proc.returncode != 0:
-        error("adb push failed!")
-
-
-def setup_avd(args):
-    if not args.skip:
-        build_all(args)
-
-    header("* Setting up emulator")
-
-    push_files(args, "scripts/avd_magisk.sh")
-
-    proc = execv([adb_path, "shell", "sh", "/data/local/tmp/avd_magisk.sh"])
-    if proc.returncode != 0:
-        error("avd_magisk.sh failed!")
-
-
-def patch_avd_ramdisk(args):
-    if not args.skip:
-        args.release = False
-        build_all(args)
-
-    header("* Patching emulator ramdisk.img")
-
-    # Create a backup to prevent accidental overwrites
-    backup = args.ramdisk + ".bak"
-    if not op.exists(backup):
-        cp(args.ramdisk, backup)
-
-    ini = op.join(op.dirname(args.ramdisk), "advancedFeatures.ini")
-    with open(ini, "r") as f:
-        adv_ft = f.read()
-
-    # Need to turn off system as root
-    if "SystemAsRoot = on" in adv_ft:
-        # Create a backup
-        cp(ini, ini + ".bak")
-        adv_ft = adv_ft.replace("SystemAsRoot = on", "SystemAsRoot = off")
-        with open(ini, "w") as f:
-            f.write(adv_ft)
-
-    push_files(args, "scripts/avd_patch.sh")
-
-    proc = execv([adb_path, "push", backup, "/data/local/tmp/ramdisk.cpio.tmp"])
-    if proc.returncode != 0:
-        error("adb push failed!")
-
-    proc = execv([adb_path, "shell", "sh", "/data/local/tmp/avd_patch.sh"])
-    if proc.returncode != 0:
-        error("avd_patch.sh failed!")
-
-    proc = execv([adb_path, "pull", "/data/local/tmp/ramdisk.cpio.gz", args.ramdisk])
-    if proc.returncode != 0:
-        error("adb pull failed!")
-
-
 def build_all(args):
     build_binary(args)
     build_app(args)
@@ -691,19 +611,6 @@ app_parser.set_defaults(func=build_app)
 
 stub_parser = subparsers.add_parser("stub", help="build the stub app")
 stub_parser.set_defaults(func=build_stub)
-
-avd_parser = subparsers.add_parser("emulator", help="setup AVD for development")
-avd_parser.add_argument(
-    "-s", "--skip", action="store_true", help="skip building binaries and the app"
-)
-avd_parser.set_defaults(func=setup_avd)
-
-avd_patch_parser = subparsers.add_parser("avd_patch", help="patch AVD ramdisk.img")
-avd_patch_parser.add_argument("ramdisk", help="path to ramdisk.img")
-avd_patch_parser.add_argument(
-    "-s", "--skip", action="store_true", help="skip building binaries and the app"
-)
-avd_patch_parser.set_defaults(func=patch_avd_ramdisk)
 
 clean_parser = subparsers.add_parser("clean", help="cleanup")
 clean_parser.add_argument(
