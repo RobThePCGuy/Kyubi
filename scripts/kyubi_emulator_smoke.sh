@@ -41,8 +41,11 @@ if ! adb shell pidof "$PKG" >/dev/null 2>&1; then
 fi
 
 echo "* Scanning the crash buffer"
+# String test, not 'echo | grep -q': under pipefail, grep -q exiting early on a
+# match SIGPIPEs the producer and the pipeline reads as failed -- which would
+# make this MISS the very crash it is meant to catch.
 crash="$(adb logcat -b crash -d || true)"
-if echo "$crash" | grep -q "$PKG"; then
+if [[ "$crash" == *"$PKG"* ]]; then
   echo "EMU SMOKE FAIL: $PKG appears in the crash buffer"
   echo "$crash"
   exit 1
