@@ -35,6 +35,12 @@ listing="$(unzip -l "$APK")"
 [[ "$listing" == *"lib/arm64"*     ]] && fail "arm64 ABI present -- Kyubi is x86-only"
 [[ "${listing,,}" == *"magiskboot"* ]] && fail "magiskboot present -- must be stripped (system-mode only)"
 
+# Kyubi is not a recovery-flashable zip and ships no boot-image OTA survival:
+# the META-INF updater and addon.d.sh (both carry boot-image logic) must be gone.
+[[ "$listing" == *"META-INF/com/google/android/update-binary"* ]] && fail "flashable-zip updater embedded (update-binary) -- Kyubi is not recovery-flashable"
+[[ "$listing" == *"META-INF/com/google/android/updater-script"* ]] && fail "flashable-zip updater-script embedded"
+[[ "$listing" == *"assets/addon.d.sh"* ]] && fail "addon.d.sh shipped -- boot-image OTA survival must be removed"
+
 # package id (aapt if the runner has build-tools; otherwise skip with a warning)
 aapt=""
 for c in "${ANDROID_HOME:-}"/build-tools/*/aapt "${ANDROID_SDK_ROOT:-}"/build-tools/*/aapt; do

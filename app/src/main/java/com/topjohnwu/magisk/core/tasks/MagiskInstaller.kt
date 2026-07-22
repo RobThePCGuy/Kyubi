@@ -94,8 +94,9 @@ abstract class MagiskInstallImpl protected constructor(
                 }
             }
 
-            // Extract scripts (system-mode only: no boot_patch.sh, no chromeos tools)
-            for (script in listOf("util_functions.sh", "addon.d.sh", "stub.apk")) {
+            // Extract scripts (system-mode only: no boot_patch.sh, no chromeos
+            // tools, no addon.d survival script)
+            for (script in listOf("util_functions.sh", "stub.apk")) {
                 val dest = File(installDir, script)
                 context.assets.open(script).writeTo(dest)
             }
@@ -131,15 +132,27 @@ abstract class MagiskInstallImpl protected constructor(
 
     protected fun uninstall() = "run_uninstaller $AppApkPath".sh().isSuccess
 
+    // installDir is lateinit; a duplicate-session bail returns before it is set,
+    // so only clean up when it was actually initialized. isInitialized is only
+    // allowed in the declaring class, hence this helper.
+    protected fun cleanupInstall() {
+        if (::installDir.isInitialized)
+            Shell.cmd("rm -rf $installDir").submit()
+    }
+
     @WorkerThread
     protected abstract suspend fun operations(): Boolean
 
     open suspend fun exec(): Boolean {
-        if (haveActiveSession.getAndSet(true))
+        // Exception-safe single-session lock: never leave haveActiveSession stuck
+        // at true if operations() throws or the coroutine is cancelled.
+        if (!haveActiveSession.compareAndSet(false, true))
             return false
-        val result = withContext(Dispatchers.IO) { operations() }
-        haveActiveSession.set(false)
-        return result
+        return try {
+            withContext(Dispatchers.IO) { operations() }
+        } finally {
+            haveActiveSession.set(false)
+        }
     }
 
     companion object {
@@ -157,7 +170,7 @@ abstract class MagiskInstaller(
         if (success) {
             console.add("- All done!")
         } else {
-            Shell.cmd("rm -rf $installDir").submit()
+            cleanupInstall()
             console.add("! Installation failed")
         }
         return success

@@ -66,30 +66,41 @@ APKs carry **x86 and x86_64** native libs only.
 
 Release APKs are signed with the **Kyubi key, which lives only in GitHub Actions
 secrets** — never in the repo. `config.prop` carries no credentials; `*.jks` /
-`*.keystore` are git-ignored. CI's "Set up release signing" step decodes
-`KYUBI_KEYSTORE_B64` and appends the signing config to `config.prop` from
-`KYUBI_KEYSTORE_PASS` / `KYUBI_KEY_ALIAS` / `KYUBI_KEY_PASS`. With no secret set,
-the build falls back to debug-signed.
+`*.keystore` are git-ignored. The signing secrets are exposed **only on a kitsune
+push** (the "Set up release signing" step is skipped for PRs, `dev`, and manual
+runs, so those never receive the key). The step decodes `KYUBI_KEYSTORE_B64` and
+appends the config to `config.prop` from `KYUBI_KEYSTORE_PASS` / `KYUBI_KEY_ALIAS`
+/ `KYUBI_KEY_PASS`; a kitsune push with no secret **fails closed**. The signing
+config is then **stripped before the debug build**, so debug APKs are always
+debug-signed, and CI asserts release certs == the pin and debug certs != the pin.
+The cert pin is single-source: CI checks the stub's `DynLoad` pin against the
+workflow `KYUBI_CERT_SHA256` and fails on drift.
 
 ## CI / releases
 
 `.github/workflows/android.yml`:
 
+- **Permissions:** read-only by default; only the `release` job elevates to
+  `contents: write`. Checkouts use `persist-credentials: false`.
 - **Triggers** on push to `dev`/`kitsune`, on **pull requests**, and manually
   (`workflow_dispatch`).
-- **`build`** — release + debug for x86/x86_64, signed from secrets, artifacts
-  uploaded.
+- **`build`** — release + debug for x86/x86_64. Release is signed from secrets
+  (kitsune push only); the key is stripped before the debug build; certs verified.
 - **`smoke`** — asserts Kyubi's build invariants on the release APK (package id,
-  x86-only ABIs, no `magiskboot`, feeds point at Kyubi) and installs + launches
-  it on a stock x86_64 emulator, failing on a crash. **Note:** this does not test
-  the offline system-mode root install, which is BlueStacks-VHD-specific and
-  can't be reproduced on a stock AVD — that validation happens on real emulator
-  instances.
-- **`release`** — publishes only the cert-verified release manager/stub APKs on a
-  `kitsune` push, and **only if `build` and `smoke` both pass**. Debug APKs remain
-  private CI artifacts. Tag `v31.0-<short-commit>`; the short hash is the exact
-  version the APK reports. Releases never expire (unlike CI artifacts); prune old
-  ones whenever.
+  x86-only ABIs, no `magiskboot`, no flashable-zip updater / addon.d.sh, feeds
+  point at Kyubi) and installs + launches it on a stock x86_64 emulator, failing
+  on a crash. **Note:** this does not test the offline system-mode root install,
+  which is BlueStacks-VHD-specific and can't be reproduced on a stock AVD — that
+  validation happens on real emulator instances.
+- **`release`** — publishes **only the cert-verified release** manager/stub APKs
+  on a `kitsune` push, and **only if `build` and `smoke` both pass**, always as a
+  **prerelease** (rolling candidate). Debug APKs stay private CI artifacts. Tag
+  `v31.0-<short-commit>`.
 
-To cut a blessed **stable** milestone (e.g. `kyubi-1.0.0`), tag the commit; the
-per-commit releases are the rolling/canary line, a stable tag is additive.
+**Stable releases are cut manually** (no tag-triggered job yet): after live
+system-mode validation, publish a `kyubi-x.y.z` release from a validated commit's
+`app-release.apk`/`stub-release.apk`. Automating this behind a protected
+environment with manual approval is a tracked follow-up. **Also tracked:**
+decouple the Android application `versionCode` (should be a monotonic build
+number) from the Magisk core compat code (`31000`) before an update feed goes
+live, or the updater can't tell two rolling builds apart.

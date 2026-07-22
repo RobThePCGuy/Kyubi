@@ -33,14 +33,18 @@ Everything else — MagiskSU (root), Magisk Modules, DenyList — works.
 ## Downloads
 
 Grab a build from [**Releases**](https://github.com/RobThePCGuy/Kyubi/releases).
-Every push to `kitsune` publishes a full release tagged `v31.0-<short-commit>`
-(the short hash is the version the app reports); stable milestones are tagged
-separately (e.g. `kyubi-1.0.0`).
+Every push to `kitsune` publishes a **rolling prerelease** tagged
+`v31.0-<short-commit>` (the short hash is the build suffix in the version the app
+reports). These are candidates: CI verifies the build and that it installs and
+launches, but the system-mode root install is validated separately on a real
+instance. A blessed **stable** milestone (e.g. `kyubi-1.0.0`) is cut manually
+after that validation.
 
-Each release attaches:
+Each release attaches only the certificate-verified release APKs (debug builds
+are not published):
 
 - `app-release.apk` — the Kyubi manager (install this)
-- `app-debug.apk` — debug build, verbose logging (use this for bug reports)
+- `stub-release.apk` — the cert-pinned hidden-manager stub
 
 ## Building
 

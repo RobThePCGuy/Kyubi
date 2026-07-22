@@ -250,21 +250,14 @@ fun Project.setupApp() {
         }
     }
 
-    val syncResources by tasks.registering(Sync::class) {
-        into("src/main/resources/META-INF/com/google/android")
-        from(rootProject.file("scripts/update_binary.sh")) {
-            rename { "update-binary" }
-        }
-        from(rootProject.file("scripts/flash_script.sh")) {
-            rename { "updater-script" }
-        }
-    }
+    // Kyubi does not ship as a recovery-flashable zip (emulator-only, offline
+    // system-mode install), so the META-INF/com/google/android updater
+    // (update_binary.sh / flash_script.sh) is not embedded in the APK.
 
     android.applicationVariants.all {
         val variantCapped = name.replaceFirstChar { it.uppercase() }
 
         tasks.getByPath("merge${variantCapped}JniLibFolders").dependsOn(syncLibs)
-        processJavaResourcesProvider.configure { dependsOn(syncResources) }
 
         val stubTask = tasks.getByPath(":stub:comment$variantCapped")
         val stubApk = stubTask.outputs.files.asFileTree.filter {
@@ -279,7 +272,7 @@ fun Project.setupApp() {
             // Kyubi system-mode only: no boot_patch.sh, no bootctl (OTA/second
             // slot), no chromeos boot-signing tools.
             from(rootProject.file("scripts")) {
-                include("util_functions.sh", "addon.d.sh")
+                include("util_functions.sh")
                 include("uninstaller.sh", "module_installer.sh")
             }
             from(stubApk) {

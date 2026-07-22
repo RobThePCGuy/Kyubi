@@ -50,43 +50,6 @@ fix_env() {
   chown -R 0:0 $MAGISKBIN
 }
 
-install_addond(){
-    local installDir="$MAGISKBIN"
-    local AppApkPath="$1"
-    local SYSTEM_INSTALL="$2"
-    [ -z "$SYSTEM_INSTALL" ] && SYSTEM_INSTALL=false
-    addond=/system/addon.d
-    test ! -d $addond && return
-    ui_print "- Adding addon.d survival script"
-    BLOCKNAME="/dev/block/system_block.$(random_str 5 20)"
-    rm -rf "$BLOCKNAME"
-    if is_rootfs; then
-        mkblknode "$BLOCKNAME" /system
-    else
-        mkblknode "$BLOCKNAME"  /
-    fi
-    blockdev --setrw "$BLOCKNAME"
-    rm -rf "$BLOCKNAME"
-    mount -o rw,remount /
-    mount -o rw,remount /system
-    rm -rf $addond/99-magisk.sh 2>/dev/null
-    rm -rf $addond/magisk 2>/dev/null
-    if [ "$SYSTEM_INSTALL" == "true" ]; then
-        cp -prLf "$installDir"/. /system/etc/init/magisk || { ui_print "! Failed to install addon.d"; return; }
-        mv "$installDir/addon.d.sh" $addond/99-magisk.sh
-        cp "$AppApkPath" /system/etc/init/magisk/magisk.apk
-        chmod 755 /system/etc/init/magisk/*
-        sed -i "s/^SYSTEMINSTALL=.*/SYSTEMINSTALL=true/g" $addond/99-magisk.sh
-    else
-        mkdir -p $addond/magisk
-        cp -prLf "$installDir"/. $addond/magisk || { ui_print "! Failed to install addon.d"; return; }
-        mv $addond/magisk/addon.d.sh $addond/99-magisk.sh
-        cp "$AppApkPath" $addond/magisk/magisk.apk
-    fi
-    mount -o ro,remount /
-    mount -o ro,remount /system
-}
-
 run_uninstaller() {
   rm -rf /dev/tmp
   mkdir -p /dev/tmp/install
@@ -485,9 +448,11 @@ direct_install_system(){
 
 
 xdirect_install_system() {
+  # Kyubi is emulator-only: no addon.d OTA-survival step (that script carries
+  # boot-image/magiskboot logic and emulators don't take OTAs). Core install +
+  # env fix + migrations only.
   direct_install_system "$@" || { cleanup_system_installation; installer_cleanup; return 1; }
   fix_env "$1"
-  install_addond "$3" "true"
   run_migrations
   return 0
 }
