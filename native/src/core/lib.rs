@@ -97,7 +97,6 @@ pub mod ffi {
         fn get_magiskd() -> &'static MagiskD;
         fn setup_logfile(self: &MagiskD);
         fn is_emulator(self: &MagiskD) -> bool;
-        fn is_recovery(self: &MagiskD) -> bool;
         fn boot_stage_handler(self: &MagiskD, client: i32, code: i32);
     }
 }

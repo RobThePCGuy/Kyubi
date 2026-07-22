@@ -12,8 +12,6 @@
     <string name="invalid_update_channel">Непостојећи Канал Ажурирања</string>
 
     <!--Install Fragment-->
-    <string name="keep_force_encryption">Задржи форсирану енкрипцију</string>
-    <string name="keep_dm_verity">Задржи AVB 2.0/dm-verity</string>
     <string name="uninstall_magisk_title">Унинсталирај Магиск</string>
     <string name="uninstall_magisk_msg">Сви модули ће бити онеспособљени/уклоњени. Корен ће бити уклоњен, и потенцијално енкриптовати твоје податке уколико већ нису енкриптовани</string>
     <string name="update">Ажурирање</string>

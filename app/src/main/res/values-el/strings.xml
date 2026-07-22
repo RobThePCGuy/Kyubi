@@ -32,11 +32,6 @@
     <string name="uninstall_magisk_msg">Όλα τα modules θα απενεργοποιηθούν/αφαιρεθούν. Το root θα αφαιρεθεί και ενδέχεται να κρυπτογραφηθούν τα δεδομένα σας, εάν δεν είναι κρυπτογραφημένα!</string>
 
     <!--Install-->
-	<string name="keep_force_encryption">Διατήρηση επιβεβλημένης κρυπτογράφησης</string>
-    <string name="keep_dm_verity">Διατήρηση AVB 2.0/dm-verity</string>
-    <string name="patch_vbmeta">Patch vbmeta στην εικόνα του boot</string>
-    <string name="recovery_mode">Μέσω Recovery mode</string>
-    <string name="install_options_title">Επιλογές</string>
     <string name="install_method_title">Μέθοδος</string>
     <string name="install_next">Επόμενο</string>
     <string name="install_start">Εκκίνηση</string>
@@ -84,7 +79,6 @@
     <string name="pid">PID: %1$d</string>
     <string name="target_uid">UID Στόχος: %1$d</string>
 
-    <!--SafetyNet-->
 
     <!--MagiskHide-->
     <string name="show_system_app">Εμφάνιση εφαρμογών συστήματος</string>
@@ -95,10 +89,6 @@
     <!--Module-->
     <string name="no_info_provided">(Δεν δόθηκαν πληροφορίες)</string>
     <string name="reboot_userspace">Soft επανεκκίνηση</string>
-    <string name="reboot_recovery">Επανεκκίνηση στο Recovery</string>
-    <string name="reboot_bootloader">Επανεκκίνηση στο Bootloader</string>
-    <string name="reboot_download">Επανεκκίνηση για λήψη</string>
-    <string name="reboot_edl">Επανεκκίνηση σε EDL</string>
     <string name="module_version_author">%1$s από %2$s</string>
     <string name="module_state_remove">Αφαίρεση</string>
     <string name="module_state_restore">Επαναφορά</string>

@@ -144,10 +144,7 @@ const rust::MagiskD &MagiskD::as_rust() const {
 }
 
 void MagiskD::reboot() const {
-    if (as_rust().is_recovery())
-        exec_command_sync("/system/bin/reboot", "recovery");
-    else
-        exec_command_sync("/system/bin/reboot");
+    exec_command_sync("/system/bin/reboot");
 }
 
 static void handle_request_async(int client, int code, const sock_cred &cred) {

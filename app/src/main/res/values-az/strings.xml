@@ -32,11 +32,6 @@
     <string name="uninstall_magisk_msg">Bütün əlavələr ləğv olunacaq/silinəcək. Root silinəcək, və əgər hal-hazırda deyilsə, bütün məlumatlarınız potensiyal olaraq şifrələnəcək.</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">Zorla şifrələməni qoru</string>
-    <string name="keep_dm_verity">AVB 2.0/dm-verity qoru</string>
-    <string name="patch_vbmeta">vbmeta\'nı boot\'da yamaqla</string>
-    <string name="recovery_mode">Bərpa Rejimi</string>
-    <string name="install_options_title">Ayarlar</string>
     <string name="install_method_title">Yol</string>
     <string name="install_next">Sonrakı</string>
     <string name="install_start">Getdik</string>
@@ -84,7 +79,6 @@
     <string name="pid">PID: %1$d</string>
     <string name="target_uid">Hədəf UID: %1$d</string>
 
-    <!--SafetyNet-->
 
     <!--MagiskHide-->
     <string name="show_system_app">Sistem tətbiqlərini göstər</string>
@@ -95,10 +89,6 @@
     <!--Module-->
     <string name="no_info_provided">(Məlumat verilməyib)</string>
     <string name="reboot_userspace">Yumuşaq başlatma</string>
-    <string name="reboot_recovery">Bərpaya başlat</string>
-    <string name="reboot_bootloader">Bootloader\'ə başlat</string>
-    <string name="reboot_download">Yükləməyə başlat</string>
-    <string name="reboot_edl">EDL\'ə başlat</string>
     <string name="module_version_author">%2$s tərəfindən %1$s buraxılışı</string>
     <string name="module_state_remove">Sil</string>
     <string name="module_state_restore">Bərpa et</string>

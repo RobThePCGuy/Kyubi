@@ -243,16 +243,13 @@ fun Project.setupApp() {
             }
         }
         onlyIf {
-            // 2 ABIs x 4 binaries = 8 (Kyubi: x86 only, no magiskboot)
+            // 2 ABIs x 4 binaries = 8 expected
             if (inputs.sourceFiles.files.size != 8)
                 throw StopExecutionException("Please build binaries first! (./build.py binary)")
             true
         }
     }
 
-    // Kyubi does not ship as a recovery-flashable zip (emulator-only, offline
-    // system-mode install), so the META-INF/com/google/android updater
-    // (update_binary.sh / flash_script.sh) is not embedded in the APK.
 
     android.applicationVariants.all {
         val variantCapped = name.replaceFirstChar { it.uppercase() }
@@ -269,8 +266,6 @@ fun Project.setupApp() {
             inputs.property("version", Config.version)
             inputs.property("versionCode", Config.versionCode)
             into("src/${this@all.name}/assets")
-            // Kyubi system-mode only: no boot_patch.sh, no bootctl (OTA/second
-            // slot), no chromeos boot-signing tools.
             from(rootProject.file("scripts")) {
                 include("util_functions.sh")
                 include("uninstaller.sh", "module_installer.sh")

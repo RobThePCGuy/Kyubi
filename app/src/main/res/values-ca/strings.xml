@@ -30,10 +30,6 @@
     <string name="uninstall_magisk_msg">Tots els mòduls seran desactivats i eliminats! L\'accés d\'arrel s\'eliminarà i, possiblement, xifrarà totes les dades (si no estan ja xifrades).</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">Mantenir el xifrat forçat</string>
-    <string name="keep_dm_verity">Mantenir AVB 2.0/dm-verity</string>
-    <string name="recovery_mode">Mode de Recuperació</string>
-    <string name="install_options_title">Opcions</string>
     <string name="install_method_title">Mètode</string>
     <string name="install_next">Següent</string>
     <string name="install_start">Endavant</string>
@@ -81,7 +77,6 @@
     <string name="pid">PID: %1$d</string>
     <string name="target_uid">UID de l\'objectiu: %1$d</string>
 
-    <!--SafetyNet-->
 
     <!-- MagiskHide -->
     <string name="show_system_app">Mostra aplicacions del sistema</string>
@@ -92,10 +87,6 @@
     <!--Module-->
     <string name="no_info_provided">(No hi ha informació)</string>
     <string name="reboot_userspace">Reinici suau</string>
-    <string name="reboot_recovery">Reiniciar en Mode Recuperació</string>
-    <string name="reboot_bootloader">Reiniciar en Mode Bootloader</string>
-    <string name="reboot_download">Reiniciar en Mode Download</string>
-    <string name="reboot_edl">Reiniciar a EDL</string>
     <string name="module_version_author">%1$s per %2$s</string>
     <string name="module_state_remove">Eliminar</string>
     <string name="module_state_restore">Recuperar</string>

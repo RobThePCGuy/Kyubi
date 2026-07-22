@@ -7,10 +7,8 @@ run_delay() {
 }
 
 env_check() {
-  # Kyubi is stripped for emulators: no magiskboot (system-mode never patches a
-  # boot image) and no preinit partition (emulators have none). Check only the
-  # binaries Kyubi actually ships, so a healthy offline install reports env-OK
-  # instead of nagging "additional setup" on every launch.
+  # Check only the binaries Kyubi actually ships, so a healthy offline install
+  # reports env-OK instead of nagging "additional setup" on every launch.
   for file in busybox magiskinit util_functions.sh; do
     [ -f "$MAGISKBIN/$file" ] || return 1
   done
@@ -266,11 +264,7 @@ cleanup_system_installation(){
 }
 
 installer_cleanup(){
-    if $BOOTMODE; then
-        umount -l "/proc/$$/attr"
-    else
-        recovery_cleanup
-    fi
+    umount -l "/proc/$$/attr"
     mount -o ro,remount /
 }
 
@@ -450,9 +444,7 @@ direct_install_system(){
 
 
 xdirect_install_system() {
-  # Kyubi is emulator-only: no addon.d OTA-survival step (that script carries
-  # boot-image/magiskboot logic and emulators don't take OTAs). Core install +
-  # env fix + migrations only.
+  # Core install + env fix only.
   direct_install_system "$@" || { cleanup_system_installation; installer_cleanup; return 1; }
   fix_env "$1" || { cleanup_system_installation; installer_cleanup; return 1; }
   run_migrations || return 1
@@ -474,8 +466,6 @@ app_init() {
   SHA1=$(grep_prop SHA1 $MAGISKTMP/.magisk/config)
   check_encryption
   get_sulist_status
-  BOOTIMAGE_PATCHED=false
-  [ ! -z "$SHA1" ] && BOOTIMAGE_PATCHED=true
 }
 
 export BOOTMODE=true

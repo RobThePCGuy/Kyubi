@@ -27,10 +27,6 @@
     <string name="uninstall_magisk_title">Выдаліць Magisk</string>
     <string name="uninstall_magisk_msg">Усе модулі будуць адключаныя/выдаленыя!\nRoot будзе выдалены!\nВашыя даныя будуць зашыфраваныя!</string>
     <!--Install-->
-    <string name="keep_force_encryption">Прымусова захаваць шыфраванне</string>
-    <string name="keep_dm_verity">Захаваць AVB 2.0/dm-verity</string>
-    <string name="recovery_mode">Рэжым Recovery</string>
-    <string name="install_options_title">Параметры</string>
     <string name="install_method_title">Метад</string>
     <string name="install_next">Далей</string>
     <string name="install_start">Усталяваць</string>
@@ -74,7 +70,6 @@
     <string name="logs_cleared">Журнал паспяхова ачышчаны</string>
     <string name="pid">PID: %1$d</string>
     <string name="target_uid">Мэтавы UID: %1$d</string>
-    <!--SafetyNet-->
     <!--MagiskHide-->
     <string name="show_system_app">Паказваць сістэмныя праграмы</string>
     <string name="show_os_app">Паказваць сістэмныя праграмы</string>
@@ -83,10 +78,6 @@
     <!--Module-->
     <string name="no_info_provided">(Няма інфармацыі)</string>
     <string name="reboot_userspace">Праграмны перазапуск</string>
-    <string name="reboot_recovery">Перазапуск у Recovery</string>
-    <string name="reboot_bootloader">Перазапуск у Bootloader</string>
-    <string name="reboot_download">Перазапуск у Download</string>
-    <string name="reboot_edl">Перазапуск у EDL</string>
     <string name="module_version_author">%1$s ад %2$s</string>
     <string name="module_state_remove">Выдаліць</string>
     <string name="module_state_restore">Аднавіць</string>

@@ -32,11 +32,6 @@
     <string name="uninstall_magisk_msg">所有模組將會被停用並移除！\nRoot 將會被移除且未被加密的資料將可能被加密！</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">保持強制加密</string>
-    <string name="keep_dm_verity">保持 AVB 2.0/dm-verity</string>
-    <string name="patch_vbmeta">修補 vbmeta 到開機映像檔</string>
-    <string name="recovery_mode">安裝至 Recovery</string>
-    <string name="install_options_title">選項</string>
     <string name="install_method_title">安裝方式</string>
     <string name="install_next">下一步</string>
     <string name="install_start">開始執行</string>
@@ -84,7 +79,6 @@
     <string name="pid">PID: %1$d</string>
     <string name="target_uid">目標 UID: %1$d</string>
 
-    <!--SafetyNet-->
 
     <!-- MagiskHide -->
     <string name="show_system_app">顯示系統應用程式</string>
@@ -95,10 +89,6 @@
     <!--Module -->
     <string name="no_info_provided">（未提供資訊）</string>
     <string name="reboot_userspace">快速重新啟動</string>
-    <string name="reboot_recovery">重新啟動至 Recovery</string>
-    <string name="reboot_bootloader">重新啟動至 Bootloader</string>
-    <string name="reboot_download">重新啟動至 Download</string>
-    <string name="reboot_edl">重新啟動至 EDL</string>
     <string name="module_version_author">%1$s 來自 %2$s</string>
     <string name="module_state_remove">移除</string>
     <string name="module_state_restore">復原</string>

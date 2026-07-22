@@ -21,11 +21,17 @@ that snapshot so a future maintainer can tell Kyubi's deltas from upstream.
   and its strings/dialog; `boot_patch.sh`, the ChromeOS signing tools, and
   `bootctl`; the addon.d survival script + the `install_addond` call/function; the
   recovery-flashable-zip metadata (`update_binary.sh`/`flash_script.sh` embedding);
-  the obsolete AVD dev scripts + their `build.py` commands; and the dormant native
-  `B_BOOT` wiring. **Still present (deliberate, coupled/inert):** the boot-image
-  helpers in the shared `util_functions.sh` (used by the kept uninstaller, whose
-  boot branch is now guarded by an explicit abort), the inert install-options
-  card, `Info.patchBootVbmeta`, and `tools/ndk-bins/arm`.
+  the obsolete AVD dev scripts + their `build.py` commands; the native `magiskboot`
+  crate itself (`native/src/boot` — Rust + C++ source — dropped from the Cargo
+  workspace, not merely excluded from the build targets); the boot-image helpers
+  in the shared `util_functions.sh`
+  (`find_boot_image`/`flash_image`/`install_magisk`/`sign_chromeos` + `boot_patch.sh`
+  sourcing); and the uninstaller's boot-restore branch — `uninstaller.sh` is now
+  system-mode only. `Info.patchBootVbmeta`/`isBootPatched` and the `patch_vbmeta`
+  string are gone as well. **Still present (deliberate, not boot-image):** the
+  install-options card (`keepVerity`/`keepEnc`/recovery — coupled to system-partition
+  modification, skipped on emulator) and `tools/ndk-bins/arm` (ARM build-support
+  prebuilts; a separate ARM-cleanup pass, not part of the boot-image strip).
 - **Built-in Zygisk removed** (upstream commit `2ef8f00`, security). The dead
   Zygisk settings toggle is removed from the app. Use
   **[ReZygisk](https://github.com/PerformanC/ReZygisk)** for the Zygisk API;

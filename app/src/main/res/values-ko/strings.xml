@@ -31,11 +31,6 @@
     <string name="uninstall_magisk_msg">모든 모듈이 비활성화/제거됩니다. 루트도 제거될 것이며, 데이터도 암호화 되어있지 않으면 암호화될 수도 있습니다.</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">강제 암호화 유지</string>
-    <string name="keep_dm_verity">AVB 2.0/dm-verity 유지</string>
-    <string name="patch_vbmeta">부트 이미지의 vbmeta 패치</string>
-    <string name="recovery_mode">리커버리 모드</string>
-    <string name="install_options_title">옵션</string>
     <string name="install_method_title">설치 방법</string>
     <string name="install_next">다음</string>
     <string name="install_start">설치</string>
@@ -83,7 +78,6 @@
     <string name="pid">PID: %1$d</string>
     <string name="target_uid">Target UID: %1$d</string>
 
-    <!--SafetyNet-->
 
     <!--MagiskHide-->
     <string name="show_system_app">시스템 앱 표시</string>
@@ -94,10 +88,6 @@
     <!--Module-->
     <string name="no_info_provided">(제공된 정보 없음)</string>
     <string name="reboot_userspace">조용히 다시 시작</string>
-    <string name="reboot_recovery">리커버리로 다시 시작</string>
-    <string name="reboot_bootloader">부트로더로 다시 시작</string>
-    <string name="reboot_download">다운로드 모드로 다시 시작</string>
-    <string name="reboot_edl">EDL로 다시 시작</string>
     <string name="module_version_author">%1$s by %2$s</string>
     <string name="module_state_remove">제거</string>
     <string name="module_state_restore">복구</string>

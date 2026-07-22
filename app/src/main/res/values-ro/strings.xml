@@ -32,11 +32,6 @@
     <string name="uninstall_magisk_msg">Toate modulele vor fi dezactivate/eliminate!\nRootul va fi eliminat!\nOrice spațiu de stocare intern necriptat prin folosirea Magisk va fi recriptat!</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">Păstrează criptarea forțată</string>
-    <string name="keep_dm_verity">Păstrează AVB 2.0/dm-verity</string>
-    <string name="patch_vbmeta">Patchuiește vbmeta în imaginea de boot</string>
-    <string name="recovery_mode">Mod de recuperare</string>
-    <string name="install_options_title">Opțiuni</string>
     <string name="install_method_title">Metodă</string>
     <string name="install_next">Înainte</string>
     <string name="install_start">Să-i dăm drumul</string>
@@ -84,7 +79,6 @@
     <string name="pid">PID: %1$d</string>
     <string name="target_uid">UID țintă: %1$d</string>
 
-    <!--SafetyNet-->
 
     <!--MagiskHide-->
     <string name="show_system_app">Afișează aplicațiile de sistem</string>
@@ -95,10 +89,6 @@
     <!--Module-->
     <string name="no_info_provided">(Nu sunt furnizate informații)</string>
     <string name="reboot_userspace">Repornire software</string>
-    <string name="reboot_recovery">Repornește în modul recovery</string>
-    <string name="reboot_bootloader">Repornește în modul bootloader</string>
-    <string name="reboot_download">Repornește în modul download</string>
-    <string name="reboot_edl">Repornește în EDL</string>
     <string name="module_version_author">%1$s de %2$s</string>
     <string name="module_state_remove">Elimină</string>
     <string name="module_state_restore">Restaurează</string>

@@ -32,11 +32,6 @@
     <string name="uninstall_magisk_msg">Az összes modul le lesz tiltva/eltávolítva!\nA root eltávolításra kerül!\nA Magisk használatával titkosítatlan belső tárhely újra titkosításra kerül!</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">Az erőltetett titkosítás megőrzése</string>
-    <string name="keep_dm_verity">AVB 2.0/dm-verity megőrzése</string>
-    <string name="patch_vbmeta">vbmeta javítás a boot image-ben</string>
-    <string name="recovery_mode">Recovery mód</string>
-    <string name="install_options_title">Lehetőségek</string>
     <string name="install_method_title">Módszer</string>
     <string name="install_next">Tovább</string>
     <string name="install_start">Hajrá</string>
@@ -84,7 +79,6 @@
     <string name="pid">PID: %1$d</string>
     <string name="target_uid">Cél UID: %1$d</string>
 
-    <!--SafetyNet-->
 
     <!--MagiskHide-->
     <string name="show_system_app">Rendszerappok megjelenítése</string>
@@ -95,10 +89,6 @@
     <!--Module-->
     <string name="no_info_provided">(Nincs információ)</string>
     <string name="reboot_userspace">Lágy újraindítás</string>
-    <string name="reboot_recovery">Újraindítás - Recovery</string>
-    <string name="reboot_bootloader">Újraindítás - Bootloader</string>
-    <string name="reboot_download">Újraindítás - Download</string>
-    <string name="reboot_edl">Újraindítás - EDL</string>
     <string name="module_version_author">%1$s / %2$s</string>
     <string name="module_state_remove">Eltávolít</string>
     <string name="module_state_restore">Visszaállít</string>

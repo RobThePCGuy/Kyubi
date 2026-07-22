@@ -1,6 +1,6 @@
 [workspace]
 exclude = ["external"]
-members = ["base", "boot", "core", "init", "sepolicy"]
+members = ["base", "core", "init", "sepolicy"]
 resolver = "2"
 
 [workspace.dependencies]

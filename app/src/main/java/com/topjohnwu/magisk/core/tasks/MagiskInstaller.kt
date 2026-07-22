@@ -29,11 +29,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 
-// Kyubi installs in SYSTEM MODE only (see xdirect_install_system in manager.sh).
-// The entire boot-image install path -- boot/recovery/init_boot/vbmeta parsing,
-// magiskboot, boot_patch.sh, ChromeOS signing, and second-slot/OTA -- is removed.
-// What remains: extract the binaries, run the system-mode install, fix the env,
-// and uninstall.
+// Kyubi installs in system mode only (see xdirect_install_system in manager.sh):
+// extract the binaries, run the system-mode install, fix the env, and uninstall.
 abstract class MagiskInstallImpl protected constructor(
     protected val console: MutableList<String> = NOPList.getInstance(),
     private val logs: MutableList<String> = NOPList.getInstance()
@@ -94,8 +91,7 @@ abstract class MagiskInstallImpl protected constructor(
                 }
             }
 
-            // Extract scripts (system-mode only: no boot_patch.sh, no chromeos
-            // tools, no addon.d survival script)
+            // Extract scripts
             for (script in listOf("util_functions.sh", "stub.apk")) {
                 val dest = File(installDir, script)
                 context.assets.open(script).writeTo(dest)

@@ -32,11 +32,6 @@
     <string name="uninstall_magisk_msg">Alle Module werden deaktiviert/entfernt!\nRoot wird entfernt!\nDeine Daten werden potentiell verschlüsselt, wenn sie nicht bereits verschlüsselt sind!</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">Erzwungene Verschlüsselung beibehalten</string>
-    <string name="keep_dm_verity">AVB 2.0/dm-verity beibehalten</string>
-    <string name="patch_vbmeta">vbmeta im Boot-Image patchen</string>
-    <string name="recovery_mode">Recovery Modus</string>
-    <string name="install_options_title">Optionen</string>
     <string name="install_method_title">Methode</string>
     <string name="install_next">Nächster Schritt</string>
     <string name="install_start">Los geht\'s</string>
@@ -84,7 +79,6 @@
     <string name="pid">PID: %1$d</string>
     <string name="target_uid">Ziel-UID: %1$d</string>
 
-    <!--SafetyNet-->
 
     <!--MagiskHide-->
     <string name="show_system_app">System-Apps anzeigen</string>
@@ -95,10 +89,6 @@
     <!--Module-->
     <string name="no_info_provided">(Keine Informationen verfügbar)</string>
     <string name="reboot_userspace">Sanfter Neustart</string>
-    <string name="reboot_recovery">Neustart zum Recovery</string>
-    <string name="reboot_bootloader">Neustart zum Bootloader</string>
-    <string name="reboot_download">Neustart zum Download</string>
-    <string name="reboot_edl">Neustart zum EDL</string>
     <string name="module_version_author">%1$s von %2$s</string>
     <string name="module_state_remove">Entfernen</string>
     <string name="module_state_restore">Wiederherstellen</string>

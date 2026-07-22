@@ -78,7 +78,6 @@ is_mounted() {
 
 abort() {
   ui_print "$1"
-  $BOOTMODE || recovery_cleanup
   [ ! -z $MODPATH ] && rm -rf $MODPATH
   rm -rf $TMPDIR
   exit 1
@@ -109,19 +108,6 @@ print_title() {
 
 setup_flashable() {
   ensure_bb
-  $BOOTMODE && return
-  if [ -z $OUTFD ] || readlink /proc/$$/fd/$OUTFD | grep -q /tmp; then
-    # We will have to manually find out OUTFD
-    for FD in $(ls /proc/$$/fd); do
-      if readlink /proc/$$/fd/$FD | grep -q pipe; then
-        if ps | grep -v grep | grep -qE " 3 $FD |status_fd=$FD"; then
-          OUTFD=$FD
-          break
-        fi
-      fi
-    done
-  fi
-  recovery_actions
 }
 
 ensure_bb() {
@@ -168,42 +154,6 @@ ensure_bb() {
   # Re-exec our script
   echo $cmds | $bb xargs $bb
   exit
-}
-
-recovery_actions() {
-  # Make sure random won't get blocked
-  mount -o bind /dev/urandom /dev/random
-  # Unset library paths
-  OLD_LD_LIB=$LD_LIBRARY_PATH
-  OLD_LD_PRE=$LD_PRELOAD
-  OLD_LD_CFG=$LD_CONFIG_FILE
-  unset LD_LIBRARY_PATH
-  unset LD_PRELOAD
-  unset LD_CONFIG_FILE
-}
-
-recovery_cleanup() {
-  local DIR
-  ui_print "- Unmounting partitions"
-  (
-  if [ ! -d /postinstall/tmp ]; then
-    umount -l /system
-    umount -l /system_root
-  fi
-  umount -l /vendor
-  umount -l /persist
-  umount -l /metadata
-  for DIR in /apex /system /system_root; do
-    if [ -L "${DIR}_link" ]; then
-      rmdir $DIR
-      mv -f ${DIR}_link $DIR
-    fi
-  done
-  umount -l /dev/random
-  ) 2>/dev/null
-  [ -z $OLD_LD_LIB ] || export LD_LIBRARY_PATH=$OLD_LD_LIB
-  [ -z $OLD_LD_PRE ] || export LD_PRELOAD=$OLD_LD_PRE
-  [ -z $OLD_LD_CFG ] || export LD_CONFIG_FILE=$OLD_LD_CFG
 }
 
 #######################
@@ -346,12 +296,7 @@ get_flags() {
   else
     ISENCRYPTED=false
   fi
-  if [ -n "$(find_block vbmeta vbmeta_a)" ]; then
-    PATCHVBMETAFLAG=false
-  else
-    PATCHVBMETAFLAG=true
-    ui_print "- No vbmeta partition, patch vbmeta in boot image"
-  fi
+  PATCHVBMETAFLAG=false
 
   # Overridable config flags with safe defaults
   getvar KEEPVERITY
@@ -374,82 +319,6 @@ get_flags() {
     fi
   fi
   [ -z $RECOVERYMODE ] && RECOVERYMODE=false
-}
-
-find_boot_image() {
-  BOOTIMAGE=
-  if $RECOVERYMODE; then
-    BOOTIMAGE=$(find_block "recovery_ramdisk$SLOT" "recovery$SLOT" "sos")
-  elif [ ! -z $SLOT ]; then
-    BOOTIMAGE=$(find_block "ramdisk$SLOT" "recovery_ramdisk$SLOT" "init_boot$SLOT" "boot$SLOT")
-  else
-    BOOTIMAGE=$(find_block ramdisk recovery_ramdisk kern-a android_boot kernel bootimg init_boot boot lnx boot_a)
-  fi
-  if [ -z $BOOTIMAGE ]; then
-    # Lets see what fstabs tells me
-    BOOTIMAGE=$(grep -v '#' /etc/*fstab* | grep -E '/boot(img)?[^a-zA-Z]' | grep -oE '/dev/[a-zA-Z0-9_./-]*' | head -n 1)
-  fi
-}
-
-flash_image() {
-  local CMD1
-  case "$1" in
-    *.gz) CMD1="gzip -d < '$1' 2>/dev/null";;
-    *)    CMD1="cat '$1'";;
-  esac
-  if [ -b "$2" ]; then
-    local img_sz=$(stat -c '%s' "$1")
-    local blk_sz=$(blockdev --getsize64 "$2")
-    [ "$img_sz" -gt "$blk_sz" ] && return 1
-    blockdev --setrw "$2"
-    local blk_ro=$(blockdev --getro "$2")
-    [ "$blk_ro" -eq 1 ] && return 2
-    eval "$CMD1" | cat - /dev/zero > "$2" 2>/dev/null
-  elif [ -c "$2" ]; then
-    flash_eraseall "$2" >&2
-    eval "$CMD1" | nandwrite -p "$2" - >&2
-  else
-    ui_print "- Not block or char device, storing image"
-    eval "$CMD1" > "$2" 2>/dev/null
-  fi
-  return 0
-}
-
-# Common installation script for flash_script.sh and addon.d.sh
-install_magisk() {
-  cd $MAGISKBIN
-
-  # Source the boot patcher
-  SOURCEDMODE=true
-  . ./boot_patch.sh "$BOOTIMAGE"
-
-  ui_print "- Flashing new boot image"
-  flash_image new-boot.img "$BOOTIMAGE"
-  case $? in
-    1)
-      abort "! Insufficient partition size"
-      ;;
-    2)
-      abort "! $BOOTIMAGE is read only"
-      ;;
-  esac
-
-  ./magiskboot cleanup
-  rm -f new-boot.img
-
-  run_migrations
-}
-
-sign_chromeos() {
-  ui_print "- Signing ChromeOS boot image"
-
-  echo > empty
-  ./chromeos/futility vbutil_kernel --pack new-boot.img.signed \
-  --keyblock ./chromeos/kernel.keyblock --signprivate ./chromeos/kernel_data_key.vbprivk \
-  --version 1 --vmlinuz new-boot.img --config empty --arch arm --bootloader empty --flags 0x1
-
-  rm -f empty new-boot.img
-  mv new-boot.img.signed new-boot.img
 }
 
 remove_system_su() {
@@ -526,40 +395,7 @@ check_data() {
   $DATA_DE && set_nvbase "/data/adb"
 }
 
-run_migrations() {
-  local LOCSHA1
-  local TARGET
-  # Legacy app installation
-  local BACKUP=$MAGISKBIN/stock_boot*.gz
-  if [ -f $BACKUP ]; then
-    cp $BACKUP /data
-    rm -f $BACKUP
-  fi
-
-  # Legacy backup
-  for gz in /data/stock_boot*.gz; do
-    [ -f $gz ] || break
-    LOCSHA1=$(basename $gz | sed -e 's/stock_boot_//' -e 's/.img.gz//')
-    [ -z $LOCSHA1 ] && break
-    mkdir /data/magisk_backup_${LOCSHA1} 2>/dev/null
-    mv $gz /data/magisk_backup_${LOCSHA1}/boot.img.gz
-  done
-
-  # Stock backups
-  LOCSHA1=$SHA1
-  for name in boot dtb dtbo dtbs; do
-    BACKUP=$MAGISKBIN/stock_${name}.img
-    [ -f $BACKUP ] || continue
-    if [ $name = 'boot' ]; then
-      LOCSHA1=$($MAGISKBIN/magiskboot sha1 $BACKUP)
-      mkdir /data/magisk_backup_${LOCSHA1} 2>/dev/null
-    fi
-    TARGET=/data/magisk_backup_${LOCSHA1}/${name}.img
-    cp $BACKUP $TARGET
-    rm -f $BACKUP
-    gzip -9f $TARGET
-  done
-}
+run_migrations() { return; }
 
 copy_preinit_files() {
   local PREINITDIR=$(magisk --path)/.magisk/preinit
@@ -635,11 +471,7 @@ install_module() {
   api_level_arch_detect
 
   # Setup busybox and binaries
-  if $BOOTMODE; then
-    boot_actions
-  else
-    recovery_actions
-  fi
+  boot_actions
 
   # Extract prop file
   unzip -o "$ZIPFILE" module.prop -d $TMPDIR >&2
@@ -730,7 +562,6 @@ install_module() {
   rmdir -p $MODPATH 2>/dev/null
 
   cd /
-  $BOOTMODE || recovery_cleanup
   rm -rf $TMPDIR
 
   ui_print "- Done"

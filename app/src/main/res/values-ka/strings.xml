@@ -30,10 +30,6 @@
     <string name="uninstall_magisk_msg">ყველა მოდული იქნება წაშლილი/გამორთული!\nRoot-ი წაიშლება!\nთქვენი მონაცემები დაიშიფრება!</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">შიფრირება ყოველთვის იყოს ჩართული</string>
-    <string name="keep_dm_verity">AVB 2.0/dm-verity იყოს ჩართული</string>
-    <string name="recovery_mode">Recovery რეჟიმი</string>
-    <string name="install_options_title">ოფციები</string>
     <string name="install_method_title">მეთოდი</string>
     <string name="install_next">შემდეგი</string>
     <string name="install_start">დაწყება</string>
@@ -81,7 +77,6 @@
     <string name="pid">PID: %1$d</string>
     <string name="target_uid">სამიზნე UID: %1$d</string>
 
-    <!--SafetyNet-->
 
     <!-- MagiskHide -->
     <string name="show_system_app">სისტემის პროგრამების ჩვენება</string>
@@ -92,10 +87,6 @@
     <!--Module Fragment-->
     <string name="no_info_provided">(ინფორმაცია არ არის მითითებული)</string>
     <string name="reboot_userspace">სისტემის გადატვირთვა</string>
-    <string name="reboot_recovery">Recovery-ში გადატვირთვა</string>
-    <string name="reboot_bootloader">Bootloader-ში გადატვირთვა</string>
-    <string name="reboot_download">Download-ში გადატვირთვა</string>
-    <string name="reboot_edl">EDL-ში გადატვირთვა</string>
     <string name="module_version_author">%1$s %2$s-სგან</string>
     <string name="module_state_remove">წაშლა</string>
     <string name="module_state_restore">აღდგენა</string>

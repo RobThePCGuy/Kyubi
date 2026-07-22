@@ -45,23 +45,6 @@ include $(BUILD_EXECUTABLE)
 
 endif
 
-ifdef B_PRELOAD
-
-include $(CLEAR_VARS)
-LOCAL_MODULE := init-ld
-LOCAL_SRC_FILES := init/preload.c
-LOCAL_STRIP_MODE := --strip-all
-# ondk r27.1 lld segfaults (0xC0000005) doing LTO codegen for this aarch64 shared
-# object ONLY on a Windows build host. LTO is a no-op for a single-file lib, so we
-# disable it on Windows only; Linux/CI keeps the original (-flto) flags for fidelity.
-ifeq ($(OS),Windows_NT)
-LOCAL_CFLAGS := -fno-lto
-LOCAL_LDFLAGS := -fno-lto
-endif
-include $(BUILD_SHARED_LIBRARY)
-
-endif
-
 ifdef B_INIT
 
 include $(CLEAR_VARS)
@@ -70,17 +53,11 @@ LOCAL_STATIC_LIBRARIES := \
     libbase \
     libcompat \
     libpolicy \
-    libxz \
     libinit-rs
 
 LOCAL_SRC_FILES := \
     init/init.cpp \
-    init/mount.cpp \
-    init/rootdir.cpp \
-    init/getinfo.cpp \
-    init/twostage.cpp \
-    init/selinux.cpp \
-    init/init-rs.cpp
+    init/selinux.cpp
 
 include $(BUILD_EXECUTABLE)
 

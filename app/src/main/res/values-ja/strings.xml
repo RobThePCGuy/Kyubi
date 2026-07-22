@@ -32,11 +32,6 @@
     <string name="uninstall_magisk_msg">すべてのモジュールが無効化/削除されます。\nアンインストール後は root が削除され､ストレージが暗号化されていない場合は暗号化される場合があります。</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">暗号化を維持する</string>
-    <string name="keep_dm_verity">AVB 2.0/dm-verity を維持する</string>
-    <string name="patch_vbmeta">boot イメージ中の vbmeta をパッチする</string>
-    <string name="recovery_mode">リカバリーモード</string>
-    <string name="install_options_title">オプション</string>
     <string name="install_method_title">方法</string>
     <string name="install_next">次へ</string>
     <string name="install_start">はじめる</string>
@@ -84,7 +79,6 @@
     <string name="pid">PID: %1$d</string>
     <string name="target_uid">ターゲット UID: %1$d</string>
 
-    <!--SafetyNet-->
 
     <!--MagiskHide-->
     <string name="show_system_app">システムアプリを表示</string>
@@ -95,10 +89,6 @@
     <!--Module-->
     <string name="no_info_provided">(情報なし)</string>
     <string name="reboot_userspace">ソフトリブート</string>
-    <string name="reboot_recovery">Recovery へ再起動</string>
-    <string name="reboot_bootloader">Bootloader へ再起動</string>
-    <string name="reboot_download">Download へ再起動</string>
-    <string name="reboot_edl">EDL へ再起動</string>
     <string name="module_version_author">%1$s 開発者：%2$s</string>
     <string name="module_state_remove">削除</string>
     <string name="module_state_restore">復元</string>

@@ -31,11 +31,6 @@
     <string name="uninstall_magisk_msg">Todos os módulos serão desativados/removidos!\nO root será removido!\nSeus dados não criptografados devido ao uso do Magisk, serão re-criptografados!</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">Manter criptografia forçada</string>
-    <string name="keep_dm_verity">Manter AVB 2.0/dm-verity</string>
-    <string name="patch_vbmeta">Corrigir vbmeta na imagem de boot</string>
-    <string name="recovery_mode">Modo Recovery</string>
-    <string name="install_options_title">Opções</string>
     <string name="install_method_title">Método</string>
     <string name="install_next">Próximo</string>
     <string name="install_start">Vamos lá</string>
@@ -94,10 +89,6 @@
     <!--Module-->
     <string name="no_info_provided">(Nenhuma informação fornecida)</string>
     <string name="reboot_userspace">Reinício rápido</string>
-    <string name="reboot_recovery">Reiniciar em modo Recovery</string>
-    <string name="reboot_bootloader">Reiniciar em modo Bootloader</string>
-    <string name="reboot_download">Reiniciar em modo Download</string>
-    <string name="reboot_edl">Reiniciar em modo EDL</string>
     <string name="module_version_author">%1$s por %2$s</string>
     <string name="module_state_remove">Remover</string>
     <string name="module_state_restore">Restaurar</string>

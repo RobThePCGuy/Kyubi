@@ -29,10 +29,6 @@
     <string name="uninstall_magisk_msg">Svi će moduli biti onemogućeni/uklonjeni!\nRoot će biti uklonjen!\nVaši su podaci potencijalno šifrirani, ako već nisu!</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">Zadrži prisilno šifirannje</string>
-    <string name="keep_dm_verity">Zadrži AVB 2.0/dm-verity</string>
-    <string name="recovery_mode">Recovery način</string>
-    <string name="install_options_title">Opcije</string>
     <string name="install_method_title">Metoda</string>
     <string name="install_next">Dalje</string>
     <string name="install_start">Krenimo</string>
@@ -79,7 +75,6 @@
     <string name="pid">PID: %1$d</string>
     <string name="target_uid">Ciljani UID: %1$d</string>
 
-    <!--SafetyNet-->
 
     <!-- MagiskHide -->
     <string name="show_system_app">Prikaži sistemske aplikacije</string>
@@ -88,10 +83,6 @@
 
     <!--Module -->
     <string name="no_info_provided">(Nema podataka)</string>
-    <string name="reboot_recovery">Ponovo pokreni u Recovery</string>
-    <string name="reboot_bootloader">Ponovo pokreni u Bootloader</string>
-    <string name="reboot_download">Ponovo pokreni u Download</string>
-    <string name="reboot_edl">Ponovo pokreni u EDL</string>
     <string name="module_version_author">%1$s od %2$s</string>
     <string name="module_state_remove">Ukloni</string>
     <string name="module_state_restore">Vrati</string>

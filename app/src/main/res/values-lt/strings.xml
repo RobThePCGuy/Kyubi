@@ -32,11 +32,6 @@
     <string name="uninstall_magisk_msg">Visi moduliai bus išjungti/pašalinti!\nRoot prieiga bus pašalinta!\nVidinė atmintis, iššifruota su Magisk, bus iš naujo užšifruota!</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">Neišjungti priverstinio šifravimo</string>
-    <string name="keep_dm_verity">Neišjungti AVB 2.0/dm-verity</string>
-    <string name="patch_vbmeta">Taisyti vbmeta boot vaizdą</string>
-    <string name="recovery_mode">Atkūrimo režimas</string>
-    <string name="install_options_title">Parinktys</string>
     <string name="install_method_title">Būdas</string>
     <string name="install_next">Toliau</string>
     <string name="install_start">Įdiegti</string>
@@ -84,7 +79,6 @@
     <string name="pid">PID: %1$d</string>
     <string name="target_uid">Tikslinis UID: %1$d</string>
 
-    <!--SafetyNet-->
 
     <!--MagiskHide-->
     <string name="show_system_app">Rodyti sistemos programėles</string>
@@ -95,10 +89,6 @@
     <!--Module-->
     <string name="no_info_provided">(Nėra informacijos)</string>
     <string name="reboot_userspace">Paleidimas neišjungus</string>
-    <string name="reboot_recovery">Paleidimas į Recovery</string>
-    <string name="reboot_bootloader">Paleidimas į Bootloader</string>
-    <string name="reboot_download">Paleidimas į Download</string>
-    <string name="reboot_edl">Paleidimas į EDL</string>
     <string name="module_version_author">%1$s nuo %2$s</string>
     <string name="module_state_remove">Šalinti</string>
     <string name="module_state_restore">Atkurti</string>

@@ -31,11 +31,6 @@
     <string name="uninstall_magisk_msg">Kõik moodulid keelatakse/eemaldatakse!\nJuurkasutaja eemaldatakse!\nMistahes sisemälu failid, millelt eemaldati Magiski tarbeks krüpteering, krüpteeritakse taas!</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">Säilita sunnitud krüpteering</string>
-    <string name="keep_dm_verity">Säilita AVB 2.0/dm-verity</string>
-    <string name="patch_vbmeta">Paika käivitustõmmises vbmeta</string>
-    <string name="recovery_mode">Taastusrežiim</string>
-    <string name="install_options_title">Valikud</string>
     <string name="install_method_title">Meetod</string>
     <string name="install_next">Edasi</string>
     <string name="install_start">Läksime</string>
@@ -83,7 +78,6 @@
     <string name="pid">PID: %1$d</string>
     <string name="target_uid">Siht-UID: %1$d</string>
 
-    <!--SafetyNet-->
 
     <!--MagiskHide-->
     <string name="show_system_app">Kuva uuendatavad süsteemirakendused</string>
@@ -94,10 +88,6 @@
     <!--Module-->
     <string name="no_info_provided">(Info puudub)</string>
     <string name="reboot_userspace">Pehme taaskäivitus</string>
-    <string name="reboot_recovery">Taaskäivita taastusesse</string>
-    <string name="reboot_bootloader">Taaskäivita käivitushaldurisse</string>
-    <string name="reboot_download">Taaskäivita allalaadimisrežiimi</string>
-    <string name="reboot_edl">Taaskäivita EDLi</string>
     <string name="module_version_author">%1$s autorilt %2$s</string>
     <string name="module_state_remove">Eemalda</string>
     <string name="module_state_restore">Taasta</string>

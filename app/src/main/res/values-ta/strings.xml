@@ -30,10 +30,6 @@
     <string name="uninstall_magisk_msg">அனைத்து தொகுதிகள் முடக்கப்படும்/அகற்றப்படும்!\nரூட் அகற்றப்படும்!\nஏற்கனவே இல்லையென்றால் உங்கள் தரவு குறியாக்கம் செய்யப்படலாம்!</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">குறியாக்கத்தைப் பாதுகாக்கவும்</string>
-    <string name="keep_dm_verity">AVB 2.0/dm-verityயை பாதுகாக்கவும்</string>
-    <string name="recovery_mode">மீட்பு செயல்முறை</string>
-    <string name="install_options_title">விருப்பங்கள்</string>
     <string name="install_method_title">செயல்முறை</string>
     <string name="install_next">அடுத்தது</string>
     <string name="install_start">போகலாம்</string>
@@ -81,7 +77,6 @@
     <string name="pid">பிஐடி: %1$d</string>
     <string name="target_uid">இலக்கு பிஐடி: %1$d</string>
 
-    <!--SafetyNet-->
 
     <!--MagiskHide-->
     <string name="show_system_app">தொலைபேசி பயன்பாடுகளைக் காட்டு</string>
@@ -92,10 +87,6 @@
     <!--Module-->
     <string name="no_info_provided">(எந்த தகவலும் வழங்கப்படவில்லை)</string>
     <string name="reboot_userspace">மென்மையான மறுதொடக்கம்</string>
-    <string name="reboot_recovery">மீட்டெடுப்பிற்கு மறுதொடக்கம் செய்</string>
-    <string name="reboot_bootloader">துவக்க ஏற்றிக்கு மீண்டும் துவக்கவும்</string>
-    <string name="reboot_download">பதிவிறக்க பயன்முறையில் மீண்டும் துவக்கவும்</string>
-    <string name="reboot_edl">EDL க்கு மறுதொடக்கம் செய்</string>
     <string name="module_version_author">%1$s மூலமாக %2$s</string>
     <string name="module_state_remove">அகற்று</string>
     <string name="module_state_restore">மீட்டமை</string>

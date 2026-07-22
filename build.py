@@ -242,7 +242,7 @@ def run_ndk_build(flags):
         error("Build binary failed!")
     os.chdir("..")
     for arch in archs:
-        for tgt in support_targets + ["libinit-ld.so"]:
+        for tgt in support_targets:
             source = op.join("native", "libs", arch, tgt)
             target = op.join("native", "out", arch, tgt)
             mv(source, target)
@@ -320,25 +320,6 @@ def write_if_diff(file_name, text):
             f.write(text)
 
 
-def binary_dump(src, var_name, compressor=xz):
-    out_str = f"constexpr unsigned char {var_name}[] = {{"
-    for i, c in enumerate(compressor(src.read())):
-        if i % 16 == 0:
-            out_str += "\n"
-        out_str += f"0x{c:02X},"
-    out_str += "\n};\n"
-    return out_str
-
-
-def dump_bin_header(args):
-    mkdir_p(native_gen_path)
-    for arch in archs:
-        preload = op.join("native", "out", arch, "libinit-ld.so")
-        with open(preload, "rb") as src:
-            text = binary_dump(src, "init_ld_xz")
-        write_if_diff(op.join(native_gen_path, f"{arch}_binaries.h"), text)
-
-
 def dump_flag_header():
     flag_txt = textwrap.dedent(
         """\
@@ -397,16 +378,11 @@ def build_binary(args):
     if "test" in args.target:
         flag += " B_TEST=1"
 
-    if "magiskinit" in args.target:
-        flag += " B_PRELOAD=1"
-
     if "resetprop" in args.target:
         flag += " B_PROP=1"
 
     if flag:
         run_ndk_build(flag)
-
-    # magiskinit embeds preload.so
 
     flag = ""
 
@@ -414,7 +390,6 @@ def build_binary(args):
         flag += " B_INIT=1"
 
     if flag:
-        dump_bin_header(args)
         run_ndk_build(flag)
 
     if clean:
@@ -519,8 +494,6 @@ def cleanup(args):
     if "rust" in args.target:
         header("* Cleaning Rust")
         rm_rf(op.join("native", "src", "target"))
-        rm(op.join("native", "src", "boot", "proto", "mod.rs"))
-        rm(op.join("native", "src", "boot", "proto", "update_metadata.rs"))
         for rs_gen in glob.glob("native/**/*-rs.*pp", recursive=True):
             rm(rs_gen)
 

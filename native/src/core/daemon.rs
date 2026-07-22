@@ -5,13 +5,13 @@ use std::{io, mem};
 
 use base::libc::{O_CLOEXEC, O_RDONLY};
 use base::{
-    cstr, libc, open_fd, BufReadExt, Directory, FsPathBuf, ResultExt, Utf8CStr, Utf8CStrBuf,
-    Utf8CStrBufArr, Utf8CStrBufRef, WalkResult,
+    cstr, libc, open_fd, BufReadExt, Directory, ResultExt, Utf8CStr, Utf8CStrBuf,
+    Utf8CStrBufRef, WalkResult,
 };
 
-use crate::ffi::{get_magisk_tmp, CxxMagiskD, RequestCode};
+use crate::ffi::{CxxMagiskD, RequestCode};
 use crate::logging::magisk_logging;
-use crate::{get_prop, MAIN_CONFIG};
+use crate::get_prop;
 
 // Global magiskd singleton
 pub static MAGISKD: OnceLock<MagiskD> = OnceLock::new();
@@ -43,16 +43,11 @@ pub struct MagiskD {
     pub logd: Mutex<Option<File>>,
     boot_stage_lock: Mutex<BootStateFlags>,
     is_emulator: bool,
-    is_recovery: bool,
 }
 
 impl MagiskD {
     pub fn is_emulator(&self) -> bool {
         self.is_emulator
-    }
-
-    pub fn is_recovery(&self) -> bool {
-        self.is_recovery
     }
 
     pub fn boot_stage_handler(&self, client: i32, code: i32) {
@@ -104,26 +99,8 @@ pub fn daemon_entry() {
     }
     let is_emulator = qemu == "1";
 
-    // Load config status
-    let mut buf = Utf8CStrBufArr::<64>::new();
-    let path = FsPathBuf::new(&mut buf)
-        .join(get_magisk_tmp())
-        .join(MAIN_CONFIG!());
-    let mut is_recovery = false;
-    if let Ok(file) = path.open(O_RDONLY | O_CLOEXEC) {
-        let mut file = BufReader::new(file);
-        file.foreach_props(|key, val| {
-            if key == "RECOVERYMODE" {
-                is_recovery = val == "true";
-                return false;
-            }
-            true
-        });
-    }
-
     let magiskd = MagiskD {
         is_emulator,
-        is_recovery,
         ..Default::default()
     };
     magiskd.start_log_daemon();

@@ -29,10 +29,6 @@
 
 
     <!--Install-->
-    <string name="keep_force_encryption">Afgedwongen versleuteling behouden</string>
-    <string name="keep_dm_verity">AVB 2.0/dm-verity behouden</string>
-    <string name="recovery_mode">Herstelmodus</string>
-    <string name="install_options_title">Opties</string>
     <string name="install_method_title">Methode</string>
     <string name="install_next">Volgende</string>
     <string name="install_start">Aan de slag</string>
@@ -79,7 +75,6 @@
     <string name="pid">PID: %1$d</string>
     <string name="target_uid">Doel-uid: %1$d</string>
 
-    <!--SafetyNet-->
 
     <!-- MagiskHide -->
     <string name="show_system_app">Systeemapps tonen</string>
@@ -88,10 +83,6 @@
 
     <!--Module Fragment-->
     <string name="no_info_provided">(geen informatie verstrekt)</string>
-    <string name="reboot_recovery">Recovery starten</string>
-    <string name="reboot_bootloader">Bootloader starten</string>
-    <string name="reboot_download">Downloadmodus starten</string>
-    <string name="reboot_edl">EDL starten</string>
     <string name="module_version_author">%1$s van %2$s</string>
     <string name="module_state_remove">Verwijderen</string>
     <string name="module_state_restore">Herstellen</string>

@@ -1,7 +1,6 @@
 [build]
-# Choose arm64 as the default target to make the IDE happy.
-# The actual compilation will have the target overriden by command-line.
-target = "aarch64-linux-android"
+# Default target for the IDE; actual compilation overrides it via command-line.
+target = "x86_64-linux-android"
 
 [unstable]
 build-std = ["std", "panic_abort"]

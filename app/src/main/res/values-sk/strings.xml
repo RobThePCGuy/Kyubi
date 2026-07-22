@@ -32,11 +32,6 @@
     <string name="uninstall_magisk_msg">Všetky moduly budú zakázané/odstránené!\nRoot bude odstránený!\nAkékoľvek interné úložisko nešifrované pomocou Magisku bude znovu zašifrované!</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">Ponechať vynútené šifrovanie</string>
-    <string name="keep_dm_verity">Ponechať AVB 2.0/dm-verity</string>
-    <string name="patch_vbmeta">Zaplátať vbmeta v boot image</string>
-    <string name="recovery_mode">Režim Recovery</string>
-    <string name="install_options_title">Možnosti</string>
     <string name="install_method_title">Metóda</string>
     <string name="install_next">Ďalej</string>
     <string name="install_start">Poďme na to</string>
@@ -87,7 +82,6 @@
     <string name="selinux_context">SELinux kontext: %s</string>
     <string name="supp_group">Doplnková skupina: %s</string>
 
-    <!--SafetyNet-->
 
     <!--MagiskHide-->
     <string name="show_system_app">Zobraziť systémové aplikácie</string>
@@ -98,10 +92,6 @@
     <!--Module-->
     <string name="no_info_provided">(Nie sú k dispozícii žiadne informácie)</string>
     <string name="reboot_userspace">Softvérový reštart</string>
-    <string name="reboot_recovery">Reštartovať do Recovery</string>
-    <string name="reboot_bootloader">Reštartovať do Bootloader</string>
-    <string name="reboot_download">Reštartovať do Download</string>
-    <string name="reboot_edl">Reštartovať do EDL</string>
     <string name="module_version_author">%1$s od %2$s</string>
     <string name="module_state_remove">Odstrániť</string>
     <string name="module_state_restore">Obnoviť</string>

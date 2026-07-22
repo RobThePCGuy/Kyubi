@@ -121,9 +121,6 @@ object Config : PreferenceConfig, DBConfig {
         else
             Value.DEFAULT_CHANNEL
 
-    @JvmField var keepVerity = false
-    @JvmField var keepEnc = false
-    @JvmField var recovery = false
 
     var bootId by preference(Key.BOOT_ID, "")
     var askedHome by preference(Key.ASKED_HOME, false)

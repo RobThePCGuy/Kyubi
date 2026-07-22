@@ -28,10 +28,6 @@
     <string name="uninstall_magisk_msg">ਸਾਰੇ ਮੋਡੀਊਲ ਅਯੋਗ/ਮਿਟਾ ਦਿੱਤੇ ਜਾਣਗੇ!\n ਰੂਟ ਨੂੰ ਹਟਾਇਆ ਜਾਏਗਾ!\n ਤੁਹਾਡਾ ਡਾਟਾ ਸੰਭਾਵਤ ਤੌਰ ਤੇ ਐਨਕ੍ਰਿਪਟ ਕੀਤਾ ਗਿਆ ਹੈ ਜੇ ਪਹਿਲਾਂ ਹੀ ਨਹੀਂ!</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">ਫੋਰਸ ਇਨਕ੍ਰਿਪਸ਼ਨ ਨੂੰ ਸੁਰੱਖਿਅਤ ਰੱਖੋ</string>
-    <string name="keep_dm_verity">AVB 2.0/dm-verity ਨੂੰ ਸੁਰੱਖਿਅਤ ਰੱਖੋ</string>
-    <string name="recovery_mode">ਰਿਕਵਰੀ ਮੋਡ</string>
-    <string name="install_options_title">ਚੋਣ</string>
     <string name="install_method_title">ਤਰੀਕਾ</string>
     <string name="install_next">ਅੱਗੇ</string>
     <string name="install_start">ਤਾਂ ਆਓ ਸ਼ੁਰੂ ਕਰੀਏ!</string>
@@ -78,7 +74,6 @@
     <string name="pid">PID: %1$d</string>
     <string name="target_uid">ਟੀਚਾ UID: %1$d</string>
 
-    <!--SafetyNet-->
 
     <!-- MagiskHide -->
     <string name="show_system_app">ਸਿਸਟਮ ਐਪਸ ਦਿਖਾਓ</string>
@@ -89,10 +84,6 @@
     <!--Module -->
     <string name="no_info_provided">(ਕੋਈ ਜਾਣਕਾਰੀ ਨਹੀਂ ਦਿੱਤੀ ਗਈ)</string>
     <string name="reboot_userspace">ਸਾਫਟ ਰੀਬੂਟ</string>
-    <string name="reboot_recovery">ਰਿਕਵਰੀ ਰੀਬੂਟ</string>
-    <string name="reboot_bootloader">ਬੂਟਲੋਡਰ ਰੀਬੂਟ</string>
-    <string name="reboot_download">ਡਾਊਨਲੋਡ ਮੋਡ ਰੀਬੂਟ</string>
-    <string name="reboot_edl">EDL ਰੀਬੂਟ</string>
     <string name="module_version_author"> %2$s ਦੇ ਦੁਆਰਾ %1$s</string>
     <string name="module_state_remove">ਹਟਾਓ</string>
     <string name="module_state_restore">ਰੀਸਟੋਰ ਕਰੋ</string>

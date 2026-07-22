@@ -32,11 +32,6 @@
     <string name="uninstall_magisk_msg">Tüm modüller devre dışı bırakılacak/kaldırılacak!\nKök kaldırılacak!\nMagisk kullanılarak şifrelenmemiş herhangi bir dahili depolama yeniden şifrelenecek!</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">Zorla şifrelemeyi koru</string>
-    <string name="keep_dm_verity">AVB 2.0/dm-verity\'yi koruyun</string>
-    <string name="patch_vbmeta">Önyükleme görüntüsünde vbmeta yamasını uygula</string>
-    <string name="recovery_mode">Kurtarma Modu</string>
-    <string name="install_options_title">Seçenekler</string>
     <string name="install_method_title">Yöntem</string>
     <string name="install_next">Sonraki</string>
     <string name="install_start">Hadi gidelim</string>
@@ -84,7 +79,6 @@
     <string name="pid">PID: %1$d</string>
     <string name="target_uid">Hedef UID: %1$d</string>
 
-    <!--SafetyNet-->
 
     <!--MagiskHide-->
     <string name="show_system_app">Sistem uygulamalarını göster</string>
@@ -95,10 +89,6 @@
     <!--Module-->
     <string name="no_info_provided">(Bilgi verilmedi)</string>
     <string name="reboot_userspace">Yazılımsal olarak yeniden başlat</string>
-    <string name="reboot_recovery">Kurtarma modunda Yeniden Başlat</string>
-    <string name="reboot_bootloader">Önyükleyici modunda Yeniden Başlat</string>
-    <string name="reboot_download">Download modunda Yeniden Başlat</string>
-    <string name="reboot_edl">EDL modunda Yeniden Başlat</string>
     <string name="module_version_author">%1$s / %2$s</string>
     <string name="module_state_remove">Kaldır</string>
     <string name="module_state_restore">Geri yükle</string>

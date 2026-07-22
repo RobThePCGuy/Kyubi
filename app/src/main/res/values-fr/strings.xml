@@ -32,11 +32,6 @@
     <string name="uninstall_magisk_msg">Tous les modules seront désactivés ou supprimés !\nL’accès super‑utiliateur sera perdu !\nVos données seront potentiellement chiffrées si elles ne le sont pas déjà.</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">Conserver le chiffrement forcé</string>
-    <string name="keep_dm_verity">Conserver AVB 2.0/dm-verity</string>
-    <string name="patch_vbmeta">Patch vbmeta dans l’image de démarrage</string>
-    <string name="recovery_mode">Mode récupération</string>
-    <string name="install_options_title">Options</string>
     <string name="install_method_title">Méthode</string>
     <string name="install_next">Suivant</string>
     <string name="install_start">C’est parti</string>
@@ -87,7 +82,6 @@
     <string name="selinux_context">Contexte SELinux: %s</string>
     <string name="supp_group">Groupe supplémentaire: %s</string>
 
-    <!--SafetyNet-->
 
     <!-- MagiskHide -->
     <string name="show_system_app">Afficher les applications système</string>
@@ -98,10 +92,6 @@
     <!--Module -->
     <string name="no_info_provided">(aucune info transmise)</string>
     <string name="reboot_userspace">Redémarrage à chaud</string>
-    <string name="reboot_recovery">Redémarrer en mode récupération</string>
-    <string name="reboot_bootloader">Redémarrer en mode amorçage</string>
-    <string name="reboot_download">Redémarrer en mode téléchargement</string>
-    <string name="reboot_edl">Redémarrer en mode secours (EDL)</string>
     <string name="module_version_author">%1$s, par %2$s</string>
     <string name="module_state_remove">Supprimer</string>
     <string name="module_state_restore">Restaurer</string>

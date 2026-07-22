@@ -30,10 +30,6 @@
     <string name="uninstall_magisk_msg">Alle moduler vil bli avskrudd/fjernet.\nRot-tigang vil bli fjernet!\nKrypter din data hvis den ikke er det allerede.</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">Bevar påvunget kryptering</string>
-    <string name="keep_dm_verity">Bevar AVB 2.0/dm-verity</string>
-    <string name="recovery_mode">Gjenopprettingsmodus</string>
-    <string name="install_options_title">Innstillinger</string>
     <string name="install_method_title">Metode</string>
     <string name="install_next">Neste</string>
     <string name="install_start">Start</string>
@@ -81,7 +77,6 @@
     <string name="pid">PID: %1$d</string>
     <string name="target_uid">Mål-UID: %1$d</string>
 
-    <!--SafetyNet-->
 
     <!--MagiskHide-->
     <string name="show_system_app">Vis systemprogrammer</string>
@@ -92,10 +87,6 @@
     <!--Module-->
     <string name="no_info_provided">(Ingen info angitt)</string>
     <string name="reboot_userspace">Myk omstart</string>
-    <string name="reboot_recovery">Omstart til gjenoppretting</string>
-    <string name="reboot_bootloader">Omstart til oppstartslaster</string>
-    <string name="reboot_download">Omstart til nedlasting</string>
-    <string name="reboot_edl">Omstart til EDL</string>
     <string name="module_version_author">%1$s av %2$s</string>
     <string name="module_state_remove">Fjern</string>
     <string name="module_state_restore">Gjenopprett</string>

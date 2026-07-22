@@ -35,11 +35,6 @@
     <string name="uninstall_magisk_msg">All modules will be disabled or removed.\nRoot will be removed.\nAny internal storage unencrypted through Kyubi will be re-encrypted.</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">Preserve force encryption</string>
-    <string name="keep_dm_verity">Preserve AVB 2.0/dm-verity</string>
-    <string name="patch_vbmeta">Patch vbmeta in boot image</string>
-    <string name="recovery_mode">Recovery Mode</string>
-    <string name="install_options_title">Options</string>
     <string name="install_method_title">Method</string>
     <string name="install_next">Next</string>
     <string name="install_start">Let\'s go</string>
@@ -90,7 +85,6 @@
     <string name="selinux_context">SELinux context: %s</string>
     <string name="supp_group">Supplementary group: %s</string>
 
-    <!--SafetyNet-->
 
     <!-- DenyList -->
     <string name="show_system_app">Show system apps</string>
@@ -101,10 +95,6 @@
     <!--Module-->
     <string name="no_info_provided">(No info provided)</string>
     <string name="reboot_userspace">Soft reboot</string>
-    <string name="reboot_recovery">Reboot to Recovery</string>
-    <string name="reboot_bootloader">Reboot to Bootloader</string>
-    <string name="reboot_download">Reboot to Download</string>
-    <string name="reboot_edl">Reboot to EDL</string>
     <string name="module_version_author">%1$s by %2$s</string>
     <string name="module_state_remove">Remove</string>
     <string name="module_action">Action</string>

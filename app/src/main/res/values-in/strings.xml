@@ -32,11 +32,6 @@
     <string name="uninstall_magisk_msg">Semua modul akan dinonaktifkan/dihapus!\nRoot akan dihapus!\nData Anda berpotensi terenkripsi jika belum!</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">Pertahankan enkripsi paksa</string>
-    <string name="keep_dm_verity">Pertahankan AVB 2.0/dm-verity</string>
-    <string name="patch_vbmeta">Tambal vbmeta dalam boot image</string>
-    <string name="recovery_mode">Mode Recovery</string>
-    <string name="install_options_title">Opsi</string>
     <string name="install_method_title">Metode</string>
     <string name="install_next">Berikutnya</string>
     <string name="install_start">Mulai</string>
@@ -84,7 +79,6 @@
     <string name="pid">PID: %1$d</string>
     <string name="target_uid">Target UID: %1$d</string>
 
-    <!--SafetyNet-->
 
     <!--MagiskHide-->
     <string name="show_system_app">Tampilkan aplikasi sistem</string>
@@ -95,10 +89,6 @@
     <!--Module-->
     <string name="no_info_provided">(Info tidak tersedia)</string>
     <string name="reboot_userspace">Mulai ulang secara halus</string>
-    <string name="reboot_recovery">Mulai ulang ke mode Recovery</string>
-    <string name="reboot_bootloader">Mulai ulang ke mode Bootloader</string>
-    <string name="reboot_download">Mulai ulang ke mode Download</string>
-    <string name="reboot_edl">Mulai ulang ke mode EDL</string>
     <string name="module_version_author">%1$s oleh %2$s</string>
     <string name="module_state_remove">Hapus</string>
     <string name="module_state_restore">Pulihkan</string>

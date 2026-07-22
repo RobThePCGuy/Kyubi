@@ -32,11 +32,6 @@
     <string name="uninstall_magisk_msg">सभी मॉड्यूल्स को निष्क्रिय/हटा दिया जाएगा!\n रूट को हटा दिया जाएगा!\n आपका डेटा संभावित रूप से एन्क्रिप्ट किया गया है यदि पहले से नहीं है!</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">फ़ोर्स एन्क्रिप्शन को संरक्षित रखें</string>
-    <string name="keep_dm_verity">AVB 2.0/dm-verity को संरक्षित रखें</string>
-    <string name="patch_vbmeta">vbmeta को बूट छवि में पैच करें</string>
-    <string name="recovery_mode">रिकवरी मोड</string>
-    <string name="install_options_title">विकल्प</string>
     <string name="install_method_title">तरीका</string>
     <string name="install_next">आगे</string>
     <string name="install_start">तो चलिए शुरू करते हैं!</string>
@@ -84,7 +79,6 @@
     <string name="pid">PID: %1$d</string>
     <string name="target_uid">लक्षित UID: %1$d</string>
 
-    <!--SafetyNet-->
 
     <!-- MagiskHide -->
     <string name="show_system_app">सिस्टम ऐप्स दिखाएं</string>
@@ -95,10 +89,6 @@
     <!--Module -->
     <string name="no_info_provided">(कोई जानकारी नहीं दी गई)</string>
     <string name="reboot_userspace">सॉफ्ट रिबूट</string>
-    <string name="reboot_recovery">रिकवरी रिबूट</string>
-    <string name="reboot_bootloader">बूटलोडर रिबूट</string>
-    <string name="reboot_download">डाउनलोड मोड रिबूट</string>
-    <string name="reboot_edl">EDL रिबूट</string>
     <string name="module_version_author"> %2$s के द्वारा %1$s</string>
     <string name="module_state_remove">हटाएँ</string>
     <string name="module_state_restore">रिस्टोर करें</string>

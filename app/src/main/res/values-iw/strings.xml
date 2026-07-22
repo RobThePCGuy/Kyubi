@@ -32,11 +32,6 @@
     <string name="uninstall_magisk_msg">כל המודולים יושבתו/יוסרו!\nגישת שורש תושבת!\nהנתונים שלך עשויים להיות מוצפנים אם לא הוצפנו כבר!</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">שמירה על הצפנה בכח</string>
-    <string name="keep_dm_verity">שמירה על AVB 2.0/dm-verity</string>
-    <string name="patch_vbmeta">תיקון vbmeta בתמונת האתחול</string>
-    <string name="recovery_mode">מצב שחזור</string>
-    <string name="install_options_title">אפשרויות</string>
     <string name="install_method_title">שיטה</string>
     <string name="install_next">הבא</string>
     <string name="install_start">צא לדרך</string>
@@ -86,7 +81,6 @@
     <string name="selinux_context">הקשר SELinux: %s</string>
     <string name="supp_group">קבוצה משלימה: %s</string>
 
-    <!--SafetyNet-->
 
     <!-- MagiskHide -->
     <string name="show_system_app">הצגת יישומי מערכת</string>
@@ -97,10 +91,6 @@
     <!--Module-->
     <string name="no_info_provided">(לא סופק מידע)</string>
     <string name="reboot_userspace">אתחול מהיר</string>
-    <string name="reboot_recovery">אתחול למצב שחזור</string>
-    <string name="reboot_bootloader">אתחול מצב מנהל האתחול</string>
-    <string name="reboot_download">אתחול מצב הורדה</string>
-    <string name="reboot_edl">אתחול למצב EDL</string>
     <string name="module_version_author">%1$s מאת %2$s</string>
     <string name="module_state_remove">הסרה</string>
     <string name="module_state_restore">שיחזור</string>

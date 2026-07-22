@@ -31,10 +31,6 @@
     <string name="uninstall_magisk_msg">Ця дія призведе до вимкнення/видалення всіх модулів! Рут буде повністю видалено!\nВаші дані можуть зашифруватися, якщо вони не зашифровані!\nВпевнені, що бажаєте продовжити?</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">Залишити примусове шифрування</string>
-    <string name="keep_dm_verity">Залишити AVB 2.0/dm-verity</string>
-    <string name="recovery_mode">Режим Recovery</string>
-    <string name="install_options_title">Параметри</string>
     <string name="install_method_title">Спосіб</string>
     <string name="install_next">Далі</string>
     <string name="install_start">Встановити</string>
@@ -82,7 +78,6 @@
     <string name="pid">PID: %1$d</string>
     <string name="target_uid">Цільовий UID: %1$d</string>
 
-    <!--SafetyNet-->
 
     <!--MagiskHide-->
     <string name="show_system_app">Показувати системні застосунки</string>
@@ -93,10 +88,6 @@
     <!--Module-->
     <string name="no_info_provided">(немає наданої інформації)</string>
     <string name="reboot_userspace">Швидке перезавантаження</string>
-    <string name="reboot_recovery">Перезавантажити в Recovery</string>
-    <string name="reboot_bootloader">Перезавантажити в Bootloader</string>
-    <string name="reboot_download">Перезавантажити в Download</string>
-    <string name="reboot_edl">Перезавантажити в EDL</string>
     <string name="module_version_author">%1$s, розробник %2$s</string>
     <string name="module_state_remove">Видалити</string>
     <string name="module_state_restore">Відновити</string>

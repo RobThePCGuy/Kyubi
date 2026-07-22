@@ -32,11 +32,6 @@
     <string name="uninstall_magisk_msg">সমস্ত মডিউল নিষ্ক্রিয়/মুছে ফেলা হবে!\nরুট সরানো হবে!\nম্যাজিস্ক ব্যবহারের মাধ্যমে এনক্রিপ্ট করা যে কোনও অভ্যন্তরীণ স্টোরেজ পুনরায় এনক্রিপ্ট করা হবে!</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">এনক্রিপশন সংরক্ষণ করুন</string>
-    <string name="keep_dm_verity">AVB 2.0/dm-verity সংরক্ষণ করুন</string>
-    <string name="patch_vbmeta">বুট ইমেজে vbmeta প্যাচ করুন</string>
-    <string name="recovery_mode">পুনরুদ্ধার অবস্থা</string>
-    <string name="install_options_title">অপশন</string>
     <string name="install_method_title">পদ্ধতি</string>
     <string name="install_next">পরবর্তী</string>
     <string name="install_start">চলো যাই</string>
@@ -83,7 +78,6 @@
     <string name="pid">PID: %1$d</string>
     <string name="target_uid">লক্ষ্য UID: %1$d</string>
 
-    <!--SafetyNet-->
 
     <!--MagiskHide-->
     <string name="show_system_app">সিস্টেম অ্যাপ দেখান</string>
@@ -94,10 +88,6 @@
     <!--Module-->
     <string name="no_info_provided">(কোন তথ্য প্রদান করা হয়</string>
     <string name="reboot_userspace">নরম রিবুট</string>
-    <string name="reboot_recovery">রিকভারিতে রিবুট করুন</string>
-    <string name="reboot_bootloader">বুটলোডারে রিবুট করুন</string>
-    <string name="reboot_download">ডাউনলোড করতে রিবুট করুন</string>
-    <string name="reboot_edl">EDL এ রিবুট করুন</string>
     <string name="module_version_author">%1$s by %2$s</string>
     <string name="module_state_remove">অপসারণ</string>
     <string name="module_state_restore">পুনরুদ্ধার করুন</string>

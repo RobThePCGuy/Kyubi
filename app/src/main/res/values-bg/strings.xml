@@ -32,11 +32,6 @@
     <string name="uninstall_magisk_msg">Всички модули ще бъдат изключени/премахнати. Достъпът до правата на суперпотребителя ще бъде премахнат!\nАко вътрешното хранилище е разшифровано с Magisk, то ще бъде шифровано отново!</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">Запазване на наложеното шифроване</string>
-    <string name="keep_dm_verity">Запазване на AVB 2.0/dm-verity</string>
-    <string name="patch_vbmeta">Закърпване на vbmeta в образ на boot</string>
-    <string name="recovery_mode">Режим за възстановяване</string>
-    <string name="install_options_title">Настройки</string>
     <string name="install_method_title">Метод</string>
     <string name="install_next">Напред</string>
     <string name="install_start">Начало</string>
@@ -84,7 +79,6 @@
     <string name="pid">PID: %1$d</string>
     <string name="target_uid">Целеви UID: %1$d</string>
 
-    <!--SafetyNet-->
 
     <!--MagiskHide-->
     <string name="show_system_app">Показване на системни приложения</string>
@@ -95,10 +89,6 @@
     <!--Module-->
     <string name="no_info_provided">(Липсва информация)</string>
     <string name="reboot_userspace">Бърз рестарт</string>
-    <string name="reboot_recovery">Рестарт в режим за възстановяване</string>
-    <string name="reboot_bootloader">Рестарт в bootloader</string>
-    <string name="reboot_download">Рестарт в режим за изтегляне</string>
-    <string name="reboot_edl">Рестарт в EDL</string>
     <string name="module_version_author">%1$s от %2$s</string>
     <string name="module_state_remove">Премахване</string>
     <string name="module_state_restore">Възстановяване</string>

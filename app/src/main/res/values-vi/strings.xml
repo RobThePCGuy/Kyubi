@@ -31,11 +31,6 @@
     <string name="uninstall_magisk_msg">Tất cả các mô-đun sẽ bị tắt hoặc bị xóa!\nRoot sẽ bị gỡ bỏ\nPhân vùng data đã tắt mã hóa thông qua Magisk sẽ bị mã hóa lại!</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">Giữ bắt buộc mã hóa</string>
-    <string name="keep_dm_verity">Giữ AVB 2.0/dm-verity</string>
-     <string name="patch_vbmeta">Vá vbmeta trong boot image</string>
-    <string name="recovery_mode">Chế độ Recovery</string>
-    <string name="install_options_title">Tùy chọn</string>
     <string name="install_method_title">Phương pháp</string>
     <string name="install_next">Kế tiếp</string>
     <string name="install_start">Đi nào</string>
@@ -83,7 +78,6 @@
     <string name="pid">PID: %1$d</string>
     <string name="target_uid">UID mục tiêu: %1$d</string>
 
-    <!--SafetyNet-->
 
     <!--MagiskHide-->
     <string name="show_system_app">Hiển thị các ứng dụng hệ thống</string>
@@ -94,10 +88,6 @@
     <!--Module-->
     <string name="no_info_provided">(Không cung cấp thông tin)</string>
     <string name="reboot_userspace">Khởi động lại</string>
-    <string name="reboot_recovery">Khởi động lại vào Recovery Mode</string>
-    <string name="reboot_bootloader">Khởi động lại vào Bootloader</string>
-    <string name="reboot_download">Khởi động lại vào Download</string>
-    <string name="reboot_edl">Khởi động lại vào EDL</string>
     <string name="module_version_author">%1$s bởi %2$s</string>
     <string name="module_state_remove">Gỡ bỏ</string>
     <string name="module_state_restore">Khôi phục</string>

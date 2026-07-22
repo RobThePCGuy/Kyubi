@@ -32,11 +32,6 @@
     <string name="uninstall_magisk_msg">Wszystkie moduły zostaną wyłączone/usunięte!\nRoot zostanie usunięty!\nWszelka wewnętrzna pamięć niezaszyfrowana w związku z użytkowaniem Magisk zostanie ponownie zaszyfrowana!</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">Zachowaj force encryption (wymuszenie szyfrowania)</string>
-    <string name="keep_dm_verity">Zachowaj AVB 2.0/dm-verity (weryfikację rozruchu)</string>
-    <string name="patch_vbmeta">Załataj vbmeta w obrazie rozruchowym</string>
-    <string name="recovery_mode">Tryb Recovery</string>
-    <string name="install_options_title">Opcje</string>
     <string name="install_method_title">Metoda</string>
     <string name="install_next">Dalej</string>
     <string name="install_start">Zaczynajmy</string>
@@ -87,7 +82,6 @@
     <string name="selinux_context">Kontekst SELinux: %s</string>
     <string name="supp_group">Grupa uzupełniająca: %s</string>
 
-    <!--SafetyNet-->
 
     <!--MagiskHide -->
     <string name="show_system_app">Pokaż aplikacje systemowe</string>
@@ -98,10 +92,6 @@
     <!--Module -->
     <string name="no_info_provided">(Brak informacji)</string>
     <string name="reboot_userspace">Miękki reboot</string>
-    <string name="reboot_recovery">Reboot do trybu Recovery</string>
-    <string name="reboot_bootloader">Reboot do trybu Bootloader</string>
-    <string name="reboot_download">Reboot do trybu Download</string>
-    <string name="reboot_edl">Reboot do trybu EDL</string>
     <string name="module_version_author">%1$s od %2$s</string>
     <string name="module_state_remove">Usuń</string>
     <string name="module_state_restore">Przywróć</string>

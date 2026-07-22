@@ -29,10 +29,6 @@
     <string name="uninstall_magisk_msg">Alla moduler kommer att bli inaktiverade/borttagna!\nRoot kommer också att avinstalleras!\nDin data kan komma att krypteras om den inte är det redan!</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">Bibehåll tvingad kryptering</string>
-    <string name="keep_dm_verity">Bibehåll AVB 2.0/dm-verity</string>
-    <string name="recovery_mode">Recovery-läge</string>
-    <string name="install_options_title">Alternativ</string>
     <string name="install_method_title">Metod</string>
     <string name="install_next">Nästa</string>
     <string name="install_start">Nu kör vi!</string>
@@ -80,7 +76,6 @@
     <!-- <string name="pid">PID: %1$d</string> -->
     <!-- <string name="target_uid">Target UID: %1$d</string> -->
 
-    <!--SafetyNet-->
 
     <!--MagiskHide-->
     <string name="show_system_app">Visa system-appar</string>
@@ -91,10 +86,6 @@
     <!--Module-->
     <string name="no_info_provided">(Ingen information tillgänglig)</string>
     <string name="reboot_userspace">Mjuk omstart</string>
-    <string name="reboot_recovery">Starta om till Recovery</string>
-    <string name="reboot_bootloader">Omstart till Bootloader</string>
-    <string name="reboot_download">Omstart till Nedladdningsläge</string>
-    <string name="reboot_edl">Omstart till EDL</string>
     <string name="module_version_author">%1$s av %2$s</string>
     <string name="module_state_remove">Ta bort</string>
     <string name="module_state_restore">Återställ</string>

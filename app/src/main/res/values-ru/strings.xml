@@ -32,11 +32,6 @@
     <string name="uninstall_magisk_msg">Все модули будут отключены либо удалены!\nRoot-доступ будет недоступен!\nБудет активировано шифрование /data (если отключалось при установке)!</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">Не отключать шифрование /data</string>
-    <string name="keep_dm_verity">Не отключать AVB 2.0/dm-verity</string>
-    <string name="patch_vbmeta">Патчить vbmeta в boot-образе</string>
-    <string name="recovery_mode">Патчить образ recovery вместо boot</string>
-    <string name="install_options_title">Опции</string>
     <string name="install_method_title">Способ</string>
     <string name="install_next">Далее</string>
     <string name="install_start">Установить</string>
@@ -84,7 +79,6 @@
     <string name="pid">PID: %1$d</string>
     <string name="target_uid">Целевой UID: %1$d</string>
 
-    <!--SafetyNet-->
 
     <!--MagiskHide-->
     <string name="show_system_app">Системные приложения</string>
@@ -95,10 +89,6 @@
     <!--Module-->
     <string name="no_info_provided">(Нет информации)</string>
     <string name="reboot_userspace">Перезапуск оболочки</string>
-    <string name="reboot_recovery">Перезагрузка в Recovery</string>
-    <string name="reboot_bootloader">Перезагрузка в Bootloader</string>
-    <string name="reboot_download">Перезагрузка в Download</string>
-    <string name="reboot_edl">Перезагрузка в EDL</string>
     <string name="module_version_author">%1$s от %2$s</string>
     <string name="module_state_remove">Удалить</string>
     <string name="module_state_restore">Восстановить</string>

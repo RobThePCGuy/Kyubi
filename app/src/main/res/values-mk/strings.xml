@@ -10,17 +10,12 @@
 
     <!--Status Fragment-->
     <string name="invalid_update_channel">Невалиден канал за ажурирања</string>
-    <string name="keep_force_encryption">Задржи ја присилната енкрипција</string>
-    <string name="keep_dm_verity">Задржи AVB 2.0/dm-verity</string>
     <string name="uninstall_magisk_title">Деинсталирај го Magisk</string>
     <string name="uninstall_magisk_msg">Сите модули ќе бидат оневозможени/oтстранети. Рут привилегиите ќе бидат отстранети, а вашите податоци може да се енкриптираат ако моментално не се.</string>
     <string name="update">Ажурирај</string>
 
     <!--Module Fragment-->
     <string name="no_info_provided">(Нема информации)</string>
-    <string name="reboot_recovery">Рестартирај во Recovery режим</string>
-    <string name="reboot_bootloader">Рестартирај во Bootloader режим</string>
-    <string name="reboot_download">Рестартирај во Download режим</string>
 
     <!--Repo Fragment-->
     <string name="update_available">Достапно е ажурирање</string>

@@ -16,10 +16,6 @@ object RebootMenu {
         when (item.itemId) {
             R.id.action_reboot_normal -> systemReboot()
             R.id.action_reboot_userspace -> systemReboot("userspace")
-            R.id.action_reboot_bootloader -> systemReboot("bootloader")
-            R.id.action_reboot_download -> systemReboot("download")
-            R.id.action_reboot_edl -> systemReboot("edl")
-            R.id.action_reboot_recovery -> systemReboot("recovery")
             else -> Unit
         }
         return true

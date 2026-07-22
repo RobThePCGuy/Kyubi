@@ -32,11 +32,6 @@
     <string name="uninstall_magisk_msg">എല്ലാ മൊഡ്യൂളുകളും പ്രവർത്തനരഹിതമാക്കും/നീക്കം ചെയ്യപ്പെടും!\nറൂട്ട് നീക്കം ചെയ്യപ്പെടും!\nമജിസ്‌ക് വഴി  അൺഎൻക്രിപ്റ്റ്  ചെയ്യപ്പെട്ട ഇന്റെര്ണല് സ്റ്റോറേജുകൾ വീണ്ടും എൻക്രിപ്റ്റ് ചെയ്യപ്പെടും!!</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">ഫോഴ്‌സ് എൻക്രിപ്ഷൻ സംരക്ഷിക്കുക</string>
-    <string name="keep_dm_verity">AVB 2.0/dm-verity സംരക്ഷിക്കുക</string>
-    <string name="patch_vbmeta">ബൂട്ട് ഇമേജിൽ vbmeta പാച്ച് ചെയ്യുക</string>
-    <string name="recovery_mode">റിക്കവറി മോഡ്</string>
-    <string name="install_options_title">ഓപ്ഷനുകൾ</string>
     <string name="install_method_title">രീതി</string>
     <string name="install_next">അടുത്തത്</string>
     <string name="install_start">നമുക്ക് തുടങ്ങാം</string>
@@ -84,7 +79,6 @@
     <string name="pid">PID: %1$d</string>
     <string name="target_uid">ടാർഗെറ്റ് UID: %1$d</string>
 
-    <!--SafetyNet-->
 
     <!--MagiskHide-->
     <string name="show_system_app">സിസ്റ്റം ആപ്പുകൾ കാണിക്കുക</string>
@@ -95,10 +89,6 @@
     <!--Module-->
     <string name="no_info_provided">(വിവരങ്ങളൊന്നും നൽകിയിട്ടില്ല)</string>
     <string name="reboot_userspace">സോഫ്റ്റ് റീബൂട്ട്</string>
-    <string name="reboot_recovery">റിക്കവറിയിലേക്ക് റീബൂട്ട് ചെയ്യുക</string>
-    <string name="reboot_bootloader">ബൂട്ട്ലോഡറിലേക്ക് റീബൂട്ട് ചെയ്യുക</string>
-    <string name="reboot_download">ഡൗൺലോഡ് മോഡിലേക്ക് റീബൂട്ട് ചെയ്യുക</string>
-    <string name="reboot_edl">EDL-ലേക്ക് റീബൂട്ട് ചെയ്യുക</string>
     <string name="module_version_author">%1$s നിർമ്മിച്ചത് %2$s</string>
     <string name="module_state_remove">നീക്കുക</string>
     <string name="module_state_restore">പുനഃസ്ഥാപിക്കുക</string>

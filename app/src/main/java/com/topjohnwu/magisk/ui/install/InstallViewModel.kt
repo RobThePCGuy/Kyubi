@@ -27,12 +27,7 @@ import java.io.IOException
 class InstallViewModel(svc: NetworkService, markwon: Markwon) : BaseViewModel() {
 
     val isRooted get() = Info.isRooted
-    val skipOptions = Info.isEmulator || (Info.isSAR && !Info.isFDE && Info.ramdisk)
-    val allowSystemInstall = isRooted && !Info.isBootPatched
-
-    @get:Bindable
-    var step = if (skipOptions) 1 else 0
-        set(value) = set(value, field, { field = it }, BR.step)
+    val allowSystemInstall = isRooted
 
     private var methodId = -1
 
@@ -69,26 +64,22 @@ class InstallViewModel(svc: NetworkService, markwon: Markwon) : BaseViewModel() 
     }
 
     fun install() {
-        // Kyubi is system-mode only: magiskboot is stripped, so the boot-image
-        // install methods are gone. Always run the system-mode install.
         FlashFragment.flash(2).navigate(true)
     }
 
     override fun onSaveState(state: Bundle) {
-        state.putParcelable(INSTALL_STATE_KEY, InstallState(methodId, step))
+        state.putParcelable(INSTALL_STATE_KEY, InstallState(methodId))
     }
 
     override fun onRestoreState(state: Bundle) {
         state.getParcelable<InstallState>(INSTALL_STATE_KEY)?.let {
             methodId = it.method
-            step = it.step
         }
     }
 
     @Parcelize
     class InstallState(
         val method: Int,
-        val step: Int,
     ) : Parcelable
 
     companion object {

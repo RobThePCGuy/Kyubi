@@ -31,12 +31,10 @@ object Info {
     @JvmField val isZygiskEnabled = System.getenv("ZYGISK_ENABLED") == "1"
     @JvmStatic val isFDE get() = crypto == "block"
     @JvmField var ramdisk = false
-    var patchBootVbmeta = false
     var crypto = ""
     var noDataExec = false
     var isRooted = false
     var sulist = false
-    var isBootPatched = false
 
     @JvmField var hasGMS = true
     @JvmField val isEmulator =

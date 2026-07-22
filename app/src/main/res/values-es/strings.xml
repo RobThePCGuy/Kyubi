@@ -32,11 +32,6 @@
     <string name="uninstall_magisk_msg">Antes de desinstalar Magisk, ten en cuenta lo siguiente:\n• Todos los módulos serán desinstalados\n• Perderás el acceso root\n• Tu almacenamiento interno será reencriptado en caso de que no lo esté</string>
 
     <!--Instalación-->
-    <string name="keep_force_encryption">Mantener FDE (Full-Disk Encryption)</string>
-    <string name="keep_dm_verity">Mantener AVB 2.0/dm-verity</string>
-    <string name="patch_vbmeta">Parchar vbmeta en el archivo boot.img</string>
-    <string name="recovery_mode">Modo recovery</string>
-    <string name="install_options_title">Opciones de instalación:</string>
     <string name="install_method_title">Método de instalación:</string>
     <string name="install_next">Siguiente</string>
     <string name="install_start">Instalar</string>
@@ -84,7 +79,6 @@
     <string name="pid">PID: %1$d</string>
     <string name="target_uid">Target UID: %1$d</string>
 
-    <!--SafetyNet/PlayIntegrity-->
 
     <!--Denylist-->
     <string name="show_system_app">Mostrar apps del sistema</string>
@@ -95,10 +89,6 @@
     <!--Módulos-->
     <string name="no_info_provided">El creador del módulo no proporcionó ninguna descripción.</string>
     <string name="reboot_userspace">Reinicio suave</string>
-    <string name="reboot_recovery">Modo Recovery</string>
-    <string name="reboot_bootloader">Modo Bootloader</string>
-    <string name="reboot_download">Modo Download</string>
-    <string name="reboot_edl">Modo EDL</string>
     <string name="module_version_author">Versión %1$s, por %2$s</string>
     <string name="module_state_remove">Desinstalar</string>
     <string name="module_state_restore">Reinstalar</string>

@@ -32,11 +32,6 @@
     <string name="uninstall_magisk_msg">Të gjitha modulet do të çaktivizohen/hiqen!\nRrënja do të hiqet!\nTë dhënat tuaja potencialisht të koduara nëse jo tashmë!</string>
 
     <!--Install-->
-    <string name="keep_force_encryption">Ruaj kriptimin me forcë</string>
-    <string name="keep_dm_verity">Ruaj AVB 2.0/dm-verity</string>
-    <string name="recovery_mode">Recovery Mode</string>
-    <string name="install_options_title">Opsionet</string>
-    <string name="patch_vbmeta">Arno vbmeta në imazhin e nisjes</string>
     <string name="install_method_title">Metoda</string>
     <string name="install_next">Tjetër</string>
     <string name="install_start">Shkojme</string>
@@ -87,7 +82,6 @@
     <string name="selinux_context">Konteksti SELinux: %s</string>
     <string name="supp_group">Grupi suplementar: %s</string>
 
-    <!--SafetyNet-->
 
     <!--MagiskHide-->
     <string name="show_system_app">Shfaq aplikacionet e sistemit</string>
@@ -98,10 +92,6 @@
     <!--Module-->
     <string name="no_info_provided">(Nuk ka asnjë informacion)</string>
     <string name="reboot_userspace">Rinisje e shpejtë</string>
-    <string name="reboot_recovery">Rinis te Recovery</string>
-    <string name="reboot_bootloader">Rinis te Bootloader</string>
-    <string name="reboot_download">Rinis te Download</string>
-    <string name="reboot_edl">Rinis te EDL</string>
     <string name="module_version_author">%1$s nga %2$s</string>
     <string name="module_state_remove">Hiqe</string>
     <string name="module_state_restore">Rikëthe</string>
