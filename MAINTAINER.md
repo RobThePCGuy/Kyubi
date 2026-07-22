@@ -13,18 +13,19 @@ that snapshot so a future maintainer can tell Kyubi's deltas from upstream.
   APKs are **not** universal.
 - **No `magiskboot` / no boot-image path.** The `magiskboot` native module is
   dropped from the build (load-bearing: without it boot-image patching literally
-  cannot run), and Kyubi installs **system-mode only**. The boot-patch install
-  routes are both **hidden** (`InstallViewModel.allowBootPatch = false`) and
-  **blocked** (`InstallViewModel.install()` always runs the system-mode flash and
-  never navigates into a boot-image flow). `manager.sh`'s `env_check` no longer
-  requires `magiskboot`/preinit (so a healthy offline install shows no "additional
-  setup" nag). **Not yet stripped (tracked dead code):** `MagiskInstaller`'s
-  `Patch`/`Direct`/`SecondSlot` + `patchBoot()`, and the ChromeOS boot-signing
-  assets, are unreachable but still present; `boot_patch.sh` is deliberately kept
-  because the addon.d survival path (`install_addond`) still consumes it. Removing
-  that plumbing is a build-verified follow-up, not a quick delete. The obsolete
-  AVD boot/root developer scripts and their `build.py` commands have been removed,
-  along with the dormant native `B_BOOT` build wiring.
+  cannot run), and Kyubi installs **system-mode only**. `manager.sh`'s `env_check`
+  no longer requires `magiskboot`/preinit (so a healthy offline install shows no
+  "additional setup" nag). The entire boot-image install path is **removed**, not
+  just hidden: `MagiskInstaller`'s `Patch`/`Direct`/`SecondSlot` + `patchBoot()` +
+  boot/vbmeta/payload parsers; the install-method UI (patch/direct/inactive-slot)
+  and its strings/dialog; `boot_patch.sh`, the ChromeOS signing tools, and
+  `bootctl`; the addon.d survival script + the `install_addond` call/function; the
+  recovery-flashable-zip metadata (`update_binary.sh`/`flash_script.sh` embedding);
+  the obsolete AVD dev scripts + their `build.py` commands; and the dormant native
+  `B_BOOT` wiring. **Still present (deliberate, coupled/inert):** the boot-image
+  helpers in the shared `util_functions.sh` (used by the kept uninstaller, whose
+  boot branch is now guarded by an explicit abort), the inert install-options
+  card, `Info.patchBootVbmeta`, and `tools/ndk-bins/arm`.
 - **Built-in Zygisk removed** (upstream commit `2ef8f00`, security). The dead
   Zygisk settings toggle is removed from the app. Use
   **[ReZygisk](https://github.com/PerformanC/ReZygisk)** for the Zygisk API;

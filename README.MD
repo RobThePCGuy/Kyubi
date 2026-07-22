@@ -19,10 +19,10 @@ smaller, faster to build, and has less surface to go wrong:
 - **No `magiskboot`, no boot-image patching.** The `magiskboot` native tool — the
   thing that unpacks and repacks a boot image — is stripped from the build, so
   boot-image patching cannot run. Kyubi installs in **system mode** only, writing
-  into the guest's system partition, and the boot-patch install options are
-  disabled in the app. (Some higher-level boot-patch plumbing still exists but is
-  unreachable; `boot_patch.sh` is retained only for the addon.d survival path.
-  Removing that dead code is tracked, not yet done.)
+  into the guest's system partition. The boot-image install path is gone: the
+  installer's boot-patch methods, `boot_patch.sh`, the ChromeOS signing tools, the
+  addon.d survival script, and the recovery-flashable-zip metadata are all removed.
+  Kyubi is not a recovery-flashable zip.
 - **No built-in Zygisk.** The built-in Zygisk was removed upstream (commit
   `2ef8f00`) over security vulnerabilities. Use
   **[ReZygisk](https://github.com/PerformanC/ReZygisk)** for the Zygisk API;

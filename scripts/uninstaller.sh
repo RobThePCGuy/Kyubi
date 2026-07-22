@@ -144,6 +144,12 @@ backup_restore "$MIRRORDIR/system/etc/init/bootanim.rc" && rm -rf "$MIRRORDIR/sy
 
 else
 
+# Kyubi is system-mode only: magiskboot does not ship, so the boot-image
+# uninstall path below cannot run. Reaching here means the system-mode marker
+# (/system/etc/init/magisk/config SYSTEMMODE=true) is missing or corrupt -- fail
+# explicitly instead of executing a guaranteed-to-fail boot-image restore.
+abort "! No system-mode Kyubi installation found (Kyubi is system-mode only)"
+
 ui_print "--- Uninstall Magisk in boot image"
 
 [ -z $BOOTIMAGE ] && abort "! Unable to detect target image"

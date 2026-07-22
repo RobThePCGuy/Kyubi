@@ -24,30 +24,32 @@ env_check() {
 
 cp_readlink() {
   if [ -z $2 ]; then
-    cd $1
+    cd $1 || return 1
   else
-    cp -af $1/. $2
-    cd $2
+    cp -af $1/. $2 || return 1
+    cd $2 || return 1
   fi
   for file in *; do
     if [ -L $file ]; then
-      local full=$(readlink -f $file)
-      rm $file
-      cp -af $full $file
+      local full
+      full=$(readlink -f $file) || return 1
+      rm $file || return 1
+      cp -af $full $file || return 1
     fi
   done
-  chmod -R 755 .
+  chmod -R 755 . || return 1
   cd /
 }
 
 fix_env() {
-  # Cleanup and make dirs
-  rm -rf $MAGISKBIN/*
-  mkdir -p $MAGISKBIN 2>/dev/null
-  chmod 700 $NVBASE
-  cp_readlink $1 $MAGISKBIN
-  rm -rf $1
-  chown -R 0:0 $MAGISKBIN
+  # Cleanup and make dirs -- fail fast so a partial/empty $MAGISKBIN can never be
+  # reported as a successful install.
+  rm -rf $MAGISKBIN/* || return 1
+  mkdir -p $MAGISKBIN || return 1
+  chmod 700 $NVBASE || return 1
+  cp_readlink $1 $MAGISKBIN || return 1
+  rm -rf $1 || return 1
+  chown -R 0:0 $MAGISKBIN || return 1
 }
 
 run_uninstaller() {
@@ -452,8 +454,8 @@ xdirect_install_system() {
   # boot-image/magiskboot logic and emulators don't take OTAs). Core install +
   # env fix + migrations only.
   direct_install_system "$@" || { cleanup_system_installation; installer_cleanup; return 1; }
-  fix_env "$1"
-  run_migrations
+  fix_env "$1" || { cleanup_system_installation; installer_cleanup; return 1; }
+  run_migrations || return 1
   return 0
 }
 

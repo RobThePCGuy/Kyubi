@@ -136,8 +136,10 @@ abstract class MagiskInstallImpl protected constructor(
     // so only clean up when it was actually initialized. isInitialized is only
     // allowed in the declaring class, hence this helper.
     protected fun cleanupInstall() {
+        // Synchronous (.exec, not .submit): the caller holds the session lock and
+        // must not return until the failed attempt's files are actually gone.
         if (::installDir.isInitialized)
-            Shell.cmd("rm -rf $installDir").submit()
+            Shell.cmd("rm -rf $installDir").exec()
     }
 
     @WorkerThread
@@ -149,7 +151,14 @@ abstract class MagiskInstallImpl protected constructor(
         if (!haveActiveSession.compareAndSet(false, true))
             return false
         return try {
-            withContext(Dispatchers.IO) { operations() }
+            withContext(Dispatchers.IO) {
+                val result = operations()
+                // Clean up a failed attempt synchronously and WHILE the lock is
+                // still held, so an immediate retry can't recreate installDir and
+                // then have this delete race away the new attempt's files.
+                if (!result) cleanupInstall()
+                result
+            }
         } finally {
             haveActiveSession.set(false)
         }
@@ -166,13 +175,10 @@ abstract class MagiskInstaller(
 ) : MagiskInstallImpl(console, logs) {
 
     override suspend fun exec(): Boolean {
+        // Failure cleanup is handled synchronously inside super.exec() while the
+        // session lock is held; here we only report the outcome.
         val success = super.exec()
-        if (success) {
-            console.add("- All done!")
-        } else {
-            cleanupInstall()
-            console.add("! Installation failed")
-        }
+        console.add(if (success) "- All done!" else "! Installation failed")
         return success
     }
 
