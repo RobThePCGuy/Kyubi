@@ -106,22 +106,30 @@ jobs:
       - name: Verify signing certificates
         if: github.ref == 'refs/heads/kitsune' && github.event_name == 'push'
         run: |
+          set -o pipefail
           APKSIGNER="$(ls "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -1)"
-          cert() { "$APKSIGNER" verify --print-certs "$1" 2>/dev/null \
-            | grep -iE 'certificate SHA-256 digest' | head -1 | awk '{print $NF}'; }
+          # ALL signer cert SHA-256 digests, one per line (nonzero if apksigner
+          # verification itself fails -- pipefail propagates it).
+          certs() { "$APKSIGNER" verify --print-certs "$1" 2>/dev/null \
+            | grep -iE 'certificate SHA-256 digest' | awk '{print $NF}'; }
+          # Release: apksigner must verify, at least one signer, and EVERY signer
+          # must be the pinned Kyubi cert (mirrors DynLoad's all-signers check).
           for apk in out/app-release.apk out/stub-release.apk; do
-            got="$(cert "$apk")"
-            if [ "$got" != "$KYUBI_CERT_SHA256" ]; then
-              echo "::error::$apk signing cert $got != pinned Kyubi cert" >&2; exit 1
-            fi
-            echo "$apk: release cert OK ($got)"
+            digs="$(certs "$apk")" || { echo "::error::apksigner verification failed for $apk" >&2; exit 1; }
+            [ -n "$digs" ] || { echo "::error::no signer certificate found in $apk" >&2; exit 1; }
+            while read -r d; do
+              [ "$d" = "$KYUBI_CERT_SHA256" ] || { echo "::error::$apk signer $d != pinned Kyubi cert" >&2; exit 1; }
+            done <<< "$digs"
+            echo "$apk: all release signers == Kyubi pin"
           done
+          # Debug: must verify, have signer(s), and NO signer may be the release key.
           for apk in out/app-debug.apk out/stub-debug.apk; do
-            got="$(cert "$apk")"
-            if [ "$got" = "$KYUBI_CERT_SHA256" ]; then
-              echo "::error::$apk is production-signed -- debug builds must not use the release key" >&2; exit 1
-            fi
-            echo "$apk: debug cert correctly NOT the release key"
+            digs="$(certs "$apk")" || { echo "::error::apksigner verification failed for $apk" >&2; exit 1; }
+            [ -n "$digs" ] || { echo "::error::no signer certificate found in $apk" >&2; exit 1; }
+            while read -r d; do
+              [ "$d" != "$KYUBI_CERT_SHA256" ] || { echo "::error::$apk is production-signed -- debug must not use the release key" >&2; exit 1; }
+            done <<< "$digs"
+            echo "$apk: debug signer(s) present and none is the release key"
           done
 
       - name: Stop gradle daemon
@@ -188,8 +196,9 @@ jobs:
   # APKs are the ones built (and signed) in `build` -- downloaded, not rebuilt.
   # Rolling per-commit builds are marked prerelease: CI cannot validate the
   # offline system-mode root install, so a build is only a candidate until it
-  # passes the real BlueStacks system-mode test on an emulator instance. Promote
-  # a validated commit to a full release by tagging a stable kyubi-x.y.z.
+  # passes the real BlueStacks system-mode test on an emulator instance. A stable
+  # release is cut MANUALLY after that validation (no tag-triggered job yet; see
+  # MAINTAINER.md).
   release:
     name: Publish release
     needs: [build, smoke]
