@@ -20,3 +20,5 @@ native/out
 # Tooling scratch / audit trails (kept local, not product)
 .codex/
 .claude/
+.codebase-reckoning/
+__pycache__/

@@ -33,7 +33,7 @@ class SuRequestHandler(
         if (!init(intent))
             return false
 
-        // Never allow com.topjohnwu.magisk (could be malware)
+        // Never allow an app impersonating Kyubi's own package id (could be malware)
         if (pkgInfo.packageName == BuildConfig.APPLICATION_ID) {
             Shell.cmd("(pm uninstall ${BuildConfig.APPLICATION_ID} >/dev/null 2>&1)&").exec()
             return false

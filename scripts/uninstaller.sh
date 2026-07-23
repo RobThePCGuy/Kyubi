@@ -151,7 +151,17 @@ ui_print "********************************************"
 ui_print " The Kyubi app will uninstall itself, and"
 ui_print " the device will reboot after a few seconds"
 ui_print "********************************************"
-(sleep 8; /system/bin/reboot)&
+sleep 8
+if ! /system/bin/reboot; then
+  # Reboot failed to even start (rather than silently not completing, which
+  # this shell can't observe either way) -- don't leave the partitions we
+  # remounted read-write above sitting open with nothing to close them.
+  ui_print "! Reboot failed, remounting system partitions read-only"
+  mount -o ro,remount /system_root 2>/dev/null
+  mount -o ro,remount /system 2>/dev/null
+  mount -o ro,remount /vendor 2>/dev/null
+  mount -o ro,remount /odm 2>/dev/null
+fi
 
 rm -rf $TMPDIR
 exit 0

@@ -64,7 +64,7 @@
 
                         <Button
                             style="@style/WidgetFoundation.Button.Text"
-                            isEnabled="@{viewModel.method != -1}"
+                            isEnabled="@{viewModel.allowSystemInstall}"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:onClick="@{() -> viewModel.install()}"
@@ -74,26 +74,16 @@
 
                     </LinearLayout>
 
-                    <RadioGroup
+                    <TextView
+                        gone="@{!viewModel.allowSystemInstall}"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/l1"
                         android:layout_marginTop="@dimen/l_50"
                         android:layout_marginEnd="@dimen/l1"
                         android:layout_marginBottom="@dimen/l_50"
-                        android:checkedButton="@={viewModel.method}"
-                        android:paddingStart="3dp"
-                        android:paddingEnd="3dp">
-
-                        <RadioButton
-                            android:id="@+id/method_direct_system"
-                            style="@style/WidgetFoundation.RadioButton"
-                            gone="@{!viewModel.allowSystemInstall}"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@string/direct_install_system" />
-
-                    </RadioGroup>
+                        android:text="@string/direct_install_system"
+                        android:textAppearance="@style/AppearanceFoundation.Body" />
 
                 </LinearLayout>
 

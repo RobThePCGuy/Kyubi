@@ -1,5 +1,12 @@
 # Android Booting Shenanigans
 
+> **Kyubi note:** this page is inherited upstream Magisk documentation about
+> patching a device's `boot`/`recovery` image. Kyubi never does this — it
+> ships no `magiskboot` and installs **system-mode only**, writing directly
+> into the emulator guest's system partition. Kept for lineage and because
+> the underlying Android boot concepts are still accurate background reading;
+> none of the boot-image install methods it describes exist in Kyubi.
+
 ## Terminologies
 
 - **rootdir**: the root directory (`/`). All files/folders/filesystems are stored in or mounted under rootdir. On Android, the filesystem may be either `rootfs` or the `system` partition.

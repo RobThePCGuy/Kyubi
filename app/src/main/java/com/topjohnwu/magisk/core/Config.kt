@@ -39,7 +39,6 @@ object Config : PreferenceConfig, DBConfig {
         const val SU_MULTIUSER_MODE = "multiuser_mode"
         const val SU_MNT_NS = "mnt_ns"
         const val SU_BIOMETRIC = "su_biometric"
-        const val ZYGISK = "zygisk"
         const val DENYLIST = "magiskhide"
         const val SU_MANAGER = "requester"
         const val KEYSTORE = "keystore"
@@ -170,7 +169,6 @@ object Config : PreferenceConfig, DBConfig {
         set(value) {
             userAuth = value
         }
-    var zygisk by dbSettings(Key.ZYGISK, false)
     var denyList by BoolDBPropertyNoWrite(Key.DENYLIST, false)
     var sulist by BoolDBPropertyNoWrite(Key.SULIST, false)
     var suManager by dbStrings(Key.SU_MANAGER, "", true)

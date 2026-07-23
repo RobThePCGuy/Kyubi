@@ -351,9 +351,9 @@ direct_install_system(){
     for magisk in $magisk_applet magiskpolicy magiskinit stub.apk; do
         cat "$INSTALLDIR/$magisk" >"$MIRRORDIR$MAGISKSYSTEMDIR/$magisk" || { ui_print "! Unable to write Magisk binaries to system"; return 1; }
     done
-    echo -e "SYSTEMMODE=true\nRECOVERYMODE=false" >"$MIRRORDIR$MAGISKSYSTEMDIR/config"
-    chcon -R u:object_r:system_file:s0 "$MIRRORDIR$MAGISKSYSTEMDIR"
-    chmod -R 700 "$MIRRORDIR$MAGISKSYSTEMDIR"
+    echo -e "SYSTEMMODE=true\nRECOVERYMODE=false" >"$MIRRORDIR$MAGISKSYSTEMDIR/config" || { ui_print "! Unable to write Magisk config"; return 1; }
+    chcon -R u:object_r:system_file:s0 "$MIRRORDIR$MAGISKSYSTEMDIR" || { ui_print "! Unable to set SELinux context on Magisk files"; return 1; }
+    chmod -R 700 "$MIRRORDIR$MAGISKSYSTEMDIR" || { ui_print "! Unable to set permissions on Magisk files"; return 1; }
 
     if [ "$API" -gt 24 ]; then
 

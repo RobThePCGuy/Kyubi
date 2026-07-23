@@ -63,9 +63,9 @@ class SettingsViewModel : BaseViewModel(), BaseSettingsItem.Handler {
         // Magisk
         if (Info.env.isActive) {
             list.addAll(listOf(
-                // Kyubi: no built-in Zygisk (removed as outdated/vulnerable); ReZygisk
-                // provides Zygisk externally, so a built-in Zygisk toggle here would be
-                // a control that does nothing. DenyList below still works via ReZygisk.
+                // Kyubi: no built-in Zygisk (removed as outdated/vulnerable).
+                // DenyList below still works via ReZygisk, which provides the
+                // Zygisk API externally.
                 Magisk,
                 SystemlessHosts
             ))
@@ -114,7 +114,6 @@ class SettingsViewModel : BaseViewModel(), BaseSettingsItem.Handler {
             UpdateChannel -> openUrlIfNecessary(view)
             is Hide -> viewModelScope.launch { HideAPK.hide(view.activity, item.value) }
             Restore -> viewModelScope.launch { HideAPK.restore(view.activity) }
-            Zygisk -> if (Zygisk.mismatch) SnackbarEvent(R.string.reboot_apply_change).publish()
             SuList -> if (SuList.mismatch) SnackbarEvent(R.string.reboot_apply_change).publish()
             else -> Unit
         }

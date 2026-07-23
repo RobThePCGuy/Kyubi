@@ -25,7 +25,11 @@ object Info {
 
     // Device state
     @JvmStatic val env by lazy { loadState() }
-    @JvmField val isZygiskEnabled = System.getenv("ZYGISK_ENABLED") == "1"
+    // Kyubi ships no built-in Zygisk; nothing ever sets this true. Left as an
+    // explicit constant (instead of the upstream System.getenv("ZYGISK_ENABLED")
+    // read, which named a variable nothing in this fork ever sets) so module
+    // compatibility checks in ModuleRvItem keep working the way they did.
+    @JvmField val isZygiskEnabled = false
     @JvmStatic val isFDE get() = crypto == "block"
     var crypto = ""
     var noDataExec = false

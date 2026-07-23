@@ -287,8 +287,6 @@ static bool check_key_combo() {
  ***********************/
 
 extern int disable_deny();
-extern void start_zygisk();
-
 
 bool MagiskD::post_fs_data() const {
     as_rust().setup_logfile();
@@ -332,8 +330,6 @@ bool MagiskD::post_fs_data() const {
         initialize_denylist();
         handle_modules();
     }
-
-    if (zygisk_enabled) start_zygisk();
 
 early_abort:
     load_modules();

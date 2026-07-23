@@ -1,7 +1,5 @@
 package com.topjohnwu.magisk.ui.install
 
-import android.os.Bundle
-import android.os.Parcelable
 import android.text.Spanned
 import android.text.SpannedString
 import androidx.databinding.Bindable
@@ -19,7 +17,6 @@ import io.noties.markwon.Markwon
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlinx.parcelize.Parcelize
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
@@ -28,13 +25,6 @@ class InstallViewModel(svc: NetworkService, markwon: Markwon) : BaseViewModel() 
 
     val isRooted get() = Info.isRooted
     val allowSystemInstall = isRooted
-
-    private var methodId = -1
-
-    @get:Bindable
-    var method
-        get() = methodId
-        set(value) = set(value, methodId, { methodId = it }, BR.method)
 
     @get:Bindable
     var notes: Spanned = SpannedString("")
@@ -65,24 +55,5 @@ class InstallViewModel(svc: NetworkService, markwon: Markwon) : BaseViewModel() 
 
     fun install() {
         FlashFragment.flash(2).navigate(true)
-    }
-
-    override fun onSaveState(state: Bundle) {
-        state.putParcelable(INSTALL_STATE_KEY, InstallState(methodId))
-    }
-
-    override fun onRestoreState(state: Bundle) {
-        state.getParcelable<InstallState>(INSTALL_STATE_KEY)?.let {
-            methodId = it.method
-        }
-    }
-
-    @Parcelize
-    class InstallState(
-        val method: Int,
-    ) : Parcelable
-
-    companion object {
-        private const val INSTALL_STATE_KEY = "install_state"
     }
 }
