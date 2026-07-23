@@ -72,9 +72,6 @@ class LogViewModel(
             val logFile = MediaStoreUtils.getFile(filename, true)
             logFile.uri.outputStream().bufferedWriter().use { file ->
                 file.write("---Detected Device Info---\n\n")
-                file.write("isAB=${Info.isAB}\n")
-                file.write("isSAR=${Info.isSAR}\n")
-                file.write("ramdisk=${Info.ramdisk}\n")
                 val uname = Os.uname()
                 file.write("kernel=${uname.sysname} ${uname.machine} ${uname.release} ${uname.version}\n")
 

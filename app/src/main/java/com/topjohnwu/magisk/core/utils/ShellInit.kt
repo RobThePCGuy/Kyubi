@@ -77,11 +77,7 @@ class ShellInit : Shell.Initializer() {
         fun getVar(name: String) = fastCmd("echo \$$name")
         fun getBool(name: String) = getVar(name).toBoolean()
 
-        Info.isSAR = getBool("SYSTEM_AS_ROOT")
-        Info.ramdisk = getBool("RAMDISKEXIST")
-        Info.isAB = getBool("ISAB")
         Info.crypto = getVar("CRYPTOTYPE")
-        Info.legacySAR = getBool("LEGACYSAR")
         Info.sulist = getBool("SULISTMODE")
 
         return true

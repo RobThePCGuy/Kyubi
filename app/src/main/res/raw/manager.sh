@@ -89,24 +89,6 @@ adb_pm_install() {
   return $res
 }
 
-check_boot_ramdisk() {
-  # Create boolean ISAB
-  ISAB=true
-  [ -z $SLOT ] && ISAB=false
-
-  # If we are A/B, then we must have ramdisk
-  $ISAB && return 0
-
-  # If we are using legacy SAR, but not A/B, assume we do not have ramdisk
-  if $LEGACYSAR; then
-    # Override recovery mode to true
-    RECOVERYMODE=true
-    return 1
-  fi
-
-  return 0
-}
-
 check_encryption() {
   if $ISENCRYPTED; then
     if [ $SDK_INT -lt 24 ]; then
@@ -143,29 +125,9 @@ run_action() {
 # Non-root util_functions
 ##########################
 
-mount_partitions() {
-  [ "$(getprop ro.build.ab_update)" = "true" ] && SLOT=$(getprop ro.boot.slot_suffix)
-  # Check whether non rootfs root dir exists
-  SYSTEM_AS_ROOT=false
-  grep ' / ' /proc/mounts | grep -qv 'rootfs' && SYSTEM_AS_ROOT=true
-
-  LEGACYSAR=false
-  grep ' / ' /proc/mounts | grep -q '/dev/root' && LEGACYSAR=true
-}
-
 get_flags() {
-  KEEPVERITY=$SYSTEM_AS_ROOT
   ISENCRYPTED=false
   [ "$(getprop ro.crypto.state)" = "encrypted" ] && ISENCRYPTED=true
-  KEEPFORCEENCRYPT=$ISENCRYPTED
-  if [ -n "$(getprop ro.boot.vbmeta.device)" -o -n "$(getprop ro.boot.vbmeta.size)" ]; then
-    PATCHVBMETAFLAG=false
-  elif getprop ro.product.ab_ota_partitions | grep -wq vbmeta; then
-    PATCHVBMETAFLAG=false
-  else
-    PATCHVBMETAFLAG=true
-  fi
-  [ -z $RECOVERYMODE ] && RECOVERYMODE=false
 }
 
 run_migrations() { return; }
@@ -254,13 +216,25 @@ restore_from_bak(){
 }
 
 cleanup_system_installation(){
-    rm -rf "$MIRRORDIR${MAGISKSYSTEMDIR}"
-    rm -rf "$MIRRORDIR${MAGISKSYSTEMDIR}.rc"
-    backup_restore "$MIRRORDIR/system/etc/init/bootanim.rc" \
-    && rm -rf "$MIRRORDIR/system/etc/init/bootanim.rc.gz"
-    if [ -e "$MIRRORDIR${MAGISKSYSTEMDIR}" ] || [ -e "$MIRRORDIR${MAGISKSYSTEMDIR}.rc" ]; then
+    local mirror="${1:-$MIRRORDIR}"
+    rm -rf "$mirror${MAGISKSYSTEMDIR}"
+    rm -rf "$mirror${MAGISKSYSTEMDIR}.rc"
+    backup_restore "$mirror/system/etc/init/bootanim.rc" \
+    && rm -rf "$mirror/system/etc/init/bootanim.rc.gz"
+    if [ -e "$mirror${MAGISKSYSTEMDIR}" ] || [ -e "$mirror${MAGISKSYSTEMDIR}.rc" ]; then
         return 1
     fi
+}
+
+restore_system_sepolicy(){
+    local mirror="${1:-$MIRRORDIR}" file
+    for file in /vendor/etc/selinux/precompiled_sepolicy /odm/etc/selinux/precompiled_sepolicy /system/etc/selinux/precompiled_sepolicy /system_root/sepolicy /system_root/sepolicy_debug /system_root/sepolicy.unlocked; do
+        if [ -f "$mirror$file.gz" ]; then
+            ui_print "- Restore sepolicy patch"
+            restore_from_bak "$mirror$file" || return 1
+            break
+        fi
+    done
 }
 
 installer_cleanup(){
@@ -436,7 +410,6 @@ direct_install_system(){
     ui_print "[*] Reflash your ROM if your ROM is unable to start"
     ui_print "    and do not use this method to install Magisk" 
 
-    $BOOTMODE && installer_cleanup
     true
     return 0
 }
@@ -444,10 +417,28 @@ direct_install_system(){
 
 
 xdirect_install_system() {
-  # Core install + env fix only.
-  direct_install_system "$@" || { cleanup_system_installation; installer_cleanup; return 1; }
-  fix_env "$1" || { cleanup_system_installation; installer_cleanup; return 1; }
-  run_migrations || return 1
+  # Keep the writable mirror mounted until every step commits, so rollback can
+  # restore both the original policy and init files after any later failure.
+  local mirror="/proc/$$/attr"
+  direct_install_system "$@" || {
+    restore_system_sepolicy "$mirror"
+    cleanup_system_installation "$mirror"
+    installer_cleanup
+    return 1
+  }
+  fix_env "$1" || {
+    restore_system_sepolicy "$mirror"
+    cleanup_system_installation "$mirror"
+    installer_cleanup
+    return 1
+  }
+  run_migrations || {
+    restore_system_sepolicy "$mirror"
+    cleanup_system_installation "$mirror"
+    installer_cleanup
+    return 1
+  }
+  installer_cleanup
   return 0
 }
 
@@ -458,9 +449,6 @@ xdirect_install_system() {
 #############
 
 app_init() {
-  mount_partitions
-  RAMDISKEXIST=false
-  check_boot_ramdisk && RAMDISKEXIST=true
   get_flags
   run_migrations
   SHA1=$(grep_prop SHA1 $MAGISKTMP/.magisk/config)

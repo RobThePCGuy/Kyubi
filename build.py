@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import glob
+import hashlib
 import lzma
 import multiprocessing
 import os
@@ -11,6 +12,7 @@ import stat
 import subprocess
 import sys
 import tarfile
+import tempfile
 import textwrap
 import urllib.request
 
@@ -39,6 +41,16 @@ def vprint(str):
 
 is_windows = os.name == "nt"
 EXE_EXT = ".exe" if is_windows else ""
+
+# SHA-256 pins for the immutable ONDK r27.1 release assets. Update these only
+# after independently verifying every supported host archive.
+ONDK_SHA256 = {
+    "r27.1": {
+        "darwin": "d492316f9e6c14c0fc8ce9f3810766ca1aae021ad08ab7572ce751bd9fc61c9d",
+        "linux": "c78330b7841b9d73f4b8cc5f452559f2f15b1d8eb3f694a8d1cb62b1b6ce143e",
+        "windows": "9f6328da29b657255e748bfe46a596d6c14ac04c6baba16f333c38e733e69547",
+    }
+}
 
 no_color = False
 if is_windows:
@@ -411,24 +423,41 @@ def find_jdk():
         if op.exists(jbr):
             env["PATH"] = f'{jbr}{os.pathsep}{env["PATH"]}'
 
-    no_jdk = False
+    javac_version = None
     try:
         proc = subprocess.run(
-            "javac -version",
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
+            ["javac", "-version"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
             env=env,
-            shell=True,
+            text=True,
         )
-        no_jdk = proc.returncode != 0
+        if proc.returncode == 0:
+            version = proc.stdout.strip().split()[-1]
+            javac_version = int(version.split(".")[0])
     except FileNotFoundError:
-        no_jdk = True
+        pass
+    except (IndexError, ValueError):
+        pass
 
-    if no_jdk:
+    if javac_version is None:
         error(
             "Please set Android Studio's path to environment variable ANDROID_STUDIO,\n"
             + "or install JDK 17 and make sure 'javac' is available in PATH"
         )
+    if javac_version != 17:
+        error(
+            f"JDK 17 is required, but javac {javac_version} is active.\n"
+            + "Set ANDROID_STUDIO to an installation with a bundled JDK 17,\n"
+            + "or put JDK 17 first in PATH."
+        )
+
+    # Gradle prefers JAVA_HOME over PATH. Point it at the same JDK we just
+    # validated so an unrelated system JAVA_HOME cannot silently override it.
+    javac_path = shutil.which("javac", path=env["PATH"])
+    if javac_path is None:
+        error("Unable to resolve the validated JDK 17 compiler")
+    env["JAVA_HOME"] = op.dirname(op.dirname(op.realpath(javac_path)))
 
     return env
 
@@ -510,16 +539,45 @@ def setup_ndk(args):
     ndk_archive = url.split("/")[-1]
     ondk_path = op.join(ndk_root, f"ondk-{ndk_ver}")
 
-    header(f"* Downloading and extracting {ndk_archive}")
-    rm_rf(ondk_path)
-    with urllib.request.urlopen(url) as response:
-        with tarfile.open(mode="r|xz", fileobj=response) as tar:
+    expected_hash = ONDK_SHA256.get(ndk_ver, {}).get(os_name)
+    if expected_hash is None:
+        error(f"No trusted ONDK checksum for {ndk_ver} on {os_name}")
+
+    header(f"* Downloading {ndk_archive}")
+    if op.exists(ondk_path):
+        rm_rf(ondk_path)
+    archive_path = None
+    try:
+        with urllib.request.urlopen(url) as response:
+            with tempfile.NamedTemporaryFile(
+                dir=ndk_root, prefix="ondk-", suffix=".tar.xz", delete=False
+            ) as archive:
+                archive_path = archive.name
+                shutil.copyfileobj(response, archive)
+
+        actual_hash = hashlib.sha256()
+        with open(archive_path, "rb") as archive:
+            for chunk in iter(lambda: archive.read(1024 * 1024), b""):
+                actual_hash.update(chunk)
+        actual_hash = actual_hash.hexdigest()
+        if actual_hash != expected_hash:
+            error(
+                f"ONDK checksum mismatch for {ndk_archive}:\n"
+                + f"expected {expected_hash}\nactual   {actual_hash}"
+            )
+
+        header(f"* Extracting verified {ndk_archive}")
+        with tarfile.open(archive_path, mode="r:xz") as tar:
             if hasattr(tarfile, "data_filter"):
                 tar.extractall(ndk_root, filter="tar")
             else:
                 tar.extractall(ndk_root)
+    finally:
+        if archive_path is not None:
+            rm(archive_path)
 
-    rm_rf(ndk_path)
+    if op.exists(ndk_path):
+        rm_rf(ndk_path)
     mv(ondk_path, ndk_path)
 
     header("* Patching static libs")
