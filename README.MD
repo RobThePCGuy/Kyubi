@@ -1,13 +1,15 @@
 # Kyubi
 
-**Kyubi is a stripped-down, emulator-only build of Magisk** — root for Android
+**Kyubi is a stripped-down, emulator-only build of Magisk.** Root for Android
 emulators (BlueStacks and other x86/x86_64 guests), and nothing you don't need
 there. It is a rebrand and reduction of the Magisk Delta / Kitsune lineage, kept
 open under the GPL.
 
 > Not affiliated with or endorsed by [topjohnwu](https://github.com/topjohnwu)
 > (Magisk), HuskyDG (Magisk Delta), or the Kitsune Magisk maintainers. Kyubi
-> builds on their GPL-licensed work — see **Lineage & credit** below.
+> builds on their GPL-licensed work, see **Lineage & credit** below.
+
+**Site:** [robthepcguy.github.io/Kyubi](https://robthepcguy.github.io/Kyubi/) · **Install it with** [BlueStacks-Root-GUI](https://github.com/RobThePCGuy/BlueStacks-Root-GUI)
 
 ## What "stripped-down" means
 
@@ -16,8 +18,8 @@ smaller, faster to build, and has less surface to go wrong:
 
 - **x86 / x86_64 only.** No ARM ABIs. Emulator guests are x86; ARM builds were
   dead weight (the APK is ~42% smaller for it).
-- **No `magiskboot`, no boot-image patching.** The `magiskboot` native tool — the
-  thing that unpacks and repacks a boot image — is stripped from the build, so
+- **No `magiskboot`, no boot-image patching.** The `magiskboot` native tool (the
+  thing that unpacks and repacks a boot image) is stripped from the build, so
   boot-image patching cannot run. Kyubi installs in **system mode** only, writing
   into the guest's system partition. The boot-image install path is gone: the
   installer's boot-patch methods, `boot_patch.sh`, the ChromeOS signing tools, the
@@ -28,7 +30,7 @@ smaller, faster to build, and has less surface to go wrong:
   **[ReZygisk](https://github.com/PerformanC/ReZygisk)** for the Zygisk API;
   Kyubi's DenyList feeds it.
 
-Everything else — MagiskSU (root), Magisk Modules, DenyList — works.
+Everything else works: MagiskSU (root), Magisk Modules, DenyList.
 
 ## Downloads
 
@@ -43,8 +45,8 @@ after that validation.
 Each release attaches only the certificate-verified release APKs (debug builds
 are not published):
 
-- `app-release.apk` — the Kyubi manager (install this)
-- `stub-release.apk` — the cert-pinned hidden-manager stub
+- `app-release.apk`: the Kyubi manager (install this)
+- `stub-release.apk`: the cert-pinned hidden-manager stub
 
 ## Building
 
@@ -69,9 +71,9 @@ the install log; for runtime issues, `logcat` or `dmesg` from the emulator.
 
 Kyubi stands on a chain of GPL work, each link credited:
 
-- **[Magisk](https://github.com/topjohnwu/Magisk)** — topjohnwu, the original.
-- **Magisk Delta** — HuskyDG, which added the system-mode install Kyubi relies on.
-- **[Kitsune Magisk](https://github.com/1q23lyc45/KitsuneMagisk)** — the
+- **[Magisk](https://github.com/topjohnwu/Magisk)**: topjohnwu, the original.
+- **Magisk Delta**: HuskyDG, which added the system-mode install Kyubi relies on.
+- **[Kitsune Magisk](https://github.com/1q23lyc45/KitsuneMagisk)**: the
   continuation Kyubi forked from (core version `31.0-kitsune`, versionCode 31000).
 
 The in-app credits screen names the upstream authors directly. Kyubi keeps the
