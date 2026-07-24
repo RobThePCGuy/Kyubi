@@ -235,8 +235,9 @@ jobs:
             # tree, and stable.json is tracked and freshly overwritten, so rebasing
             # earlier fails with exit 128 on every real run. With our work as a
             # commit it replays on top of the remote, and a genuine concurrent edit
-            # becomes a loud conflict before the push rather than a rejected push
-            # after the release is already flipped to latest.
+            # becomes a loud conflict here -- before the release is flipped to
+            # latest in the next step -- instead of an avoidable non-fast-forward
+            # rejection.
             git pull --rebase origin gh-pages
             git push origin HEAD:gh-pages
             sha="$(git rev-parse HEAD)"
