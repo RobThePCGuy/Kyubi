@@ -1,0 +1,238 @@
+# Promote a validated rolling prerelease to stable. Manual, protected, and
+# idempotent: a rerun after a partial failure completes the remaining steps
+# rather than rejecting the tag.
+name: Promote to stable
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to promote (e.g. v31.0-0669c9c7)
+        required: true
+        type: string
+      bootstrap:
+        description: Allow the FIRST stable publication (no stable.json yet)
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+env:
+  KYUBI_CERT_SHA256: "7ad4f68f776d56a9bedfdc02f32cd68ac3bb0531a862817eb17c1c243e482303"
+
+jobs:
+  promote:
+    name: Promote ${{ inputs.tag }}
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: write
+      pages: write
+    # Job-level, not workflow-level: the lock is on the feed write, and holding it
+    # at workflow level would serialize the whole dispatch while it is still
+    # waiting on the protected environment's reviewers.
+    concurrency:
+      group: kyubi-feed
+      cancel-in-progress: false
+      queue: max
+    steps:
+      # Sparse: this job needs only the composite action, not the source tree.
+      # path: repo keeps it clear of site/ (gh-pages) and downloaded assets.
+      - name: Check out composite actions
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: .github/actions
+          path: repo
+          persist-credentials: false
+
+      # Only rolling prerelease tags. This workflow promotes an existing build in
+      # place, and the APK version-name binding below can only be satisfied by the
+      # v31.0-<sha8> form.
+      - name: Validate tag format
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          [[ "$TAG" =~ ^v31\.0-[0-9a-f]{8}$ ]] \
+            || { echo "::error::tag '$TAG' is not a rolling prerelease tag (v31.0-<sha8>)" >&2; exit 1; }
+
+      # persist-credentials: true is a deliberate exception to the repo-wide
+      # convention -- this job pushes the feed. It already holds contents: write,
+      # so this is not a privilege escalation.
+      - name: Check out gh-pages
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: gh-pages
+          path: site
+          persist-credentials: true
+
+      - name: Download and verify the release APK
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          draft="$(gh release view "$TAG" --repo "$GITHUB_REPOSITORY" --json isDraft --jq .isDraft)"
+          [ "$draft" = "false" ] || { echo "::error::$TAG is a draft" >&2; exit 1; }
+
+          mkdir -p dl
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern app-release.apk --dir dl
+          [ "$(ls dl/*.apk | wc -l)" -eq 1 ] || { echo "::error::expected exactly one app-release.apk" >&2; exit 1; }
+
+          # Re-verify at promotion time: this artifact is about to become the
+          # default download. Mirrors the build-time all-signers check.
+          APKSIGNER="$(ls "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -1)"
+          digs="$("$APKSIGNER" verify --print-certs dl/app-release.apk 2>/dev/null \
+            | grep -iE 'certificate SHA-256 digest' | awk '{print $NF}')"
+          [ -n "$digs" ] || { echo "::error::no signer certificate found" >&2; exit 1; }
+          while read -r d; do
+            [ "$d" = "$KYUBI_CERT_SHA256" ] || { echo "::error::signer $d != pinned Kyubi cert" >&2; exit 1; }
+          done <<< "$digs"
+
+      - name: Parse and bind the APK to the tag
+        id: apk
+        env:
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          python3 - "$TAG" <<'PY'
+          import re, sys, zipfile, os
+          tag = sys.argv[1]
+          c = zipfile.ZipFile("dl/app-release.apk").comment.decode()
+          def one(key):
+              vals = re.findall(rf'^{key}=(.+)$', c, re.M)
+              if len(vals) != 1:
+                  sys.exit(f"::error::expected exactly one {key} in APK comment, got {len(vals)}")
+              return vals[0].strip()
+          build_code = int(one("buildCode"))
+          core = int(one("coreVersionCode"))
+          version = one("version")
+          if core != 31000:
+              sys.exit(f"::error::coreVersionCode {core} != 31000")
+          # Bind the signed APK to THIS tag, not merely to some Kyubi-signed APK.
+          # Exact equality, not endswith: CI builds the version name as
+          # 31.0-kitsune.<sha8> (android.yml "Embed build commit in version name"),
+          # and the tag carries the same sha8.
+          sha8 = tag[len("v31.0-"):]
+          expected = f"31.0-kitsune.{sha8}"
+          if version != expected:
+              sys.exit(f"::error::version '{version}' != expected '{expected}' for tag '{tag}'")
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"build_code={build_code}\nversion={version}\n")
+          PY
+
+      - name: Read release state
+        id: rel
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          gh release view "$TAG" --repo "$GITHUB_REPOSITORY" \
+            --json isPrerelease,isLatest --jq \
+            '"is_prerelease=\(.isPrerelease)\nis_latest=\(.isLatest)"' >> "$GITHUB_OUTPUT"
+
+      - name: Check stable state and monotonicity
+        env:
+          TAG: ${{ inputs.tag }}
+          BUILD_CODE: ${{ steps.apk.outputs.build_code }}
+          VERSION: ${{ steps.apk.outputs.version }}
+          IS_PRERELEASE: ${{ steps.rel.outputs.is_prerelease }}
+          IS_LATEST: ${{ steps.rel.outputs.is_latest }}
+          BOOTSTRAP: ${{ inputs.bootstrap }}
+        run: |
+          set -euo pipefail
+          # Read from the checked-out branch, never the public URL, which has
+          # deployment and caching delay.
+          if [ ! -f site/stable.json ]; then
+            [ "$BOOTSTRAP" = "true" ] || { echo "::error::no stable.json -- rerun with bootstrap: true" >&2; exit 1; }
+            echo "bootstrap: first stable publication"
+            exit 0
+          fi
+          [ "$BOOTSTRAP" = "false" ] \
+            || { echo "::error::stable.json exists -- bootstrap must not become habitual" >&2; exit 1; }
+
+          PREV="$(jq -er '.kyubi.buildCode' site/stable.json)" \
+            || { echo "::error::stable.json malformed" >&2; exit 1; }
+
+          if [ "$BUILD_CODE" -gt "$PREV" ]; then
+            # New promotion. The release should still be an unpromoted prerelease.
+            [ "$IS_PRERELEASE" = "true" ] \
+              || { echo "::error::$TAG is not a prerelease, and stable.json does not name it" >&2; exit 1; }
+            echo "new promotion: $BUILD_CODE (published stable $PREV)"
+          elif [ "$BUILD_CODE" -eq "$PREV" ]; then
+            # Rerun of a promotion that already wrote the feed. Permit ONLY if the
+            # published entry identifies exactly this tag, so the remaining steps
+            # (release flip, Pages build) can finish.
+            PREV_VER="$(jq -er '.kyubi.version' site/stable.json)"
+            PREV_LINK="$(jq -er '.kyubi.link' site/stable.json)"
+            if [ "$PREV_VER" = "$VERSION" ] && [[ "$PREV_LINK" == *"/download/${TAG}/"* ]]; then
+              echo "rerun: stable.json already names $TAG (prerelease=$IS_PRERELEASE latest=$IS_LATEST)"
+            else
+              echo "::error::stable buildCode $BUILD_CODE already published for a different release" >&2
+              exit 1
+            fi
+          else
+            echo "::error::buildCode $BUILD_CODE < published stable $PREV" >&2
+            exit 1
+          fi
+
+      # Staged first: a GITHUB_TOKEN push does not go live on its own, so the
+      # feed is written before the release flip and published after it.
+      - name: Stage the stable feed
+        id: push
+        env:
+          TAG: ${{ inputs.tag }}
+          BUILD_CODE: ${{ steps.apk.outputs.build_code }}
+          VERSION: ${{ steps.apk.outputs.version }}
+        run: |
+          set -euo pipefail
+          mkdir -p site/notes
+          # The prerelease run already wrote this note; only synthesise one if the
+          # tag was published before the feed existed.
+          [ -f "site/notes/${TAG}.md" ] || \
+            printf '## Kyubi %s\n\nValidated stable release (buildCode %s).\n' "$TAG" "$BUILD_CODE" \
+              > "site/notes/${TAG}.md"
+          jq -n --arg v "$VERSION" --argjson b "$BUILD_CODE" --arg t "$TAG" \
+            '{kyubi:{version:$v,buildCode:$b,
+               link:("https://github.com/RobThePCGuy/Kyubi/releases/download/"+$t+"/app-release.apk"),
+               note:("https://robthepcguy.github.io/Kyubi/notes/"+$t+".md")}}' \
+            > site/stable.json
+          cd site
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add stable.json "notes/${TAG}.md"
+          if git diff --cached --quiet; then
+            echo "feed already matches -- no commit needed"
+            # No local commit, so HEAD may lag the branch tip if gh-pages moved.
+            # Pages builds the TIP, so bind the poll to that, not to our checkout.
+            git fetch -q origin gh-pages
+            echo "pages_sha=$(git rev-parse FETCH_HEAD)" >> "$GITHUB_OUTPUT"
+          else
+            git commit -m "feed: stable ${TAG} (buildCode ${BUILD_CODE})"
+            # Rebase AFTER committing, never before: pull --rebase refuses a dirty
+            # tree, and stable.json is tracked and freshly overwritten, so rebasing
+            # earlier fails with exit 128 on every real run. With our work as a
+            # commit it replays on top of the remote, and a genuine concurrent edit
+            # becomes a loud conflict before the push rather than a rejected push
+            # after the release is already flipped to latest.
+            git pull --rebase origin gh-pages
+            git push origin HEAD:gh-pages
+            echo "pages_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Mark the release latest
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ inputs.tag }}
+        run: |
+          set -euo pipefail
+          gh release edit "$TAG" --repo "$GITHUB_REPOSITORY" --prerelease=false --latest
+
+      - name: Publish Pages build
+        uses: ./repo/.github/actions/publish-pages
+        with:
+          pages-sha: ${{ steps.push.outputs.pages_sha }}
+          token: ${{ secrets.GITHUB_TOKEN }}
