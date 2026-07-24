@@ -342,18 +342,23 @@ jobs:
           cd site
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          # The kyubi-feed concurrency group covers release-vs-promote, but not a
-          # human editing gh-pages directly. Rebasing first turns that into a
-          # merge instead of a failed push after the release is public.
-          git pull --rebase origin gh-pages
           git add prerelease.json "notes/${TAG}.md"
           if git diff --cached --quiet; then
             echo "feed already current -- no commit needed"
+            # No local commit, so HEAD may lag the branch tip if gh-pages moved.
+            # Pages builds the TIP, so bind the poll to that, not to our checkout.
+            git fetch -q origin gh-pages
+            echo "pages_sha=$(git rev-parse FETCH_HEAD)" >> "$GITHUB_OUTPUT"
           else
             git commit -m "feed: prerelease ${TAG} (buildCode ${BUILD_CODE})"
+            # Rebase AFTER committing, never before: pull --rebase refuses a dirty
+            # tree, and prerelease.json is tracked and freshly overwritten. With our
+            # work as a commit it replays on top of the remote instead of being
+            # clobbered, and a genuine concurrent edit becomes a loud conflict.
+            git pull --rebase origin gh-pages
             git push origin HEAD:gh-pages
+            echo "pages_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           fi
-          echo "pages_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Publish Pages build
         uses: ./repo/.github/actions/publish-pages

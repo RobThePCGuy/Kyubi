@@ -35,14 +35,18 @@ runs:
         for _ in $(seq 1 60); do
           # A single 502 or secondary rate-limit must not abort the job -- by this
           # point the release is already public and the feed already pushed.
-          if ! build="$(gh api "repos/${GITHUB_REPOSITORY}/pages/builds/latest" 2>&1)"; then
-            echo "pages api call failed, retrying: ${build}"
+          if ! build="$(gh api "repos/${GITHUB_REPOSITORY}/pages/builds/latest" 2>/tmp/gh-err)"; then
+            echo "pages api call failed, retrying: $(cat /tmp/gh-err 2>/dev/null)"
             sleep 10
             continue
           fi
           last="$build"
-          status="$(echo "$build" | jq -r '.status // "unknown"')"
-          sha="$(echo "$build" | jq -r '.commit // "unknown"')"
+          # `// "unknown"` covers a MISSING key. The `2>/dev/null || echo unknown`
+          # covers an UNPARSEABLE body -- jq emits nothing at all on a parse error,
+          # so the alternative operator never fires and set -e would abort mid-loop,
+          # skipping the diagnostic echo this loop exists to produce.
+          status="$(echo "$build" | jq -r '.status // "unknown"' 2>/dev/null || echo unknown)"
+          sha="$(echo "$build"    | jq -r '.commit // "unknown"' 2>/dev/null || echo unknown)"
           echo "pages build: status=$status commit=$sha (want $PAGES_SHA)"
           if [ "$status" = "built" ] && [ "$sha" = "$PAGES_SHA" ]; then exit 0; fi
           if [ "$status" = "errored" ]; then echo "::error::Pages build errored" >&2; exit 1; fi
