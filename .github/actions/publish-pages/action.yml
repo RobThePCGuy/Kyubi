@@ -1,0 +1,36 @@
+name: Publish Pages build
+description: >
+  Request a GitHub Pages build for a legacy (branch-source) site and wait until
+  the build for a SPECIFIC commit reports built. A GITHUB_TOKEN push does not
+  cascade into new workflow runs, so the branch-source pages-build-deployment
+  workflow may never fire and the live site would stay stale -- the build must be
+  requested explicitly. Binding to the commit SHA stops an EARLIER completed
+  build from satisfying the check while the requested one is still invisible.
+inputs:
+  pages-sha:
+    description: The gh-pages commit that must be live before this succeeds.
+    required: true
+  token:
+    description: Token carrying pages:write on this repository.
+    required: true
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        PAGES_SHA: ${{ inputs.pages-sha }}
+      run: |
+        set -euo pipefail
+        gh api -X POST "repos/${GITHUB_REPOSITORY}/pages/builds" >/dev/null
+        for _ in $(seq 1 30); do
+          build="$(gh api "repos/${GITHUB_REPOSITORY}/pages/builds/latest")"
+          status="$(echo "$build" | jq -r .status)"
+          sha="$(echo "$build" | jq -r .commit)"
+          echo "pages build: status=$status commit=$sha (want $PAGES_SHA)"
+          if [ "$status" = "built" ] && [ "$sha" = "$PAGES_SHA" ]; then exit 0; fi
+          if [ "$status" = "errored" ]; then echo "::error::Pages build errored" >&2; exit 1; fi
+          sleep 10
+        done
+        echo "::error::Pages build for $PAGES_SHA did not reach 'built' within 5 minutes" >&2
+        exit 1

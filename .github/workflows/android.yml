@@ -206,12 +206,40 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pages: write
+    # Both this job and promote.yml write the gh-pages branch. queue: single (the
+    # default) keeps only ONE pending member and cancels the previous one, which
+    # would silently drop a feed write. queue: max cannot be combined with
+    # cancel-in-progress: true.
+    concurrency:
+      group: kyubi-feed
+      cancel-in-progress: false
+      queue: max
     steps:
+      # Sparse: this job needs only the composite action, not the source tree.
+      # path: repo keeps it clear of out/ (artifacts) and site/ (gh-pages).
+      - name: Check out composite actions
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: .github/actions
+          path: repo
+          persist-credentials: false
+
       - name: Download build artifact
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: ${{ github.sha }}
           path: out
+
+      # persist-credentials: true is a deliberate exception to the repo-wide
+      # convention -- this job pushes the feed. It already holds contents: write,
+      # so this is not a privilege escalation.
+      - name: Check out gh-pages
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: gh-pages
+          path: site
+          persist-credentials: true
 
       # Tag = v31.0-<short commit>: v31.0 tracks magisk.versionCode=31000, and the
       # short SHA is the build suffix embedded in the APK's version name
@@ -219,6 +247,50 @@ jobs:
       - name: Compute version tag
         id: ver
         run: echo "tag=v31.0-$(echo '${{ github.sha }}' | cut -c1-8)" >> "$GITHUB_OUTPUT"
+
+      - name: Validate build code against the published feed
+        id: feed
+        env:
+          TAG: ${{ steps.ver.outputs.tag }}
+        run: |
+          set -euo pipefail
+          comment="$(unzip -z out/app-release.apk)"
+          BUILD_CODE="$(echo "$comment" | sed -n 's/^buildCode=\([0-9]*\)$/\1/p')"
+          VERSION="$(echo "$comment" | sed -n 's/^version=\(.*\)$/\1/p')"
+          [ -n "$BUILD_CODE" ] || { echo "::error::no buildCode in APK comment" >&2; exit 1; }
+          [ -n "$VERSION" ]    || { echo "::error::no version in APK comment" >&2; exit 1; }
+          LINK="https://github.com/RobThePCGuy/Kyubi/releases/download/${TAG}/app-release.apk"
+
+          # A missing prerelease.json is NOT treated as a fresh start -- an
+          # accidental deletion would reset the monotonic barrier. Both feeds are
+          # seeded once by hand (see the rollout task).
+          [ -f site/prerelease.json ] || { echo "::error::prerelease.json missing -- seed it first" >&2; exit 1; }
+          PREV="$(jq -er '.kyubi.buildCode' site/prerelease.json)" \
+            || { echo "::error::prerelease.json malformed" >&2; exit 1; }
+
+          # Three outcomes, so that a rerun after a failed Pages build can finish
+          # instead of failing permanently on equality.
+          if [ "$BUILD_CODE" -gt "$PREV" ]; then
+            echo "new build $BUILD_CODE (published $PREV)"
+          elif [ "$BUILD_CODE" -eq "$PREV" ]; then
+            PREV_VER="$(jq -er '.kyubi.version' site/prerelease.json)"
+            PREV_LINK="$(jq -er '.kyubi.link' site/prerelease.json)"
+            if [ "$PREV_VER" = "$VERSION" ] && [ "$PREV_LINK" = "$LINK" ]; then
+              echo "rerun: feed already describes this exact build"
+            else
+              echo "::error::buildCode $BUILD_CODE already published for a different build" >&2
+              exit 1
+            fi
+          else
+            echo "::error::buildCode $BUILD_CODE < published $PREV -- lineage regressed" >&2
+            exit 1
+          fi
+
+          {
+            echo "build_code=$BUILD_CODE"
+            echo "version=$VERSION"
+            echo "link=$LINK"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Publish release
         uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
@@ -246,3 +318,39 @@ jobs:
           files: |
             out/app-release.apk
             out/stub-release.apk
+
+      - name: Write prerelease feed
+        id: push
+        env:
+          TAG: ${{ steps.ver.outputs.tag }}
+          BUILD_CODE: ${{ steps.feed.outputs.build_code }}
+          VERSION: ${{ steps.feed.outputs.version }}
+          LINK: ${{ steps.feed.outputs.link }}
+        run: |
+          set -euo pipefail
+          mkdir -p site/notes
+          printf '## Kyubi %s\n\nRolling prerelease built from `%s` (buildCode %s).\n\nCI verifies the build shape and that it installs and launches. The offline\nsystem-mode root install is validated separately on a real instance, so treat\nthis as a candidate until promoted.\n' \
+            "$TAG" "$GITHUB_SHA" "$BUILD_CODE" > "site/notes/${TAG}.md"
+
+          jq -n --arg v "$VERSION" --argjson b "$BUILD_CODE" --arg l "$LINK" --arg t "$TAG" \
+            '{kyubi:{version:$v,buildCode:$b,link:$l,
+               note:("https://robthepcguy.github.io/Kyubi/notes/"+$t+".md")}}' \
+            > site/prerelease.json
+
+          cd site
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add prerelease.json "notes/${TAG}.md"
+          if git diff --cached --quiet; then
+            echo "feed already current -- no commit needed"
+          else
+            git commit -m "feed: prerelease ${TAG} (buildCode ${BUILD_CODE})"
+            git push
+          fi
+          echo "pages_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Publish Pages build
+        uses: ./repo/.github/actions/publish-pages
+        with:
+          pages-sha: ${{ steps.push.outputs.pages_sha }}
+          token: ${{ secrets.GITHUB_TOKEN }}
