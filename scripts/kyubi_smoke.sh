@@ -74,8 +74,9 @@ fi
 comment="$(unzip -z "$APK" 2>/dev/null || true)"
 [[ "$comment" == *"buildCode="*             ]] || fail "APK comment missing buildCode="
 [[ "$comment" == *"coreVersionCode=31000"*  ]] || fail "APK comment missing coreVersionCode=31000"
-# Must match the BARE key only. `coreVersionCode=` contains `versionCode=` as a
-# substring, so anchor the test to a line start.
+# Must match the BARE key only, so anchor to a line start. (Note `coreVersionCode=`
+# does NOT collide here -- bash [[ ]] is case-sensitive and its `V` is capitalised --
+# but anchoring is what keeps that true if a key is ever renamed.)
 [[ "$comment" == *$'\n'"versionCode="*      ]] && fail "APK comment uses ambiguous versionCode= key"
 
 # The comment is what CI reads to build the feed; the manifest is what Android
