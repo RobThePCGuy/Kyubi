@@ -64,12 +64,14 @@ object Info {
         val isDebug: Boolean = false,
         code: Int = -1
     ) {
-        val versionCode = when {
+        // The CORE compatibility code reported by `magisk -V` -- not the APK's
+        // Android versionCode, which is an unrelated monotonic build number.
+        val coreVersionCode = when {
             code < Const.Version.MIN_VERCODE -> -1
             isRooted ->  code
             else -> -1
         }
         val isUnsupported = code > 0 && code < Const.Version.MIN_VERCODE
-        val isActive = versionCode > 0
+        val isActive = coreVersionCode > 0
     }
 }

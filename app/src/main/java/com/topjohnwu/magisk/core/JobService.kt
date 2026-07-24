@@ -77,7 +77,7 @@ class JobService : BaseJobService() {
         GlobalScope.launch(Dispatchers.IO) {
             ServiceLocator.networkService.fetchUpdate()?.let {
                 Info.remote = it
-                if (Info.env.isActive && BuildConfig.VERSION_CODE < it.magisk.versionCode)
+                if (Info.env.isActive && BuildConfig.VERSION_CODE < it.kyubi.buildCode)
                     Notifications.updateAvailable()
                 jobFinished(params, false)
             }

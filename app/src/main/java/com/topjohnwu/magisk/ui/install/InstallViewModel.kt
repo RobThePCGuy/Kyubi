@@ -36,7 +36,7 @@ class InstallViewModel(svc: NetworkService, markwon: Markwon) : BaseViewModel() 
                 val file = File(AppContext.cacheDir, "${BuildConfig.VERSION_CODE}.md")
                 val text = when {
                     file.exists() -> file.readText()
-                    Const.Url.CHANGELOG_URL.isEmpty() -> ""
+                    Const.Url.CHANGELOG_URL.isBlank() -> ""
                     else -> {
                         val str = svc.fetchString(Const.Url.CHANGELOG_URL)
                         file.writeText(str)

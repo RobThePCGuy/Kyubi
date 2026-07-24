@@ -1,12 +1,7 @@
 package com.topjohnwu.magisk.core.repository
 
 import com.topjohnwu.magisk.core.Config
-import com.topjohnwu.magisk.core.Config.Value.BETA_CHANNEL
-import com.topjohnwu.magisk.core.Config.Value.CANARY_CHANNEL
-import com.topjohnwu.magisk.core.Config.Value.CUSTOM_CHANNEL
-import com.topjohnwu.magisk.core.Config.Value.DEBUG_CHANNEL
-import com.topjohnwu.magisk.core.Config.Value.DEFAULT_CHANNEL
-import com.topjohnwu.magisk.core.Config.Value.STABLE_CHANNEL
+import com.topjohnwu.magisk.core.Config.Value.PRERELEASE_CHANNEL
 import com.topjohnwu.magisk.core.Info
 import com.topjohnwu.magisk.core.data.GithubPageServices
 import com.topjohnwu.magisk.core.data.RawServices
@@ -19,28 +14,11 @@ class NetworkService(
     private val raw: RawServices
 ) {
     suspend fun fetchUpdate() = safe {
-        var info = when (Config.updateChannel) {
-            DEFAULT_CHANNEL, STABLE_CHANNEL -> fetchStableUpdate()
-            BETA_CHANNEL -> fetchBetaUpdate()
-            CANARY_CHANNEL -> fetchCanaryUpdate()
-            DEBUG_CHANNEL -> fetchDebugUpdate()
-            CUSTOM_CHANNEL -> fetchCustomUpdate(Config.customChannelUrl)
-            else -> throw IllegalArgumentException()
-        }
-        if (info.magisk.versionCode < Info.env.versionCode &&
-            Config.updateChannel == DEFAULT_CHANNEL) {
-            Config.updateChannel = BETA_CHANNEL
-            info = fetchBetaUpdate()
-        }
-        info
+        if (Config.updateChannel == PRERELEASE_CHANNEL)
+            pages.fetchUpdateJSON("prerelease.json")
+        else
+            pages.fetchUpdateJSON("stable.json")
     }
-
-    // UpdateInfo
-    private suspend fun fetchStableUpdate() = pages.fetchUpdateJSON("stable.json")
-    private suspend fun fetchBetaUpdate() = pages.fetchUpdateJSON("beta.json")
-    private suspend fun fetchCanaryUpdate() = pages.fetchUpdateJSON("canary.json")
-    private suspend fun fetchDebugUpdate() = pages.fetchUpdateJSON("debug.json")
-    private suspend fun fetchCustomUpdate(url: String) = pages.fetchUpdateJSON(url)
 
     private inline fun <T> safe(factory: () -> T): T? {
         return try {

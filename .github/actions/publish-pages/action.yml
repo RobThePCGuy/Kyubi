@@ -1,0 +1,60 @@
+name: Publish Pages build
+description: >
+  Request a GitHub Pages build for a legacy (branch-source) site and wait until
+  the build for a SPECIFIC commit reports built. A GITHUB_TOKEN push does not
+  cascade into new workflow runs, so the branch-source pages-build-deployment
+  workflow may never fire and the live site would stay stale -- the build must be
+  requested explicitly. Binding to the commit SHA stops an EARLIER completed
+  build from satisfying the check while the requested one is still invisible.
+inputs:
+  pages-sha:
+    description: The gh-pages commit that must be live before this succeeds.
+    required: true
+  token:
+    description: Token carrying pages:write on this repository.
+    required: true
+runs:
+  using: composite
+  steps:
+    - name: Request and verify Pages build
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.token }}
+        PAGES_SHA: ${{ inputs.pages-sha }}
+      run: |
+        set -euo pipefail
+
+        # `required: true` on a composite input is documentation only -- the runner
+        # does not enforce it. An empty value would never match and would burn the
+        # whole budget before reporting a misleading timeout.
+        [ -n "${PAGES_SHA:-}" ] || { echo "::error::pages-sha input is empty" >&2; exit 1; }
+
+        gh api -X POST "repos/${GITHUB_REPOSITORY}/pages/builds" >/dev/null
+
+        last=""
+        for _ in $(seq 1 60); do
+          # A single 502 or secondary rate-limit must not abort the job -- by this
+          # point the release is already public and the feed already pushed.
+          if ! build="$(gh api "repos/${GITHUB_REPOSITORY}/pages/builds/latest" 2>/tmp/gh-err)"; then
+            echo "pages api call failed, retrying: $(cat /tmp/gh-err 2>/dev/null)"
+            sleep 10
+            continue
+          fi
+          last="$build"
+          # `// "unknown"` covers a MISSING key. The `2>/dev/null || echo unknown`
+          # covers an UNPARSEABLE body -- jq emits nothing at all on a parse error,
+          # so the alternative operator never fires and set -e would abort mid-loop,
+          # skipping the diagnostic echo this loop exists to produce.
+          status="$(echo "$build" | jq -r '.status // "unknown"' 2>/dev/null || echo unknown)"
+          sha="$(echo "$build"    | jq -r '.commit // "unknown"' 2>/dev/null || echo unknown)"
+          echo "pages build: status=$status commit=$sha (want $PAGES_SHA)"
+          if [ "$status" = "built" ] && [ "$sha" = "$PAGES_SHA" ]; then exit 0; fi
+          if [ "$status" = "errored" ]; then echo "::error::Pages build errored" >&2; exit 1; fi
+          sleep 10
+        done
+
+        # Echo the last raw response: a timeout caused by an unexpected payload
+        # shape is otherwise indistinguishable from a genuinely slow build.
+        echo "::error::Pages build for $PAGES_SHA did not reach 'built' within 10 minutes" >&2
+        echo "last response: ${last:-<none>}" >&2
+        exit 1

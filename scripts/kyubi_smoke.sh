@@ -55,6 +55,42 @@ else
 fi
 echo "APK shape OK: x86-only, magiskboot-free."
 
+# --- Version invariants -----------------------------------------------------
+# The APK versionCode is a monotonic build code, NOT the Magisk core compat
+# code. Ten releases shipped versionCode=31000, so anything <= 31000 is a
+# downgrade Android will refuse to install over them.
+if [ -n "$aapt" ]; then
+  vc="$(echo "$badging" | sed -n "s/.*versionCode='\([0-9]*\)'.*/\1/p" | head -1)"
+  [ -n "$vc" ] || fail "could not read versionCode from badging"
+  [ "$vc" -gt 31000 ] || fail "versionCode $vc <= 31000 -- downgrade vs published releases"
+  echo "  versionCode OK: $vc (> 31000)"
+else
+  echo "  WARN: aapt not found -- skipping versionCode assertion"
+fi
+
+# The APK comment must name both numbers explicitly. setupAppCommon() is shared
+# with the stub (whose manifest versionCode is 1), so a bare `versionCode=` key
+# would be ambiguous when read off a stub APK.
+comment="$(unzip -z "$APK" 2>/dev/null || true)"
+[[ "$comment" == *"buildCode="*             ]] || fail "APK comment missing buildCode="
+[[ "$comment" == *"coreVersionCode=31000"*  ]] || fail "APK comment missing coreVersionCode=31000"
+# Must match the BARE key only, so anchor to a line start. (Note `coreVersionCode=`
+# does NOT collide here -- bash [[ ]] is case-sensitive and its `V` is capitalised --
+# but anchoring is what keeps that true if a key is ever renamed.)
+[[ "$comment" == *$'\n'"versionCode="*      ]] && fail "APK comment uses ambiguous versionCode= key"
+
+# The comment is what CI reads to build the feed; the manifest is what Android
+# reads to decide upgrades. If plumbing ever drifts they disagree silently and
+# the feed advertises a build code no installed APK actually carries.
+if [ -n "$aapt" ]; then
+  cbc="$(echo "$comment" | sed -n 's/^buildCode=\([0-9]*\)$/\1/p')"
+  [ -n "$cbc" ] || fail "could not parse buildCode from APK comment"
+  [ "$cbc" -eq "$vc" ] || fail "APK comment buildCode $cbc != manifest versionCode $vc"
+  echo "  APK comment OK: buildCode $cbc matches manifest versionCode"
+else
+  echo "  APK comment OK: buildCode + coreVersionCode present (no aapt to cross-check)"
+fi
+
 # --- Feed / URL regression guard -------------------------------------------
 # The compiled-in update feeds and source URLs must point at Kyubi, never back
 # at upstream Kitsune/Magisk. Scoped to the feed sources only -- upstream author
@@ -70,5 +106,13 @@ guard 'huskydg\.github\.io'
 guard 'topjohnwu/magisk-files'
 guard 'KitsuneMagisk/releases'
 echo "Feed/URL guard OK: no upstream feeds."
+
+# The feed base must carry the /Kyubi/ project-pages segment. Without it,
+# stable.json resolves against the USER pages site, not this repo's.
+const_kt="app/src/main/java/com/topjohnwu/magisk/core/Const.kt"
+base="$(sed -n 's/.*GITHUB_PAGE_URL = "\([^"]*\)".*/\1/p' "$const_kt")"
+[ "$base" = "https://robthepcguy.github.io/Kyubi/" ] \
+  || fail "feed base URL is '$base', expected https://robthepcguy.github.io/Kyubi/"
+echo "  feed base URL OK: $base"
 
 echo "SMOKE OK."

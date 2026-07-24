@@ -60,6 +60,23 @@ that snapshot so a future maintainer can tell Kyubi's deltas from upstream.
 
 ## Building
 
+**JDK:** the bundled Kotlin compiler cannot parse class files from the newest
+JDKs — a default `JAVA_HOME` pointing at JDK 25+ fails with a Kotlin compiler
+error that does not name the JDK as the cause. Build with JDK 17 or 21:
+
+```sh
+export JAVA_HOME=/c/path/to/jdk-21              # or jdk-17
+export PATH="/c/path/to/jdk-21/bin:$PATH"       # build.py resolves javac via PATH
+```
+
+On Windows under Git Bash, use the `/c/...` form. A Windows-style
+`C:/Users/.../jdk-21` is silently split on the colon as a PATH separator, so
+`java` still resolves to the system JDK and the build fails as if `JAVA_HOME`
+were never set. **`JAVA_HOME` alone is not sufficient here** -- `build.py`
+resolves `javac` from `PATH`, so a newer `javac` earlier in `PATH` still wins
+and the build fails with "JDK 17 is required, but javac NN is active". Prepend
+the JDK bin directory to `PATH` as well.
+
 ```sh
 export ANDROID_SDK_ROOT=/path/to/android-sdk
 python build.py ndk        # install the ondk (Magisk NDK, r27.1)
@@ -87,8 +104,9 @@ workflow `KYUBI_CERT_SHA256` and fails on drift.
 
 `.github/workflows/android.yml`:
 
-- **Permissions:** read-only by default; only the `release` job elevates to
-  `contents: write`. Checkouts use `persist-credentials: false`.
+- **Permissions:** read-only by default; the `release` job elevates to
+  `contents: write` + `pages: write`. Checkouts use `persist-credentials: false`,
+  **except** the `gh-pages` checkout in the feed-writing jobs, which must push.
 - **Triggers** on push to `dev`/`kitsune`, on **pull requests**, and manually
   (`workflow_dispatch`).
 - **`build`** — release + debug for x86/x86_64. Release is signed from secrets
@@ -104,10 +122,42 @@ workflow `KYUBI_CERT_SHA256` and fails on drift.
   **prerelease** (rolling candidate). Debug APKs stay private CI artifacts. Tag
   `v31.0-<short-commit>`.
 
-**Stable releases are cut manually** (no tag-triggered job yet): after live
-system-mode validation, publish a `kyubi-x.y.z` release from a validated commit's
-`app-release.apk`/`stub-release.apk`. Automating this behind a protected
-environment with manual approval is a tracked follow-up. **Also tracked:**
-decouple the Android application `versionCode` (should be a monotonic build
-number) from the Magisk core compat code (`31000`) before an update feed goes
-live, or the updater can't tell two rolling builds apart.
+## Versioning
+
+Kyubi carries **two** version numbers, and conflating them is the bug this
+scheme exists to prevent:
+
+- **Core compatibility code** — `magisk.versionCode=31000` in `gradle.properties`.
+  The Magisk core feature level the daemon implements; reported by `magisk -V`,
+  compiled into `flags.h` and `util_functions.sh`, and exposed to the app as
+  `BuildConfig.CORE_VER_CODE`. Compare this against an *installed daemon*.
+- **Build code** — the APK's Android `versionCode`, computed as
+  `31000 + commits since kyubi.buildCodeAnchor`. A monotonic ordering key, not an
+  identity (the commit SHA is the identity). Compare this against a *feed entry*.
+
+The anchor is the last commit shipped at `versionCode = 31000`. It is
+ancestry-checked at build time: a rewritten lineage fails the build rather than
+producing a plausible wrong count.
+
+**If history is ever rewritten past the anchor, you must move BOTH values, as a
+new epoch.** Moving `kyubi.buildCodeAnchor` alone lowers the build code, because
+the count restarts from a later commit while the base stays at 31000 — which
+reintroduces exactly the downgrade this scheme exists to prevent. Set:
+
+- `LEGACY_BUILD_CODE_BASE` (in `buildSrc/src/main/java/Plugin.kt`) to the highest
+  build code you have ever published, and
+- `kyubi.buildCodeAnchor` to the commit carrying that high-water mark.
+
+The next descendant commit then receives high-water-mark + 1. Verify with
+`./build.py -vr all && ./scripts/kyubi_smoke.sh out/app-release.apk` before
+publishing anything, and confirm against
+`gh release list` that no published release carries a higher code.
+
+Stable releases are promoted through `.github/workflows/promote.yml`, which
+requires manual approval via the protected `release` environment.
+
+**The `release` environment must exist with required reviewers configured**
+(Settings → Environments). GitHub implicitly creates an environment referenced by
+a workflow *with no protection rules*, so a missing configuration leaves promotion
+looking gated while approving automatically. Keep **Prevent self-review OFF** —
+with a single maintainer, enabling it makes promotion impossible.

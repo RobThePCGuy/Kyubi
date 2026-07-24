@@ -14,12 +14,18 @@ class ManagerInstallDialog : MarkDownDialog() {
     private val svc get() = ServiceLocator.networkService
 
     override suspend fun getMarkdownText(): String {
-        val text = svc.fetchString(Info.remote.magisk.note)
+        val note = Info.remote.kyubi.note
+        // A blank note must NOT be fetched. Retrofit resolves an empty @Url against
+        // the RawServices base, which 301s to github.com and returns 200 with the
+        // full HTML homepage -- no HttpException, so MarkDownDialog's IOException
+        // catch never fires and Markwon renders the HTML as Markdown.
+        if (note.isBlank()) return ""
+        val text = svc.fetchString(note)
         // Cache the changelog
         AppContext.cacheDir.listFiles { _, name -> name.endsWith(".md") }.orEmpty().forEach {
             it.delete()
         }
-        File(AppContext.cacheDir, "${Info.remote.magisk.versionCode}.md").writeText(text)
+        File(AppContext.cacheDir, "${Info.remote.kyubi.buildCode}.md").writeText(text)
         return text
     }
 

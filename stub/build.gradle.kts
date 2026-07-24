@@ -12,8 +12,6 @@ lsparanoid {
 android {
     namespace = "com.topjohnwu.magisk"
 
-    val canary = !Config.version.contains(".")
-
     val url: String? = null  // Kyubi: never bake a foreign release host into the stub
 
     defaultConfig {

@@ -52,7 +52,7 @@ class HomeViewModel(
         get() = when {
             Info.isRooted && Info.env.isUnsupported -> State.OUTDATED
             !Info.env.isActive -> State.INVALID
-            Info.env.versionCode < BuildConfig.VERSION_CODE -> State.OUTDATED
+            Info.env.coreVersionCode < BuildConfig.CORE_VER_CODE -> State.OUTDATED
             else -> State.UP_TO_DATE
         }
 
@@ -63,7 +63,7 @@ class HomeViewModel(
     val magiskInstalledVersion
         get() = Info.env.run {
             if (isActive)
-                ("$versionString ($versionCode)" + if (isDebug) " (D)" else "").asText()
+                ("$versionString ($coreVersionCode)" + if (isDebug) " (D)" else "").asText()
             else
                 R.string.not_available.asText()
         }
@@ -91,22 +91,14 @@ class HomeViewModel(
     override suspend fun doLoadWork() {
         appState = State.LOADING
         if (!Config.checkUpdate) {
-            // Kyubi has no update feed yet, and update checks are off by default.
-            // Skip the remote request (it would 404) so it can't flip the manager
-            // to INVALID / "no connection" -- the manager is installed and usable.
             appState = State.UP_TO_DATE
             managerRemoteVersion = R.string.not_available.asText()
         } else {
             Info.getRemote(svc)?.apply {
-                appState = when {
-                    BuildConfig.VERSION_CODE < magisk.versionCode -> State.OUTDATED
-                    else -> State.UP_TO_DATE
-                }
-
-                val isDebug = Config.updateChannel == Config.Value.DEBUG_CHANNEL
-                managerRemoteVersion =
-                    ("${magisk.version} (${magisk.versionCode})" +
-                        if (isDebug) " (D)" else "").asText()
+                appState =
+                    if (BuildConfig.VERSION_CODE < kyubi.buildCode) State.OUTDATED
+                    else State.UP_TO_DATE
+                managerRemoteVersion = "${kyubi.version} (${kyubi.buildCode})".asText()
             } ?: run {
                 appState = State.INVALID
                 managerRemoteVersion = R.string.not_available.asText()
@@ -139,6 +131,7 @@ class HomeViewModel(
     fun onManagerPressed() = when (appState) {
         State.LOADING -> SnackbarEvent(R.string.loading).publish()
         State.INVALID -> SnackbarEvent(R.string.no_connection).publish()
+        State.UP_TO_DATE -> SnackbarEvent(R.string.manager_up_to_date).publish()
         else -> withExternalRW {
             withInstallPermission {
                 ManagerInstallDialog().show()
@@ -157,7 +150,7 @@ class HomeViewModel(
 
     private suspend fun ensureEnv() {
         if (magiskState == State.INVALID || checkedEnv) return
-        val cmd = "env_check ${Info.env.versionString} ${Info.env.versionCode}"
+        val cmd = "env_check ${Info.env.versionString} ${Info.env.coreVersionCode}"
         val code = Shell.cmd(cmd).await().code
         if (code != 0) {
             EnvFixDialog(this, code).show()

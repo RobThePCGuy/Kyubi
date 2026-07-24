@@ -6,14 +6,16 @@ import kotlinx.parcelize.Parcelize
 
 @JsonClass(generateAdapter = true)
 data class UpdateInfo(
-    val magisk: MagiskJson = MagiskJson(),
+    val kyubi: KyubiJson = KyubiJson(),
 )
 
 @Parcelize
 @JsonClass(generateAdapter = true)
-data class MagiskJson(
+data class KyubiJson(
     val version: String = "",
-    val versionCode: Int = -1,
+    // Monotonic APK ordering key, compared against BuildConfig.VERSION_CODE.
+    // NOT the Magisk core compatibility code.
+    val buildCode: Int = -1,
     val link: String = "",
     val note: String = ""
 ) : Parcelable
