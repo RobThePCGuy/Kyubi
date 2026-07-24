@@ -9,7 +9,7 @@
     <string name="section_home">Home</string>
     <string name="section_theme">Themes</string>
     <string name="denylist">DenyList</string>
-    <string name="denylist_off_hint">Off — your selections apply once enabled</string>
+    <string name="denylist_off_hint">Off. Your selections apply once enabled</string>
     <string name="denylist_sulist_locked_hint">SuList enforcement stays on until SuList mode is disabled and the device is rebooted.</string>
     <string name="denylist_enforce_error">Couldn\'t change DenyList state</string>
     <string name="denylist_status_error">Couldn\'t read DenyList state</string>

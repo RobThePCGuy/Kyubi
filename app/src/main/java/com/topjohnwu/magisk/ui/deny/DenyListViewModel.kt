@@ -68,7 +68,8 @@ class DenyListViewModel : AsyncLoadViewModel() {
         private set(value) = set(value, field, { field = it },
             BR.enforcementEnabled, BR.enforceBanner, BR.bannerVisible, BR.switchEnabled)
 
-    @get:Bindable
+    // Not @get:Bindable: only switchEnabled (below) reads it, and its setter
+    // notifies BR.switchEnabled directly. Nothing binds enforcementUpdating.
     var enforcementUpdating = false
         private set(value) = set(value, field, { field = it }, BR.switchEnabled)
 
