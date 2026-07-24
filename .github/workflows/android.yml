@@ -199,9 +199,10 @@ jobs:
   # APKs are the ones built (and signed) in `build` -- downloaded, not rebuilt.
   # Rolling per-commit builds are marked prerelease: CI cannot validate the
   # offline system-mode root install, so a build is only a candidate until it
-  # passes the real BlueStacks system-mode test on an emulator instance. A stable
-  # release is cut MANUALLY after that validation (no tag-triggered job yet; see
-  # MAINTAINER.md).
+  # passes the real BlueStacks system-mode test on an emulator instance. A
+  # candidate is promoted to stable through `promote.yml` (a manually-approved
+  # workflow_dispatch behind the protected `release` environment); see
+  # MAINTAINER.md.
   release:
     name: Publish release
     needs: [build, smoke]
