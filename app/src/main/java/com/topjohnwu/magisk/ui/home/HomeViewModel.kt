@@ -131,6 +131,7 @@ class HomeViewModel(
     fun onManagerPressed() = when (appState) {
         State.LOADING -> SnackbarEvent(R.string.loading).publish()
         State.INVALID -> SnackbarEvent(R.string.no_connection).publish()
+        State.UP_TO_DATE -> SnackbarEvent(R.string.manager_up_to_date).publish()
         else -> withExternalRW {
             withInstallPermission {
                 ManagerInstallDialog().show()
