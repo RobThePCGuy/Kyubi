@@ -142,11 +142,20 @@ jobs:
           gh release view "$TAG" --repo "$GITHUB_REPOSITORY" \
             --json isPrerelease --jq '"is_prerelease=\(.isPrerelease)"' >> "$GITHUB_OUTPUT"
           # 404s until the first stable release exists, so this must not be fatal.
-          latest="$(gh api "repos/${GITHUB_REPOSITORY}/releases/latest" --jq .tag_name 2>/dev/null || true)"
-          if [ "$latest" = "$TAG" ]; then
-            echo "is_latest=true" >> "$GITHUB_OUTPUT"
+          # Branch on the EXIT STATUS, not on an empty string: gh writes the error
+          # body to STDOUT, so `latest` holds a JSON blob rather than "" on failure.
+          # And distinguish "no stable release yet" from "the API failed" -- masking
+          # a 401/403/network blip as `false` would report "not flipped" for a
+          # release that IS flipped, during exactly the incident this field exists
+          # to diagnose.
+          if latest="$(gh api "repos/${GITHUB_REPOSITORY}/releases/latest" --jq .tag_name 2>/dev/null)"; then
+            if [ "$latest" = "$TAG" ]; then
+              echo "is_latest=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "is_latest=false" >> "$GITHUB_OUTPUT"
+            fi
           else
-            echo "is_latest=false" >> "$GITHUB_OUTPUT"
+            echo "is_latest=unknown" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Check stable state and monotonicity
