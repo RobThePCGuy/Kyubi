@@ -3,7 +3,6 @@ package com.topjohnwu.magisk.core
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.edit
-import com.topjohnwu.magisk.BuildConfig
 import com.topjohnwu.magisk.core.di.AppContext
 import com.topjohnwu.magisk.core.di.ServiceLocator
 import com.topjohnwu.magisk.core.ktx.writeTo
@@ -52,7 +51,6 @@ object Config : PreferenceConfig, DBConfig {
         const val SU_TAPJACK = "su_tapjack"
         const val CHECK_UPDATES = "check_update"
         const val UPDATE_CHANNEL = "update_channel"
-        const val CUSTOM_CHANNEL = "custom_channel"
         const val LOCALE = "locale"
         const val DARK_THEME = "dark_theme_extended"
         const val REPO_ORDER = "repo_order"
@@ -67,12 +65,8 @@ object Config : PreferenceConfig, DBConfig {
 
     object Value {
         // Update channels
-        const val DEFAULT_CHANNEL = -1
         const val STABLE_CHANNEL = 0
-        const val BETA_CHANNEL = 1
-        const val CUSTOM_CHANNEL = 2
-        const val CANARY_CHANNEL = 3
-        const val DEBUG_CHANNEL = 4
+        const val PRERELEASE_CHANNEL = 1
 
         // root access mode
         const val ROOT_ACCESS_DISABLED = 0
@@ -112,13 +106,7 @@ object Config : PreferenceConfig, DBConfig {
         const val ORDER_DATE = 1
     }
 
-    private val defaultChannel =
-        if (BuildConfig.DEBUG)
-            Value.DEBUG_CHANNEL
-        else if (Const.APP_IS_CANARY)
-            Value.CANARY_CHANNEL
-        else
-            Value.DEFAULT_CHANNEL
+    private val defaultChannel = Value.STABLE_CHANNEL
 
 
     var bootId by preference(Key.BOOT_ID, "")
@@ -151,7 +139,6 @@ object Config : PreferenceConfig, DBConfig {
     var doh by preference(Key.DOH, false)
     var showSystemApp by preference(Key.SHOW_SYSTEM_APP, false)
 
-    var customChannelUrl by preference(Key.CUSTOM_CHANNEL, "")
     private var localePrefs by preference(Key.LOCALE, "")
     var locale
         get() = localePrefs
@@ -195,8 +182,8 @@ object Config : PreferenceConfig, DBConfig {
             remove(SU_FINGERPRINT)
             prefs.getString(Key.UPDATE_CHANNEL, null).also {
                 if (it == null ||
-                    it.toInt() > Value.DEBUG_CHANNEL ||
-                    it.toInt() < Value.DEFAULT_CHANNEL) {
+                    it.toInt() > Value.PRERELEASE_CHANNEL ||
+                    it.toInt() < Value.STABLE_CHANNEL) {
                     putString(Key.UPDATE_CHANNEL, defaultChannel.toString())
                 }
             }

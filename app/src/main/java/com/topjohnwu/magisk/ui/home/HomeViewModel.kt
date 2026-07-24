@@ -52,7 +52,7 @@ class HomeViewModel(
         get() = when {
             Info.isRooted && Info.env.isUnsupported -> State.OUTDATED
             !Info.env.isActive -> State.INVALID
-            Info.env.versionCode < BuildConfig.VERSION_CODE -> State.OUTDATED
+            Info.env.coreVersionCode < BuildConfig.CORE_VER_CODE -> State.OUTDATED
             else -> State.UP_TO_DATE
         }
 
@@ -63,7 +63,7 @@ class HomeViewModel(
     val magiskInstalledVersion
         get() = Info.env.run {
             if (isActive)
-                ("$versionString ($versionCode)" + if (isDebug) " (D)" else "").asText()
+                ("$versionString ($coreVersionCode)" + if (isDebug) " (D)" else "").asText()
             else
                 R.string.not_available.asText()
         }
@@ -103,10 +103,8 @@ class HomeViewModel(
                     else -> State.UP_TO_DATE
                 }
 
-                val isDebug = Config.updateChannel == Config.Value.DEBUG_CHANNEL
                 managerRemoteVersion =
-                    ("${magisk.version} (${magisk.versionCode})" +
-                        if (isDebug) " (D)" else "").asText()
+                    "${magisk.version} (${magisk.versionCode})".asText()
             } ?: run {
                 appState = State.INVALID
                 managerRemoteVersion = R.string.not_available.asText()
@@ -157,7 +155,7 @@ class HomeViewModel(
 
     private suspend fun ensureEnv() {
         if (magiskState == State.INVALID || checkedEnv) return
-        val cmd = "env_check ${Info.env.versionString} ${Info.env.versionCode}"
+        val cmd = "env_check ${Info.env.versionString} ${Info.env.coreVersionCode}"
         val code = Shell.cmd(cmd).await().code
         if (code != 0) {
             EnvFixDialog(this, code).show()

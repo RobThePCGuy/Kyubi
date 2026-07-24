@@ -2,7 +2,6 @@ package com.topjohnwu.magisk.core
 
 import android.os.Build
 import android.os.Process
-import com.topjohnwu.magisk.BuildConfig
 
 @Suppress("DEPRECATION")
 object Const {
@@ -21,17 +20,16 @@ object Const {
 
     // Misc
     val USER_ID = Process.myUid() / 100000
-    val APP_IS_CANARY get() = Version.isCanary(BuildConfig.VERSION_CODE)
 
     object Version {
         const val MIN_VERSION = "v22.0"
         const val MIN_VERCODE = 22000
 
-        fun atLeast_24_0() = Info.env.versionCode >= 24000 || isCanary()
-        fun atLeast_25_0() = Info.env.versionCode >= 25000 || isCanary()
-        fun isCanary() = isCanary(Info.env.versionCode)
-
-        fun isCanary(ver: Int) = ver > 0 && ver % 100 != 0
+        // These read the INSTALLED DAEMON's core code, not the APK's. They are not
+        // dead: MIN_VERCODE admits daemons from 22000-30999, so someone upgrading
+        // onto Kyubi from an older Magisk can genuinely hit `false` here.
+        fun atLeast_24_0() = Info.env.coreVersionCode >= 24000
+        fun atLeast_25_0() = Info.env.coreVersionCode >= 25000
     }
 
     object ID {
@@ -43,15 +41,12 @@ object Const {
         const val PATREON_URL = "https://www.patreon.com/topjohnwu"
         const val SOURCE_CODE_URL = "https://github.com/RobThePCGuy/Kyubi"
 
-        // Empty until a raw-Markdown changelog is hosted. The GitHub Releases page
-        // is HTML, not Markdown -- fetching it and rendering it through Markwon
-        // produces garbage, so leave it blank (InstallViewModel handles "").
-        val CHANGELOG_URL = if (APP_IS_CANARY) Info.remote.magisk.note
-        else ""
+        // Becomes the feed's `note` URL in Task 3.
+        const val CHANGELOG_URL = ""
 
         const val GITHUB_RAW_URL = "https://raw.githubusercontent.com/"
         const val GITHUB_API_URL = "https://api.github.com/"
-        const val GITHUB_PAGE_URL = "https://robthepcguy.github.io/"  // Kyubi feed host (404 = no update until one exists; never upstream)
+        const val GITHUB_PAGE_URL = "https://robthepcguy.github.io/Kyubi/"
         const val JS_DELIVR_URL = "https://cdn.jsdelivr.net/gh/"
     }
 
