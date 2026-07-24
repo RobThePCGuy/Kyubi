@@ -1,0 +1,8 @@
+{
+  "kyubi": {
+    "version": "31.0-kitsune.67e5dcbb",
+    "buildCode": 31000,
+    "link": "https://github.com/RobThePCGuy/Kyubi/releases/download/kyubi-1.0.0/app-release.apk",
+    "note": ""
+  }
+}
