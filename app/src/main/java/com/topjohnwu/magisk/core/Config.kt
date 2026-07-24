@@ -125,9 +125,7 @@ object Config : PreferenceConfig, DBConfig {
     var themeOrdinal by preference(Key.THEME_ORDINAL, Theme.Kyubi.ordinal)
     var suReAuth by preference(Key.SU_REAUTH, false)
     var suTapjack by preference(Key.SU_TAPJACK, true)
-    // Kyubi: default OFF -- there is no Kyubi update feed yet, so an automatic
-    // check only fetches a 404. Users can still enable it in Settings.
-    private var checkUpdatePrefs by preference(Key.CHECK_UPDATES, false)
+    private var checkUpdatePrefs by preference(Key.CHECK_UPDATES, true)
     var checkUpdate
         get() = checkUpdatePrefs
         set(value) {

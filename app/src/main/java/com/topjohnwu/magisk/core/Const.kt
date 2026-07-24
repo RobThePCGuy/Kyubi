@@ -41,8 +41,7 @@ object Const {
         const val PATREON_URL = "https://www.patreon.com/topjohnwu"
         const val SOURCE_CODE_URL = "https://github.com/RobThePCGuy/Kyubi"
 
-        // Becomes the feed's `note` URL in Task 3.
-        const val CHANGELOG_URL = ""
+        val CHANGELOG_URL get() = Info.remote.kyubi.note
 
         const val GITHUB_RAW_URL = "https://raw.githubusercontent.com/"
         const val GITHUB_API_URL = "https://api.github.com/"

@@ -91,20 +91,14 @@ class HomeViewModel(
     override suspend fun doLoadWork() {
         appState = State.LOADING
         if (!Config.checkUpdate) {
-            // Kyubi has no update feed yet, and update checks are off by default.
-            // Skip the remote request (it would 404) so it can't flip the manager
-            // to INVALID / "no connection" -- the manager is installed and usable.
             appState = State.UP_TO_DATE
             managerRemoteVersion = R.string.not_available.asText()
         } else {
             Info.getRemote(svc)?.apply {
-                appState = when {
-                    BuildConfig.VERSION_CODE < magisk.versionCode -> State.OUTDATED
-                    else -> State.UP_TO_DATE
-                }
-
-                managerRemoteVersion =
-                    "${magisk.version} (${magisk.versionCode})".asText()
+                appState =
+                    if (BuildConfig.VERSION_CODE < kyubi.buildCode) State.OUTDATED
+                    else State.UP_TO_DATE
+                managerRemoteVersion = "${kyubi.version} (${kyubi.buildCode})".asText()
             } ?: run {
                 appState = State.INVALID
                 managerRemoteVersion = R.string.not_available.asText()

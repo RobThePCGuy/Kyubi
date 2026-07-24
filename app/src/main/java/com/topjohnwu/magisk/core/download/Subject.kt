@@ -10,7 +10,7 @@ import androidx.core.net.toUri
 import com.topjohnwu.magisk.core.Info
 import com.topjohnwu.magisk.core.di.AppContext
 import com.topjohnwu.magisk.core.ktx.cachedFile
-import com.topjohnwu.magisk.core.model.MagiskJson
+import com.topjohnwu.magisk.core.model.KyubiJson
 import com.topjohnwu.magisk.core.model.module.OnlineModule
 import com.topjohnwu.magisk.core.utils.MediaStoreUtils
 import com.topjohnwu.magisk.ui.flash.FlashFragment
@@ -50,10 +50,10 @@ sealed class Subject : Parcelable {
 
     @Parcelize
     class App(
-        private val json: MagiskJson = Info.remote.magisk,
+        private val json: KyubiJson = Info.remote.kyubi,
         override val notifyId: Int = Notifications.nextId()
     ) : Subject() {
-        override val title: String get() = "Magisk-${json.version}(${json.versionCode})"
+        override val title: String get() = "Kyubi-${json.version}(${json.buildCode})"
         override val url: String get() = json.link
 
         @IgnoredOnParcel

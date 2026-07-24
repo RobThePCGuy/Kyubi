@@ -14,12 +14,12 @@ class ManagerInstallDialog : MarkDownDialog() {
     private val svc get() = ServiceLocator.networkService
 
     override suspend fun getMarkdownText(): String {
-        val text = svc.fetchString(Info.remote.magisk.note)
+        val text = svc.fetchString(Info.remote.kyubi.note)
         // Cache the changelog
         AppContext.cacheDir.listFiles { _, name -> name.endsWith(".md") }.orEmpty().forEach {
             it.delete()
         }
-        File(AppContext.cacheDir, "${Info.remote.magisk.versionCode}.md").writeText(text)
+        File(AppContext.cacheDir, "${Info.remote.kyubi.buildCode}.md").writeText(text)
         return text
     }
 
