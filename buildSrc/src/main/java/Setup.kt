@@ -217,7 +217,8 @@ private fun Project.setupAppCommon() {
             this.transformationRequest.set(transformationRequest)
             this.signingConfig.set(signingConfig)
             this.comment.set("version=${Config.version}\n" +
-                "versionCode=${Config.versionCode}\n" +
+                "buildCode=${Config.buildCode}\n" +
+                "coreVersionCode=${Config.coreVersionCode}\n" +
                 "stubVersion=${Config.stubVersion}\n")
             this.outFolder.set(layout.buildDirectory.dir("outputs/apk/${variant.name}"))
         }
@@ -264,7 +265,7 @@ fun Project.setupApp() {
         val syncAssets = tasks.register("sync${variantCapped}Assets", Sync::class) {
             dependsOn(stubTask)
             inputs.property("version", Config.version)
-            inputs.property("versionCode", Config.versionCode)
+            inputs.property("coreVersionCode", Config.coreVersionCode)
             into("src/${this@all.name}/assets")
             from(rootProject.file("scripts")) {
                 include("util_functions.sh")
@@ -277,7 +278,7 @@ fun Project.setupApp() {
                 filter {
                     it.replace(
                         "#MAGISK_VERSION_STUB",
-                        "MAGISK_VER='${Config.version}'\nMAGISK_VER_CODE=${Config.versionCode}"
+                        "MAGISK_VER='${Config.version}'\nMAGISK_VER_CODE=${Config.coreVersionCode}"
                     )
                 }
                 filter<FixCrLfFilter>("eol" to FixCrLfFilter.CrLf.newInstance("lf"))

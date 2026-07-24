@@ -25,7 +25,8 @@ android {
         applicationId = "io.github.robthepcguy.kyubi"
         vectorDrawables.useSupportLibrary = true
         versionName = Config.version
-        versionCode = Config.versionCode
+        versionCode = Config.buildCode
+        buildConfigField("int", "CORE_VER_CODE", "${Config.coreVersionCode}")
         ndk {
             abiFilters += listOf("x86", "x86_64")  // Kyubi: x86 emulators only
             debugSymbolLevel = "FULL"
@@ -43,6 +44,7 @@ android {
     buildFeatures {
         dataBinding = true
         aidl = true
+        buildConfig = true
     }
 
     packaging {
