@@ -43,8 +43,14 @@ private fun computeBuildCode(repo: FileRepository): Int {
     val anchorSha = Config["kyubi.buildCodeAnchor"]
         ?: throw GradleException("kyubi.buildCodeAnchor is missing from gradle.properties")
 
+    // resolve() builds an ObjectId from any well-formed 40-hex string WITHOUT
+    // consulting the object database, so a null check alone does not detect a
+    // missing anchor -- it would surface later as a raw MissingObjectException
+    // from parseCommit, losing the actionable message. Check existence explicitly.
     val anchorId = repo.resolve(anchorSha)
-        ?: throw GradleException(
+        ?: throw GradleException("kyubi.buildCodeAnchor '$anchorSha' is not a valid object id")
+    if (!repo.newObjectReader().use { it.has(anchorId) })
+        throw GradleException(
             "Cannot resolve Kyubi build-code anchor $anchorSha -- the commit is not " +
             "in this clone. Run `git fetch --unshallow`.")
     val headId = repo.resolve(Constants.HEAD)
