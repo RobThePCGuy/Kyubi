@@ -16,21 +16,41 @@ inputs:
 runs:
   using: composite
   steps:
-    - shell: bash
+    - name: Request and verify Pages build
+      shell: bash
       env:
         GH_TOKEN: ${{ inputs.token }}
         PAGES_SHA: ${{ inputs.pages-sha }}
       run: |
         set -euo pipefail
+
+        # `required: true` on a composite input is documentation only -- the runner
+        # does not enforce it. An empty value would never match and would burn the
+        # whole budget before reporting a misleading timeout.
+        [ -n "${PAGES_SHA:-}" ] || { echo "::error::pages-sha input is empty" >&2; exit 1; }
+
         gh api -X POST "repos/${GITHUB_REPOSITORY}/pages/builds" >/dev/null
-        for _ in $(seq 1 30); do
-          build="$(gh api "repos/${GITHUB_REPOSITORY}/pages/builds/latest")"
-          status="$(echo "$build" | jq -r .status)"
-          sha="$(echo "$build" | jq -r .commit)"
+
+        last=""
+        for _ in $(seq 1 60); do
+          # A single 502 or secondary rate-limit must not abort the job -- by this
+          # point the release is already public and the feed already pushed.
+          if ! build="$(gh api "repos/${GITHUB_REPOSITORY}/pages/builds/latest" 2>&1)"; then
+            echo "pages api call failed, retrying: ${build}"
+            sleep 10
+            continue
+          fi
+          last="$build"
+          status="$(echo "$build" | jq -r '.status // "unknown"')"
+          sha="$(echo "$build" | jq -r '.commit // "unknown"')"
           echo "pages build: status=$status commit=$sha (want $PAGES_SHA)"
           if [ "$status" = "built" ] && [ "$sha" = "$PAGES_SHA" ]; then exit 0; fi
           if [ "$status" = "errored" ]; then echo "::error::Pages build errored" >&2; exit 1; fi
           sleep 10
         done
-        echo "::error::Pages build for $PAGES_SHA did not reach 'built' within 5 minutes" >&2
+
+        # Echo the last raw response: a timeout caused by an unexpected payload
+        # shape is otherwise indistinguishable from a genuinely slow build.
+        echo "::error::Pages build for $PAGES_SHA did not reach 'built' within 10 minutes" >&2
+        echo "last response: ${last:-<none>}" >&2
         exit 1

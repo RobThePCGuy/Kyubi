@@ -273,8 +273,10 @@ jobs:
           if [ "$BUILD_CODE" -gt "$PREV" ]; then
             echo "new build $BUILD_CODE (published $PREV)"
           elif [ "$BUILD_CODE" -eq "$PREV" ]; then
-            PREV_VER="$(jq -er '.kyubi.version' site/prerelease.json)"
-            PREV_LINK="$(jq -er '.kyubi.link' site/prerelease.json)"
+            PREV_VER="$(jq -er '.kyubi.version' site/prerelease.json)" \
+              || { echo "::error::prerelease.json missing .kyubi.version" >&2; exit 1; }
+            PREV_LINK="$(jq -er '.kyubi.link' site/prerelease.json)" \
+              || { echo "::error::prerelease.json missing .kyubi.link" >&2; exit 1; }
             if [ "$PREV_VER" = "$VERSION" ] && [ "$PREV_LINK" = "$LINK" ]; then
               echo "rerun: feed already describes this exact build"
             else
@@ -340,12 +342,16 @@ jobs:
           cd site
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # The kyubi-feed concurrency group covers release-vs-promote, but not a
+          # human editing gh-pages directly. Rebasing first turns that into a
+          # merge instead of a failed push after the release is public.
+          git pull --rebase origin gh-pages
           git add prerelease.json "notes/${TAG}.md"
           if git diff --cached --quiet; then
             echo "feed already current -- no commit needed"
           else
             git commit -m "feed: prerelease ${TAG} (buildCode ${BUILD_CODE})"
-            git push
+            git push origin HEAD:gh-pages
           fi
           echo "pages_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
