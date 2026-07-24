@@ -14,7 +14,9 @@ on:
   workflow_dispatch:
 
 # Least privilege: read-only by default (PR/dev/manual/smoke jobs execute
-# repo-controlled build code). Only the release job elevates to contents: write.
+# repo-controlled build code). Only the release job elevates, to contents: write
+# for the GitHub Release plus pages: write to publish the update feed. Stable
+# promotion is a separate, environment-protected workflow (promote.yml).
 permissions:
   contents: read
 
@@ -78,8 +80,9 @@ jobs:
           echo "Release signing configured from secrets."
 
       # Keep the Kitsune core lineage but append the short SHA so the APK reports
-      # a distinct, verifiable version matching its release tag. versionCode stays
-      # 31000 (Magisk feature gates depend on it).
+      # a distinct, verifiable version matching its release tag. The APK's
+      # versionCode is an anchored build code (see gradle.properties);
+      # magisk.versionCode stays 31000 as the core compat level.
       - name: Embed build commit in version name
         run: |
           SHA="$(git rev-parse --short=8 HEAD)"
@@ -241,9 +244,10 @@ jobs:
           path: site
           persist-credentials: true
 
-      # Tag = v31.0-<short commit>: v31.0 tracks magisk.versionCode=31000, and the
-      # short SHA is the build suffix embedded in the APK's version name
-      # (31.0-kitsune.<sha>), so the tag and the reported version agree.
+      # Tag = v31.0-<short commit>: v31.0 tracks the core compat level (31000),
+      # and the short SHA is the build suffix embedded in the APK's version name
+      # (31.0-kitsune.<sha>), so the tag and the reported version agree. The
+      # APK's Android versionCode is a separate monotonic build code.
       - name: Compute version tag
         id: ver
         run: echo "tag=v31.0-$(echo '${{ github.sha }}' | cut -c1-8)" >> "$GITHUB_OUTPUT"
@@ -302,7 +306,7 @@ jobs:
           prerelease: true
           fail_on_unmatched_files: false
           body: |
-            **Kyubi** rolling build — commit `${{ github.sha }}` (versionCode 31000).
+            **Kyubi** rolling build — commit `${{ github.sha }}` (core compat 31000).
             Emulator-only Magisk (Magisk Delta / Kitsune lineage), system-mode install.
             The APK's version name is `31.0-kitsune.<short-sha>`, ending with the same
             short commit SHA as this tag, so the tag and the installed version agree.

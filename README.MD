@@ -39,8 +39,9 @@ Every push to `kitsune` publishes a **rolling prerelease** tagged
 `v31.0-<short-commit>` (the short hash is the build suffix in the version the app
 reports). These are candidates: CI verifies the build and that it installs and
 launches, but the system-mode root install is validated separately on a real
-instance. A blessed **stable** milestone (e.g. `kyubi-1.0.0`) is cut manually
-after that validation.
+instance. A blessed **stable** milestone (e.g. `kyubi-1.0.0`) is promoted from a
+validated prerelease through a manually-approved workflow, after the system-mode
+install is confirmed on a real instance.
 
 Each release attaches only the certificate-verified release APKs (debug builds
 are not published):
