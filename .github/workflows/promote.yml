@@ -68,7 +68,7 @@ jobs:
           path: site
           persist-credentials: true
 
-      - name: Download and verify the release APK
+      - name: Download and verify the release APKs
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG: ${{ inputs.tag }}
@@ -78,18 +78,24 @@ jobs:
           [ "$draft" = "false" ] || { echo "::error::$TAG is a draft" >&2; exit 1; }
 
           mkdir -p dl
-          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern app-release.apk --dir dl
-          [ "$(ls dl/*.apk | wc -l)" -eq 1 ] || { echo "::error::expected exactly one app-release.apk" >&2; exit 1; }
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" \
+            --pattern app-release.apk --pattern stub-release.apk --dir dl
+          [ -f dl/app-release.apk ]  || { echo "::error::app-release.apk missing from $TAG" >&2; exit 1; }
+          [ -f dl/stub-release.apk ] || { echo "::error::stub-release.apk missing from $TAG" >&2; exit 1; }
 
-          # Re-verify at promotion time: this artifact is about to become the
-          # default download. Mirrors the build-time all-signers check.
+          # Re-verify at promotion time: BOTH artifacts become the recommended
+          # download once the release flips to latest. Mirrors android.yml's
+          # build-time all-signers check, which also covers both.
           APKSIGNER="$(ls "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -1)"
-          digs="$("$APKSIGNER" verify --print-certs dl/app-release.apk 2>/dev/null \
-            | grep -iE 'certificate SHA-256 digest' | awk '{print $NF}')"
-          [ -n "$digs" ] || { echo "::error::no signer certificate found" >&2; exit 1; }
-          while read -r d; do
-            [ "$d" = "$KYUBI_CERT_SHA256" ] || { echo "::error::signer $d != pinned Kyubi cert" >&2; exit 1; }
-          done <<< "$digs"
+          for apk in dl/app-release.apk dl/stub-release.apk; do
+            digs="$("$APKSIGNER" verify --print-certs "$apk" 2>/dev/null \
+              | grep -iE 'certificate SHA-256 digest' | awk '{print $NF}')"
+            [ -n "$digs" ] || { echo "::error::no signer certificate found in $apk" >&2; exit 1; }
+            while read -r d; do
+              [ "$d" = "$KYUBI_CERT_SHA256" ] || { echo "::error::$apk signer $d != pinned Kyubi cert" >&2; exit 1; }
+            done <<< "$digs"
+            echo "$apk: all signers == Kyubi pin"
+          done
 
       - name: Parse and bind the APK to the tag
         id: apk
@@ -130,9 +136,18 @@ jobs:
           TAG: ${{ inputs.tag }}
         run: |
           set -euo pipefail
+          # isLatest is NOT a `gh release view --json` field -- it exists only on
+          # `gh release list`. Field names are validated client-side, so asking for
+          # it aborts before any API call. Query the REST API for the latest tag.
           gh release view "$TAG" --repo "$GITHUB_REPOSITORY" \
-            --json isPrerelease,isLatest --jq \
-            '"is_prerelease=\(.isPrerelease)\nis_latest=\(.isLatest)"' >> "$GITHUB_OUTPUT"
+            --json isPrerelease --jq '"is_prerelease=\(.isPrerelease)"' >> "$GITHUB_OUTPUT"
+          # 404s until the first stable release exists, so this must not be fatal.
+          latest="$(gh api "repos/${GITHUB_REPOSITORY}/releases/latest" --jq .tag_name 2>/dev/null || true)"
+          if [ "$latest" = "$TAG" ]; then
+            echo "is_latest=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_latest=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Check stable state and monotonicity
         env:
@@ -166,8 +181,10 @@ jobs:
             # Rerun of a promotion that already wrote the feed. Permit ONLY if the
             # published entry identifies exactly this tag, so the remaining steps
             # (release flip, Pages build) can finish.
-            PREV_VER="$(jq -er '.kyubi.version' site/stable.json)"
-            PREV_LINK="$(jq -er '.kyubi.link' site/stable.json)"
+            PREV_VER="$(jq -er '.kyubi.version' site/stable.json)" \
+              || { echo "::error::stable.json missing .kyubi.version" >&2; exit 1; }
+            PREV_LINK="$(jq -er '.kyubi.link' site/stable.json)" \
+              || { echo "::error::stable.json missing .kyubi.link" >&2; exit 1; }
             if [ "$PREV_VER" = "$VERSION" ] && [[ "$PREV_LINK" == *"/download/${TAG}/"* ]]; then
               echo "rerun: stable.json already names $TAG (prerelease=$IS_PRERELEASE latest=$IS_LATEST)"
             else
@@ -190,11 +207,12 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p site/notes
-          # The prerelease run already wrote this note; only synthesise one if the
-          # tag was published before the feed existed.
-          [ -f "site/notes/${TAG}.md" ] || \
-            printf '## Kyubi %s\n\nValidated stable release (buildCode %s).\n' "$TAG" "$BUILD_CODE" \
-              > "site/notes/${TAG}.md"
+          # ALWAYS overwrite. The prerelease run wrote a note saying "treat this as a
+          # candidate until promoted"; serving that on the STABLE channel would tell
+          # users a validated release is unvalidated. Backfilling only-when-missing
+          # never fires on the normal path, because the prerelease note already exists.
+          printf '## Kyubi %s\n\nValidated stable release (buildCode %s).\n\nPromoted from the rolling prerelease of the same tag after the offline\nsystem-mode install was verified on a real emulator instance.\n' \
+            "$TAG" "$BUILD_CODE" > "site/notes/${TAG}.md"
           jq -n --arg v "$VERSION" --argjson b "$BUILD_CODE" --arg t "$TAG" \
             '{kyubi:{version:$v,buildCode:$b,
                link:("https://github.com/RobThePCGuy/Kyubi/releases/download/"+$t+"/app-release.apk"),
@@ -209,7 +227,8 @@ jobs:
             # No local commit, so HEAD may lag the branch tip if gh-pages moved.
             # Pages builds the TIP, so bind the poll to that, not to our checkout.
             git fetch -q origin gh-pages
-            echo "pages_sha=$(git rev-parse FETCH_HEAD)" >> "$GITHUB_OUTPUT"
+            sha="$(git rev-parse FETCH_HEAD)"
+            echo "pages_sha=$sha" >> "$GITHUB_OUTPUT"
           else
             git commit -m "feed: stable ${TAG} (buildCode ${BUILD_CODE})"
             # Rebase AFTER committing, never before: pull --rebase refuses a dirty
@@ -220,7 +239,8 @@ jobs:
             # after the release is already flipped to latest.
             git pull --rebase origin gh-pages
             git push origin HEAD:gh-pages
-            echo "pages_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+            sha="$(git rev-parse HEAD)"
+            echo "pages_sha=$sha" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Mark the release latest
