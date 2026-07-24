@@ -258,6 +258,7 @@
     <string name="settings_sulist_config_summary">Select the processes to be included on the sulist</string>
     <string name="settings_sulist_enforced">SuList is enforced</string>
     <string name="settings_sulist_error_magiskhide">This feature requires DenyList to be enabled</string>
+    <string name="settings_sulist_requires_denylist_tab">Enable DenyList on the DenyList tab first</string>
     <string name="home_notice_unofficial_magisk">Kyubi is a specialized emulator distribution based on Magisk. Support and issue reports belong in the Kyubi repository, not upstream Magisk channels.</string>
 
 </resources>

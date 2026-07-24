@@ -70,7 +70,7 @@ class SettingsViewModel : BaseViewModel(), BaseSettingsItem.Handler {
                 SystemlessHosts
             ))
             if (Const.Version.atLeast_24_0()) {
-                list.addAll(listOf(DenyList, SuList, DenyListConfig))
+                list.addAll(listOf(SuList))
             }
         }
 
@@ -101,7 +101,6 @@ class SettingsViewModel : BaseViewModel(), BaseSettingsItem.Handler {
             Authentication -> if (ServiceLocator.biometrics.isEnabled) authenticate(andThen) else AuthEvent(andThen).publish()
             Theme -> SettingsFragmentDirections.actionSettingsFragmentToThemeFragment().navigate()
             Logs -> MainDirections.actionLogFragment().navigate()
-            DenyListConfig -> SettingsFragmentDirections.actionSettingsFragmentToDenyFragment().navigate()
             SystemlessHosts -> createHosts()
             Hide, Restore -> withInstallPermission(andThen)
             AddShortcut -> AddHomeIconEvent().publish()
