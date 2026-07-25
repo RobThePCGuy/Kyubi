@@ -9,6 +9,10 @@
     <string name="section_home">Home</string>
     <string name="section_theme">Themes</string>
     <string name="denylist">DenyList</string>
+    <string name="denylist_off_hint">Off. Your selections apply once enabled</string>
+    <string name="denylist_sulist_locked_hint">SuList enforcement stays on until SuList mode is disabled and the device is rebooted.</string>
+    <string name="denylist_enforce_error">Couldn\'t change DenyList state</string>
+    <string name="denylist_status_error">Couldn\'t read DenyList state</string>
 
     <!--Home-->
     <string name="no_connection">No connection available</string>
@@ -254,6 +258,7 @@
     <string name="settings_sulist_config_summary">Select the processes to be included on the sulist</string>
     <string name="settings_sulist_enforced">SuList is enforced</string>
     <string name="settings_sulist_error_magiskhide">This feature requires DenyList to be enabled</string>
+    <string name="settings_sulist_requires_denylist_tab">Enable DenyList on the DenyList tab first</string>
     <string name="home_notice_unofficial_magisk">Kyubi is a specialized emulator distribution based on Magisk. Support and issue reports belong in the Kyubi repository, not upstream Magisk channels.</string>
 
 </resources>

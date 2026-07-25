@@ -11,47 +11,110 @@
 
     </data>
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/internal_action_bar_size"
+        app:fitsSystemWindowsInsets="top|bottom">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/app_list"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:orientation="vertical"
-            android:paddingTop="@dimen/internal_action_bar_size"
-            app:fitsSystemWindowsInsets="top|bottom"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:invisible="@{viewModel.loading}"
-            app:items="@{viewModel.items}"
-            app:extraBindings="@{viewModel.extraBindings}"
-            tools:listitem="@layout/item_hide_md2"
-            tools:paddingTop="40dp" />
-
-        <LinearLayout
-            goneUnless="@{viewModel.loading}"
+        <!-- Sticky enforcement header: reflects state one-way; the row click
+             drives intent via onEnforcePressed(). Never onCheckedChanged.
+             WidgetFoundation.Card inherits Widget.MaterialComponents.CardView,
+             so it must be applied to a MaterialCardView (as item_settings does),
+             not a LinearLayout. -->
+        <com.google.android.material.card.MaterialCardView
+            style="@style/WidgetFoundation.Card"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center"
-            android:orientation="vertical"
-            tools:visibility="gone">
+            android:layout_margin="@dimen/l1"
+            android:clickable="@{viewModel.switchEnabled}"
+            android:focusable="@{viewModel.switchEnabled}"
+            android:alpha="@{viewModel.switchEnabled ? 1f : .5f}"
+            android:onClick="@{() -> viewModel.onEnforcePressed()}">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/loading"
-                android:textAppearance="@style/AppearanceFoundation.Title"
-                android:textStyle="bold" />
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/l1">
 
-            <ProgressBar
-                style="@style/WidgetFoundation.ProgressBar.Indeterminate"
-                android:layout_marginTop="@dimen/l1" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-        </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@{viewModel.enforceTitle}"
+                        android:textAppearance="@style/AppearanceFoundation.Body" />
 
-    </FrameLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        gone="@{!viewModel.bannerVisible}"
+                        android:text="@{viewModel.enforceBanner}"
+                        android:textAppearance="@style/AppearanceFoundation.Caption" />
+
+                </LinearLayout>
+
+                <com.google.android.material.switchmaterial.SwitchMaterial
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/l1"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:checked="@{viewModel.enforcementEnabled}"
+                    isEnabled="@{viewModel.switchEnabled}" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/app_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:invisible="@{viewModel.loading}"
+                app:items="@{viewModel.items}"
+                app:extraBindings="@{viewModel.extraBindings}"
+                tools:listitem="@layout/item_hide_md2" />
+
+            <LinearLayout
+                goneUnless="@{viewModel.loading}"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="vertical"
+                tools:visibility="gone">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/loading"
+                    android:textAppearance="@style/AppearanceFoundation.Title"
+                    android:textStyle="bold" />
+
+                <ProgressBar
+                    style="@style/WidgetFoundation.ProgressBar.Indeterminate"
+                    android:layout_marginTop="@dimen/l1" />
+
+            </LinearLayout>
+
+        </FrameLayout>
+
+    </LinearLayout>
 
 </layout>
