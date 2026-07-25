@@ -1,8 +1,8 @@
 {
   "kyubi": {
-    "version": "31.0-kitsune.dd15eec3",
-    "buildCode": 31001,
-    "link": "https://github.com/RobThePCGuy/Kyubi/releases/download/v31.0-dd15eec3/app-release.apk",
-    "note": "https://robthepcguy.github.io/Kyubi/notes/v31.0-dd15eec3.md"
+    "version": "31.0-kitsune.0801e5b0",
+    "buildCode": 31002,
+    "link": "https://github.com/RobThePCGuy/Kyubi/releases/download/v31.0-0801e5b0/app-release.apk",
+    "note": "https://robthepcguy.github.io/Kyubi/notes/v31.0-0801e5b0.md"
   }
 }
