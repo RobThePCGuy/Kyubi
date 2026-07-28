@@ -1,12 +1,74 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
+# Dependabot version updates.
 # https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+#
+# Coverage rationale, in blast-radius order:
+#
+#   gradle          -> compiles INTO the APK that users install. Highest impact.
+#   github-actions  -> every action is SHA-pinned (deliberately, so a moved tag
+#                      cannot swap the code under us). A SHA pin never updates
+#                      itself, so without this ecosystem a pinned action silently
+#                      rots. Dependabot rewrites the SHA *and* the version comment.
+#   cargo           -> the native build toolchain. Mostly build-time only: pb-rs
+#                      and cxx-gen run on the build host and ship nothing. Real
+#                      but lower impact -- GHSA-g98v-hv3f-hcfr (atty) was this.
+#
+# Grouping keeps a solo maintainer's review queue survivable: routine
+# patch/minor bumps arrive as one PR per ecosystem, while majors stay separate
+# so a breaking change is never buried in a batch.
 
 version: 2
 updates:
-  - package-ecosystem: "cargo" # See documentation for possible values
-    directory: "/native/src" # Location of package manifests
+  # --- Ships inside the APK -------------------------------------------------
+  - package-ecosystem: "gradle"
+    directories:
+      - "/"
+      - "/app"
+      - "/app/shared"
+      - "/buildSrc"
+      - "/native"
+      - "/stub"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 20
+    open-pull-requests-limit: 10
+    groups:
+      gradle-minor-patch:
+        applies-to: version-updates
+        update-types:
+          - "minor"
+          - "patch"
+    commit-message:
+      prefix: "deps(gradle)"
+
+  # --- Builds and signs the APK ---------------------------------------------
+  # Keeps the SHA pins in .github/workflows and .github/actions current.
+  - package-ecosystem: "github-actions"
+    directories:
+      - "/"
+      - "/.github/actions/setup"
+      - "/.github/actions/publish-pages"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    groups:
+      actions-minor-patch:
+        applies-to: version-updates
+        update-types:
+          - "minor"
+          - "patch"
+    commit-message:
+      prefix: "deps(actions)"
+
+  # --- Native build toolchain -----------------------------------------------
+  - package-ecosystem: "cargo"
+    directory: "/native/src"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 10
+    groups:
+      cargo-minor-patch:
+        applies-to: version-updates
+        update-types:
+          - "minor"
+          - "patch"
+    commit-message:
+      prefix: "deps(cargo)"

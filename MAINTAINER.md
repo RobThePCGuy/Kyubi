@@ -58,6 +58,53 @@ that snapshot so a future maintainer can tell Kyubi's deltas from upstream.
   LTO codegen for a shared object on some hosts (notably Windows); LTO is
   pointless for a single-file preloader, so this is behavior-neutral.
 
+## Dependencies
+
+**There is no upstream remote.** Kyubi was a clean import, not a GitHub fork:
+`origin` is the only remote and no branch tracks anything else. The lineage
+(topjohnwu -> HuskyDG -> 1q23lyc45 -> Kitsune) lives in the commit history, which
+is where the GPL credit belongs -- but it also means **no upstream fix reaches
+Kyubi automatically**. If Magisk ships a security fix in the daemon, someone has
+to notice and port it by hand. Treat that as a standing maintenance duty, not a
+one-time note.
+
+**Submodules (9).** Every one is linked by something that ships:
+
+| Submodule | Provides | Consumed by |
+|---|---|---|
+| `selinux` | `libsepol`, `libselinux` | `magiskpolicy` (via `libpolicy`), `busybox` |
+| `pcre` | `libpcre2` | `libselinux` |
+| `busybox` | `busybox` applet | shipped binary |
+| `libcxx` | `libcxx` | `libbase`, `libsystemproperties` |
+| `cxx-rs` | Rust/C++ bridge | every Rust crate |
+| `system_properties` | `libsystemproperties` | `magisk`, `resetprop` |
+| `parallel-hashmap` | `libphmap` | `magisk` |
+| `_xDL` | `libxdl` | `magisk` |
+| `termux-elf-cleaner` | build tool | `build.py` |
+
+Five submodules were removed once `magiskboot` was dropped, because nothing
+linked them any more: **`lz4`, `bzip2`, `zopfli`, `xz`, `zlib`** (`liblz4`,
+`libbz2`, `libzopfli`, `liblzma`, `libz`). The vendored `xz-embedded` +
+`xz_config` sources went with them -- `libxz` was magiskinit's ramdisk
+decompressor, and the magiskinit rewrite (now a `--patch-sepol`-only tool) left
+it unreferenced. They were still being cloned on every CI run and every fresh
+checkout: pure supply-chain surface for zero shipped code.
+
+If you ever need to re-check this, the test is mechanical: a static library in
+`native/src/external/Android.mk` is live only if some `LOCAL_STATIC_LIBRARIES`
+chain reaches it from `magisk`, `magiskinit`, `magiskpolicy`, `resetprop`, or
+`busybox`. `ndk-build` does not build unreachable modules, so a clean build
+(`rm -rf native/obj native/libs && python build.py binary`) is the proof --
+beware stale `native/obj` artifacts, which will happily show you a `.a` for a
+module nothing links any more.
+
+**Dependabot** (`.github/dependabot.yml`) covers three ecosystems, in
+blast-radius order: **gradle** (compiles into the shipped APK), **github-actions**
+(keeps the deliberately SHA-pinned actions from rotting -- a pin never updates
+itself), and **cargo** (the native build toolchain, mostly build-time only).
+Cargo was the only ecosystem watched originally, which had it backwards: the
+one that ships was unmonitored and the one that doesn't was.
+
 ## Building
 
 **JDK:** the bundled Kotlin compiler cannot parse class files from the newest
@@ -68,6 +115,12 @@ error that does not name the JDK as the cause. Build with JDK 17 or 21:
 export JAVA_HOME=/c/path/to/jdk-21              # or jdk-17
 export PATH="/c/path/to/jdk-21/bin:$PATH"       # build.py resolves javac via PATH
 ```
+
+Adoptium installers nest the JDK one level down (e.g.
+`C:\Android\jdk17\jdk-17.0.19+10`). Pointing `JAVA_HOME`/`PATH` at the *outer*
+directory leaves the system `javac` winning, and the build then fails with
+"JDK 17 is required, but javac NN is active" as though nothing were set at all.
+Point both at the inner directory.
 
 On Windows under Git Bash, use the `/c/...` form. A Windows-style
 `C:/Users/.../jdk-21` is silently split on the colon as a PATH separator, so
