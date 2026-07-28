@@ -6,7 +6,12 @@ plugins {
 lsparanoid {
     seed = if (RAND_SEED != 0) RAND_SEED else null
     includeDependencies = true
-    global = true
+    // lsparanoid 0.6.0 dropped `global` for a filter. `classFilter = { true }` is
+    // its documented replacement -- obfuscate every class, not only @Obfuscate-
+    // annotated ones. The default is null, i.e. annotated classes only, so simply
+    // deleting the old line would still build and still pass CI while quietly
+    // leaving most of the stub's strings in the clear.
+    classFilter = { true }
 }
 
 android {
