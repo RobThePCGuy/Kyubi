@@ -34,6 +34,11 @@ default-features = false
 [workspace.dependencies.pb-rs]
 git = "https://github.com/tafia/quick-protobuf.git"
 rev = "2f37d5a65504de7d716b5b28fd82219501a901a9"
+# pb-rs's default "std" feature only exists to enable clap 2 + env_logger 0.7 for
+# its standalone CLI binary, which we never build -- we use it as a build-script
+# library. Turning it off drops that whole subtree, including the unmaintained
+# atty crate (RUSTSEC-2021-0145 / GHSA-g98v-hv3f-hcfr).
+default-features = false
 
 [workspace.dependencies.quick-protobuf]
 git = "https://github.com/tafia/quick-protobuf.git"
