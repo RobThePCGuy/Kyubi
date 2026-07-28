@@ -20,5 +20,5 @@ dependencies {
     implementation("com.android.tools.build:gradle:8.5.1")
     implementation("androidx.navigation:navigation-safe-args-gradle-plugin:2.9.8")
     implementation("org.lsposed.lsparanoid:gradle-plugin:0.6.0")
-    implementation("org.eclipse.jgit:org.eclipse.jgit:6.7.0.202309050840-r")
+    implementation("org.eclipse.jgit:org.eclipse.jgit:7.7.1.202607240634-r")
 }
