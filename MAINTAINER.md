@@ -130,8 +130,15 @@ resolves `javac` from `PATH`, so a newer `javac` earlier in `PATH` still wins
 and the build fails with "JDK 17 is required, but javac NN is active". Prepend
 the JDK bin directory to `PATH` as well.
 
+**SDK location:** if `ANDROID_HOME` is also set (many toolchain installers set it),
+Gradle aborts when the two disagree -- "Several environment variables and/or system
+properties contain different paths to the SDK". Export **both** to the same root
+for an APK build. `build.py binary` (native only) reads `ANDROID_SDK_ROOT` alone,
+so the mismatch only surfaces once Gradle runs.
+
 ```sh
 export ANDROID_SDK_ROOT=/path/to/android-sdk
+export ANDROID_HOME="$ANDROID_SDK_ROOT"   # Gradle rejects a mismatch
 python build.py ndk        # install the ondk (Magisk NDK, r27.1)
 python build.py -r all     # release -> out/app-release.apk
 python build.py all        # debug   -> out/app-debug.apk
