@@ -19,14 +19,13 @@
 version: 2
 updates:
   # --- Ships inside the APK -------------------------------------------------
+  # ONE root entry, deliberately. Gradle's updater resolves the whole build from
+  # the root -- a single scan already reaches app/, buildSrc/, stub/ and native/.
+  # Listing those subdirectories as well made it scan the same manifests again
+  # and open a second, identical PR for every bump (four duplicate pairs on the
+  # first run: Retrofit, OkHttp, AGP and jgit each arrived twice).
   - package-ecosystem: "gradle"
-    directories:
-      - "/"
-      - "/app"
-      - "/app/shared"
-      - "/buildSrc"
-      - "/native"
-      - "/stub"
+    directory: "/"
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
