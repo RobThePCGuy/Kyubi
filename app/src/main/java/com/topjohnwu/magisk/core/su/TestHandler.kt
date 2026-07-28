@@ -6,7 +6,7 @@ import com.topjohnwu.magisk.core.model.su.SuPolicy
 import com.topjohnwu.magisk.core.tasks.MagiskInstaller
 import com.topjohnwu.magisk.core.utils.RootUtils
 import com.topjohnwu.superuser.Shell
-import com.topjohnwu.superuser.internal.NOPList
+import com.topjohnwu.magisk.core.utils.NopList
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.TimeUnit
 
@@ -16,7 +16,7 @@ object TestHandler {
         val r = Bundle()
 
         fun setup(): Boolean {
-            val nop = NOPList.getInstance()
+            val nop = NopList
             return runBlocking {
                 MagiskInstaller.Emulator(nop, nop).exec()
             }

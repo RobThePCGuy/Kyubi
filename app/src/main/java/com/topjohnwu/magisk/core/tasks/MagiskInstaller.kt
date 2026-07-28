@@ -15,9 +15,9 @@ import com.topjohnwu.magisk.core.isRunningAsStub
 import com.topjohnwu.magisk.core.ktx.reboot
 import com.topjohnwu.magisk.core.ktx.toast
 import com.topjohnwu.magisk.core.ktx.writeTo
+import com.topjohnwu.magisk.core.utils.NopList
 import com.topjohnwu.magisk.core.utils.RootUtils
 import com.topjohnwu.superuser.Shell
-import com.topjohnwu.superuser.internal.NOPList
 import com.topjohnwu.superuser.internal.UiThreadHandler
 import com.topjohnwu.superuser.nio.ExtendedFile
 import com.topjohnwu.superuser.nio.FileSystemManager
@@ -32,8 +32,8 @@ import java.util.zip.ZipFile
 // Kyubi installs in system mode only (see xdirect_install_system in manager.sh):
 // extract the binaries, run the system-mode install, fix the env, and uninstall.
 abstract class MagiskInstallImpl protected constructor(
-    protected val console: MutableList<String> = NOPList.getInstance(),
-    private val logs: MutableList<String> = NOPList.getInstance()
+    protected val console: MutableList<String> = NopList,
+    private val logs: MutableList<String> = NopList
 ) {
     protected lateinit var installDir: ExtendedFile
 
