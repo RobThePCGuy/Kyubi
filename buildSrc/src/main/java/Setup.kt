@@ -12,6 +12,7 @@ import com.android.tools.build.apkzlib.zip.ZFileOptions
 import org.apache.tools.ant.filters.FixCrLfFilter
 import org.gradle.api.Action
 import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.file.DirectoryProperty
@@ -33,7 +34,7 @@ import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.registering
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.security.KeyStore
@@ -51,11 +52,6 @@ private fun Project.androidBase(configure: Action<BaseExtension>) =
 private fun Project.android(configure: Action<BaseAppModuleExtension>) =
     extensions.configure("android", configure)
 
-private fun BaseExtension.kotlinOptions(configure: Action<KotlinJvmOptions>) =
-    (this as ExtensionAware).extensions.findByName("kotlinOptions")?.let {
-        configure.execute(it as KotlinJvmOptions)
-    }
-
 private fun BaseExtension.kotlin(configure: Action<KotlinAndroidProjectExtension>) =
     (this as ExtensionAware).extensions.findByName("kotlin")?.let {
         configure.execute(it as KotlinAndroidProjectExtension)
@@ -69,8 +65,17 @@ private val Project.androidComponents
 
 fun Project.setupCommon() {
     androidBase {
-        compileSdkVersion(34)
-        buildToolsVersion = "34.0.0"
+        // compileSdk and targetSdk are deliberately NOT the same number.
+        //
+        // compileSdk 36 is forced by dependencies (okhttp-android 5.x refuses to be
+        // consumed by anything older) and only decides which APIs are available at
+        // compile time. targetSdk is what opts an app in to new runtime behaviour,
+        // and Kyubi is a root app on an emulator: raising it changes how the guest
+        // treats us, which needs its own VM validation and is not something a
+        // dependency bump should drag along. So the compile level moves and the
+        // runtime contract stays put.
+        compileSdkVersion(36)
+        buildToolsVersion = "36.0.0"
         ndkPath = "$sdkDirectory/ndk/magisk"
         ndkVersion = "27.0.11718014"
 
@@ -84,12 +89,14 @@ fun Project.setupCommon() {
             targetCompatibility = JavaVersion.VERSION_17
         }
 
-        kotlinOptions {
-            jvmTarget = "17"
-        }
-
         kotlin {
             jvmToolchain(17)
+            // Kotlin 2.x turned the old `kotlinOptions { jvmTarget = "17" }` DSL from
+            // a warning into a compile error. compilerOptions is its replacement and
+            // is typed, so a bad target is caught here rather than at codegen.
+            compilerOptions {
+                jvmTarget.set(JvmTarget.JVM_17)
+            }
         }
     }
 }
@@ -333,8 +340,19 @@ fun Project.setupStub() {
             outputs.dir(outResDir)
             doLast {
                 val apkTmp = File("${apk}.tmp")
-                exec {
-                    commandLine(aapt, "optimize", "-o", apkTmp, "--collapse-resource-names", apk)
+                // Gradle 9 removed Project.exec from task actions. aapt2 is a plain
+                // executable, so invoke it directly rather than adopting another
+                // Gradle API that can move again; this also keeps the call usable
+                // from a configuration-cache-safe context.
+                val aaptExe = if (System.getProperty("os.name").startsWith("Windows"))
+                    File("$aapt.exe") else aapt
+                val proc = ProcessBuilder(
+                    aaptExe.absolutePath, "optimize", "-o", apkTmp.absolutePath,
+                    "--collapse-resource-names", apk.absolutePath
+                ).redirectErrorStream(true).start()
+                val aaptOut = proc.inputStream.bufferedReader().use { it.readText() }
+                if (proc.waitFor() != 0) {
+                    throw GradleException("aapt2 optimize failed:\n$aaptOut")
                 }
 
                 val bos = ByteArrayOutputStream()
