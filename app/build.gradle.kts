@@ -87,7 +87,7 @@ dependencies {
     implementation("com.github.topjohnwu.libsu:service:${vLibsu}")
     implementation("com.github.topjohnwu.libsu:nio:${vLibsu}")
 
-    val vRetrofit = "2.9.0"
+    val vRetrofit = "3.0.0"
     implementation("com.squareup.retrofit2:retrofit:${vRetrofit}")
     implementation("com.squareup.retrofit2:converter-moshi:${vRetrofit}")
     implementation("com.squareup.retrofit2:converter-scalars:${vRetrofit}")
