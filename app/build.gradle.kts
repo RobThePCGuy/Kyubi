@@ -92,7 +92,7 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-moshi:${vRetrofit}")
     implementation("com.squareup.retrofit2:converter-scalars:${vRetrofit}")
 
-    val vOkHttp = "4.12.0"
+    val vOkHttp = "5.4.0"
     implementation("com.squareup.okhttp3:okhttp:${vOkHttp}")
     implementation("com.squareup.okhttp3:logging-interceptor:${vOkHttp}")
     implementation("com.squareup.okhttp3:okhttp-dnsoverhttps:${vOkHttp}")
