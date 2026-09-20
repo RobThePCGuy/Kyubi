@@ -79,7 +79,7 @@ dependencies {
     implementation("org.bouncycastle:bcpkix-jdk18on:1.86")
     implementation("dev.rikka.rikkax.layoutinflater:layoutinflater:1.3.0")
     implementation("dev.rikka.rikkax.insets:insets:1.3.0")
-    implementation("dev.rikka.rikkax.recyclerview:recyclerview-ktx:1.4.0")
+    implementation("dev.rikka.rikkax.recyclerview:recyclerview-ktx:1.3.2")
     implementation("io.noties.markwon:core:4.6.2")
 
     val vLibsu = "6.0.0"
