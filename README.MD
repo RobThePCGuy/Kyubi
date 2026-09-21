@@ -18,8 +18,8 @@ smaller, faster to build, and has less surface to go wrong:
 
 - **Emulator ABIs only: x86, x86_64 and arm64-v8a.** PC emulator guests are x86;
   BlueStacks Air on Apple Silicon Macs is a 64-bit-only ARM guest, so it gets
-  arm64-v8a and nothing else. No 32-bit ARM (`armeabi-v7a`): no emulator Kyubi
-  targets runs one.
+  arm64-v8a and nothing else. No 32-bit ARM (`armeabi-v7a`): none of the
+  emulators Kyubi supports uses it.
 - **No `magiskboot`, no boot-image patching.** The `magiskboot` native tool (the
   thing that unpacks and repacks a boot image) is stripped from the build, so
   boot-image patching cannot run. Kyubi installs in **system mode** only, writing

@@ -81,7 +81,7 @@ os_name = platform.system().lower()
 
 # Kyubi: emulator ABIs only. x86/x86_64 for PC emulators (BlueStacks on Windows);
 # arm64-v8a for BlueStacks Air on Apple Silicon, whose guest is 64-bit ARM only.
-# No armeabi-v7a: no emulator Kyubi targets runs a 32-bit ARM guest.
+# No armeabi-v7a: none of the emulators Kyubi supports has a 32-bit ARM guest.
 archs = ["x86", "x86_64", "arm64-v8a"]
 triples = [
     "i686-linux-android",

@@ -146,7 +146,7 @@ python build.py -r all     # release -> out/app-release.apk
 python build.py all        # debug   -> out/app-debug.apk
 ```
 
-APKs carry **x86 and x86_64** native libs only.
+APKs carry **x86, x86_64 and arm64-v8a** native libs only.
 
 ## Signing
 
