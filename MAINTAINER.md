@@ -7,10 +7,12 @@ that snapshot so a future maintainer can tell Kyubi's deltas from upstream.
 
 ## What Kyubi strips (the reductions that define it)
 
-- **ABIs: x86 / x86_64 only.** `build.py` (`archs`, triples, target lists),
-  `native/src/Application.mk` (`APP_ABI`), and `buildSrc/.../Setup.kt` (`syncLibs`)
-  are all trimmed to the two x86 ABIs. No `armeabi-v7a`, no `arm64-v8a`. Output
-  APKs are **not** universal.
+- **ABIs: x86, x86_64 and arm64-v8a only.** `build.py` (`archs`, triples,
+  target lists), `native/src/Application.mk` (`APP_ABI`), `app/build.gradle.kts`
+  (`abiFilters`) and `buildSrc/.../Setup.kt` (`syncLibs`) are all trimmed to
+  these three. x86/x86_64 cover PC emulators; arm64-v8a exists for BlueStacks
+  Air on Apple Silicon, a 64-bit-only guest, so it ships `libmagisk64.so` with
+  no 32-bit companion. No `armeabi-v7a`. Output APKs are **not** universal.
 - **No `magiskboot` / no boot-image path.** The `magiskboot` native module is
   dropped from the build (load-bearing: without it boot-image patching literally
   cannot run), and Kyubi installs **system-mode only**. `manager.sh`'s `env_check`
@@ -144,7 +146,7 @@ python build.py -r all     # release -> out/app-release.apk
 python build.py all        # debug   -> out/app-debug.apk
 ```
 
-APKs carry **x86 and x86_64** native libs only.
+APKs carry **x86, x86_64 and arm64-v8a** native libs only.
 
 ## Signing
 
@@ -169,10 +171,10 @@ workflow `KYUBI_CERT_SHA256` and fails on drift.
   **except** the `gh-pages` checkout in the feed-writing jobs, which must push.
 - **Triggers** on push to `dev`/`kitsune`, on **pull requests**, and manually
   (`workflow_dispatch`).
-- **`build`** — release + debug for x86/x86_64. Release is signed from secrets
+- **`build`** — release + debug for x86/x86_64/arm64-v8a. Release is signed from secrets
   (kitsune push only); the key is stripped before the debug build; certs verified.
 - **`smoke`** — asserts Kyubi's build invariants on the release APK (package id,
-  x86-only ABIs, no `magiskboot`, no flashable-zip updater / addon.d.sh, feeds
+  emulator-only ABIs (x86, x86_64, arm64-v8a; no 32-bit ARM), no `magiskboot`, no flashable-zip updater / addon.d.sh, feeds
   point at Kyubi) and installs + launches it on a stock x86_64 emulator, failing
   on a crash. **Note:** this does not test the offline system-mode root install,
   which is BlueStacks-VHD-specific and can't be reproduced on a stock AVD — that

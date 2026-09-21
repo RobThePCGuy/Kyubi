@@ -1,5 +1,5 @@
 APP_BUILD_SCRIPT := src/Android.mk
-APP_ABI          := x86 x86_64
+APP_ABI          := x86 x86_64 arm64-v8a
 APP_CFLAGS       := -Wall -Oz -fomit-frame-pointer -flto
 APP_LDFLAGS      := -flto
 APP_CPPFLAGS     := -std=c++20

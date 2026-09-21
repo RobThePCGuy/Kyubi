@@ -230,7 +230,8 @@ fun Project.setupApp() {
 
     val syncLibs by tasks.registering(Sync::class) {
         into("src/main/jniLibs")
-        // Kyubi: x86 emulators only -- ARM ABIs dropped.
+        // Kyubi: emulator ABIs only. arm64-v8a is for BlueStacks Air (Apple
+        // Silicon), a 64-bit-only guest, so it gets no 32-bit companion.
         into("x86") {
             from(rootProject.file("native/out/x86")) {
                 include("busybox", "magiskinit", "magiskpolicy", "magisk")
@@ -243,9 +244,15 @@ fun Project.setupApp() {
                 rename { if (it == "magisk") "libmagisk64.so" else "lib$it.so" }
             }
         }
+        into("arm64-v8a") {
+            from(rootProject.file("native/out/arm64-v8a")) {
+                include("busybox", "magiskinit", "magiskpolicy", "magisk")
+                rename { if (it == "magisk") "libmagisk64.so" else "lib$it.so" }
+            }
+        }
         onlyIf {
-            // 2 ABIs x 4 binaries = 8 expected
-            if (inputs.sourceFiles.files.size != 8)
+            // 3 ABIs x 4 binaries = 12 expected
+            if (inputs.sourceFiles.files.size != 12)
                 throw StopExecutionException("Please build binaries first! (./build.py binary)")
             true
         }

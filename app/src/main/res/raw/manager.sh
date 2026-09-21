@@ -258,6 +258,11 @@ direct_install_system(){
     ODM_DIR="$MIRRORDIR/odm"
 
     local MAGISKTMP_TO_INSTALL=/sbin
+    # BlueStacks Air's ramdisk has no /sbin; /debug_ramdisk is where Magisk
+    # looks first for its tmpfs anyway.
+    if [ ! -d /sbin ] && [ -d /debug_ramdisk ]; then
+        MAGISKTMP_TO_INSTALL=/debug_ramdisk
+    fi
 
     if $BOOTMODE; then
         umount -l "/proc/$$/attr"
@@ -343,7 +348,9 @@ direct_install_system(){
     local magisk_applet=magisk32 magisk_name=magisk32
     if [ "$IS64BIT" == true ]; then
         magisk_name=magisk64
-        magisk_applet="magisk32 magisk64"
+        magisk_applet=magisk64
+        # 64-bit-only guests (BlueStacks Air, arm64-v8a) ship no magisk32.
+        [ -f "$INSTALLDIR/magisk32" ] && magisk_applet="magisk32 magisk64"
     fi
 
     ui_print "- Copy files to system partition"
