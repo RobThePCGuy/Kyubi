@@ -31,8 +31,8 @@ listing="$(unzip -l "$APK")"
 
 [[ "$listing" == *"lib/x86/"*      ]] || fail "missing lib/x86/ (x86 ABI)"
 [[ "$listing" == *"lib/x86_64/"*   ]] || fail "missing lib/x86_64/ (x86_64 ABI)"
-[[ "$listing" == *"lib/armeabi"*   ]] && fail "armeabi ABI present -- Kyubi is x86-only"
-[[ "$listing" == *"lib/arm64"*     ]] && fail "arm64 ABI present -- Kyubi is x86-only"
+[[ "$listing" == *"lib/arm64-v8a/"* ]] || fail "missing lib/arm64-v8a/ (BlueStacks Air ABI)"
+[[ "$listing" == *"lib/armeabi"*   ]] && fail "armeabi ABI present -- no Kyubi target runs 32-bit ARM"
 [[ "${listing,,}" == *"magiskboot"* ]] && fail "magiskboot present -- must be stripped (system-mode only)"
 
 # Kyubi is not a recovery-flashable zip and ships no boot-image OTA survival:
@@ -53,7 +53,7 @@ if [ -n "$aapt" ]; then
 else
   echo "  WARN: aapt not found -- skipping package-id assertion"
 fi
-echo "APK shape OK: x86-only, magiskboot-free."
+echo "APK shape OK: emulator ABIs only (x86, x86_64, arm64-v8a), magiskboot-free."
 
 # --- Version invariants -----------------------------------------------------
 # The APK versionCode is a monotonic build code, NOT the Magisk core compat

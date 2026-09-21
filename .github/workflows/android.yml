@@ -1,4 +1,4 @@
-# Kyubi CI — builds the emulator-only (x86/x86_64, system-mode) Magisk fork,
+# Kyubi CI — builds the emulator-only (x86/x86_64/arm64, system-mode) Magisk fork,
 # smoke-tests the APK, and publishes a versioned GitHub Release on kitsune pushes.
 #
 # Third-party actions are pinned to a full commit SHA (supply-chain safety for a
@@ -316,7 +316,8 @@ jobs:
             does NOT run the offline system-mode root install (BlueStacks-specific).
             Treat as a candidate until validated on a real emulator instance.
 
-            x86 + x86_64 only — no ARM, no `magiskboot`/boot-image path. Built-in
+            x86, x86_64 and arm64-v8a (BlueStacks Air) only — no 32-bit ARM, no
+            `magiskboot`/boot-image path. Built-in
             Zygisk is removed for security; use ReZygisk (Kyubi's DenyList feeds it).
             Only the cert-verified release APKs are attached; debug APKs stay private.
 

@@ -79,10 +79,14 @@ if shutil.which("ccache") is not None:
 cpu_count = multiprocessing.cpu_count()
 os_name = platform.system().lower()
 
-archs = ["x86", "x86_64"]  # Kyubi: emulators are x86; ARM binaries are dead weight
+# Kyubi: emulator ABIs only. x86/x86_64 for PC emulators (BlueStacks on Windows);
+# arm64-v8a for BlueStacks Air on Apple Silicon, whose guest is 64-bit ARM only.
+# No armeabi-v7a: no emulator Kyubi targets runs a 32-bit ARM guest.
+archs = ["x86", "x86_64", "arm64-v8a"]
 triples = [
     "i686-linux-android",
     "x86_64-linux-android",
+    "aarch64-linux-android",
 ]
 default_targets = ["magisk", "magiskinit", "magiskpolicy", "busybox"]  # Kyubi: no magiskboot (system-mode, no boot image)
 support_targets = default_targets + ["resetprop"]
@@ -544,6 +548,7 @@ def setup_ndk(args):
         error(f"No trusted ONDK checksum for {ndk_ver} on {os_name}")
 
     header(f"* Downloading {ndk_archive}")
+    os.makedirs(ndk_root, exist_ok=True)  # a fresh SDK has no ndk/ dir yet
     if op.exists(ondk_path):
         rm_rf(ondk_path)
     archive_path = None

@@ -28,7 +28,7 @@ android {
         versionCode = Config.buildCode
         buildConfigField("int", "CORE_VER_CODE", "${Config.coreVersionCode}")
         ndk {
-            abiFilters += listOf("x86", "x86_64")  // Kyubi: x86 emulators only
+            abiFilters += listOf("x86", "x86_64", "arm64-v8a")  // Kyubi: emulator ABIs only
             debugSymbolLevel = "FULL"
         }
     }

@@ -1,8 +1,8 @@
 # Kyubi
 
 **Kyubi is a stripped-down, emulator-only build of Magisk.** Root for Android
-emulators (BlueStacks and other x86/x86_64 guests), and nothing you don't need
-there. It is a rebrand and reduction of the Magisk Delta / Kitsune lineage, kept
+emulators (BlueStacks and other x86/x86_64 guests, and BlueStacks Air on Apple
+Silicon Macs), and nothing you don't need there. It is a rebrand and reduction of the Magisk Delta / Kitsune lineage, kept
 open under the GPL.
 
 > Not affiliated with or endorsed by [topjohnwu](https://github.com/topjohnwu)
@@ -16,8 +16,10 @@ open under the GPL.
 Kyubi is Magisk with everything an emulator never uses removed, so what ships is
 smaller, faster to build, and has less surface to go wrong:
 
-- **x86 / x86_64 only.** No ARM ABIs. Emulator guests are x86; ARM builds were
-  dead weight (the APK is ~42% smaller for it).
+- **Emulator ABIs only: x86, x86_64 and arm64-v8a.** PC emulator guests are x86;
+  BlueStacks Air on Apple Silicon Macs is a 64-bit-only ARM guest, so it gets
+  arm64-v8a and nothing else. No 32-bit ARM (`armeabi-v7a`): no emulator Kyubi
+  targets runs one.
 - **No `magiskboot`, no boot-image patching.** The `magiskboot` native tool (the
   thing that unpacks and repacks a boot image) is stripped from the build, so
   boot-image patching cannot run. Kyubi installs in **system mode** only, writing
@@ -58,7 +60,7 @@ python build.py -r all     # release -> out/app-release.apk
 python build.py all        # debug   -> out/app-debug.apk
 ```
 
-Output APKs carry native libs for **x86 and x86_64 only**. CI in
+Output APKs carry native libs for **x86, x86_64 and arm64-v8a only**. CI in
 `.github/workflows/android.yml` builds and smoke-tests every push and pull
 request, and publishes the release on pushes to `kitsune`. Maintenance notes and
 the exact deltas from upstream live in [`MAINTAINER.md`](MAINTAINER.md).

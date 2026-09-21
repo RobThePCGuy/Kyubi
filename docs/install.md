@@ -1,6 +1,7 @@
 # Installing Kyubi
 
-Kyubi installs **system-mode only**, on x86 / x86_64 Android emulators. There is
+Kyubi installs **system-mode only**, on x86 / x86_64 Android emulators and on
+BlueStacks Air (arm64) on Apple Silicon Macs. There is
 no boot-image patching, no `magiskboot`, no recovery flashing, and no fastboot
 step — those paths are removed from this fork, not merely hidden.
 
