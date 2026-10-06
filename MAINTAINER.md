@@ -107,6 +107,51 @@ itself), and **cargo** (the native build toolchain, mostly build-time only).
 Cargo was the only ecosystem watched originally, which had it backwards: the
 one that ships was unmonitored and the one that doesn't was.
 
+### Dependency compatibility boundary (2026-10-05)
+
+The supported build remains **Gradle 8.9 / embedded Kotlin 1.9 / AGP 8.5.1 /
+compile SDK 34 / minimum Android API 23**. Upgrade these together in a dedicated
+migration, with both APK variants and emulator checks, rather than accepting
+isolated toolchain majors or a mixed AndroidX group.
+
+The maintenance pass takes the compatible updates from PRs #49, #52 and #53:
+Bouncy Castle 1.86, ConstraintLayout 2.2.2, ProfileInstaller 1.4.1, jgit
+7.8.0.202609011348-r, setup-java 6.0.1, ccache-action 1.2.24, cfg-if 1.0.5,
+and thiserror 2.0.21. The signing gates, supported ABIs and API floor stay as
+they were. The grouped PR's remaining updates and the four major-update PRs
+are deferred for the following observed reasons:
+
+| Update | Evidence / reason to defer |
+| --- | --- |
+| Gradle 9 (#25) | The PR build fails on the removed `Project.exec` call in `Setup.kt`. The custom plugin must migrate its process execution and other Gradle 9 incompatibilities first. |
+| AGP 9 (#29) | The PR fails in `buildSrc:compileKotlin` and conflicts with the current build. AGP must be upgraded with the wrapper, embedded Kotlin and custom plugin. |
+| Retrofit 3 (#26), OkHttp 5 (#30) | Both published JARs contain Kotlin metadata 2.1.0. Retrofit's PR fails Kotlin compilation; OkHttp's original run fails on Maven HTTP 403, so that run alone does not prove compatibility. The metadata is an additional compiler boundary. |
+| Navigation Safe Args 2.10.1 (#49) | The PR fails because the plugin's Kotlin metadata is 2.1.0 while the embedded compiler expects 1.9.0. |
+| Room 2.8.5, AppCompat 1.8.0, Fragment 1.9.0 | Their published Android AARs contain Kotlin metadata 2.1.0. Room 2.8.0 already has that metadata, so the exclusion starts there; the compatible 2.7 track remains eligible. |
+| Navigation runtime 2.10.1 | Its AAR contains Kotlin metadata 2.1.0 and requires API 24, above Kyubi's API 23 floor. The exclusion starts at 2.10; the 2.8 and 2.9 tracks remain eligible. |
+| RecyclerView 1.4.0, SwipeRefreshLayout 1.2.0, Transition 1.7.1, SplashScreen 1.2.0 | Published AAR metadata requires compile SDK 35; some also require AGP 8.6. |
+| Core 1.19.0 | Published AAR metadata requires compile SDK 37 and AGP 9.1. |
+| Material 1.14.0 | Its POM pulls Core 1.16.0, crossing the SDK 34 boundary indirectly. |
+| Rikkax RecyclerView 1.4.0 | A local Gradle resolution fails: this artifact is absent from Google Maven, Maven Central and JitPack. Only that exact version is ignored. |
+
+Dependabot's `ignore` entries express these compatibility tracks and keep
+available updates below the boundary flowing. Major Gradle-ecosystem updates
+require a deliberate migration. These exclusions are **not security clearance**:
+inspect advisories against retained versions and port a security fix or expedite
+the migration when needed. Revisit the exclusions during that migration.
+
+Migration checklist:
+
+- Upgrade the wrapper, AGP, embedded Kotlin and custom plugin together; remove
+  `Project.exec` and resolve plugin/API incompatibilities.
+- Raise compile SDK as required without silently changing the API 23 device
+  floor. If a dependency requires API 24, decide that support change explicitly.
+- Upgrade the held AndroidX and network-library families, then remove their
+  ignore entries only after release and debug builds plus APK/emulator smoke
+  checks pass.
+- Verify offline system-mode root on real BlueStacks instances before promoting
+  a candidate to stable. The stock CI emulator cannot prove that installation.
+
 ## Building
 
 **JDK:** the bundled Kotlin compiler cannot parse class files from the newest

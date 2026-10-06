@@ -35,6 +35,41 @@ updates:
         update-types:
           - "minor"
           - "patch"
+    # The embedded Kotlin 1.9 compiler, SDK 34 and Android 6/API 23 floor
+    # are a coordinated compatibility boundary, not independent version bumps.
+    # Evidence and the migration checklist are in MAINTAINER.md.
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
+      - dependency-name: "androidx.room:*"
+        versions: [">=2.8.0"]
+      - dependency-name: "androidx.navigation:navigation-fragment-ktx"
+        versions: [">=2.10.0"]
+      - dependency-name: "androidx.navigation:navigation-ui-ktx"
+        versions: [">=2.10.0"]
+      - dependency-name: "androidx.navigation:navigation-safe-args-gradle-plugin"
+        versions: [">=2.10.0"]
+      - dependency-name: "androidx.appcompat:appcompat"
+        versions: [">=1.8.0"]
+      - dependency-name: "androidx.fragment:fragment-ktx"
+        versions: [">=1.9.0"]
+      - dependency-name: "androidx.core:core-ktx"
+        versions: [">=1.15.0"]
+      - dependency-name: "androidx.recyclerview:recyclerview"
+        versions: [">=1.4.0"]
+      - dependency-name: "androidx.swiperefreshlayout:swiperefreshlayout"
+        versions: [">=1.2.0"]
+      - dependency-name: "androidx.transition:transition"
+        versions: [">=1.6.0"]
+      - dependency-name: "androidx.core:core-splashscreen"
+        versions: [">=1.2.0"]
+      - dependency-name: "com.google.android.material:material"
+        versions: [">=1.14.0"]
+      # This particular version is absent from every configured repository.
+      # Do not suppress later releases if the publisher fixes the artifact.
+      - dependency-name: "dev.rikka.rikkax.recyclerview:recyclerview-ktx"
+        versions: ["1.4.0"]
     commit-message:
       prefix: "deps(gradle)"
 
