@@ -52,11 +52,11 @@ updates:
         update-types:
           - "version-update:semver-major"
       - dependency-name: "androidx.room:*"
-        versions: [">=2.8.0"]
+        versions: [">=2.7.0"]
       - dependency-name: "androidx.navigation:navigation-fragment-ktx"
-        versions: [">=2.10.0"]
+        versions: [">=2.9.0"]
       - dependency-name: "androidx.navigation:navigation-ui-ktx"
-        versions: [">=2.10.0"]
+        versions: [">=2.9.0"]
       - dependency-name: "androidx.navigation:navigation-safe-args-gradle-plugin"
         versions: [">=2.10.0"]
       - dependency-name: "androidx.appcompat:appcompat"
