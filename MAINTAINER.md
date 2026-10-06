@@ -135,8 +135,9 @@ are deferred for the following observed reasons:
 | Rikkax RecyclerView 1.4.0 | A local Gradle resolution fails: this artifact is absent from Google Maven, Maven Central and JitPack. Only that exact version is ignored. |
 
 Dependabot's `ignore` entries express these compatibility tracks and keep
-available updates below the boundary flowing. Major Gradle-ecosystem updates
-require a deliberate migration. These exclusions are **not security clearance**:
+available updates below the boundary flowing. Major wrapper, AGP, Retrofit and
+OkHttp updates require a deliberate migration; other dependency majors remain
+visible. These exclusions are **not security clearance**:
 inspect advisories against retained versions and port a security fix or expedite
 the migration when needed. Revisit the exclusions during that migration.
 

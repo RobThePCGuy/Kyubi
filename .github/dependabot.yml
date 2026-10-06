@@ -39,7 +39,16 @@ updates:
     # are a coordinated compatibility boundary, not independent version bumps.
     # Evidence and the migration checklist are in MAINTAINER.md.
     ignore:
-      - dependency-name: "*"
+      - dependency-name: "gradle-wrapper"
+        update-types:
+          - "version-update:semver-major"
+      - dependency-name: "com.android.tools.build:gradle"
+        update-types:
+          - "version-update:semver-major"
+      - dependency-name: "com.squareup.retrofit2:*"
+        update-types:
+          - "version-update:semver-major"
+      - dependency-name: "com.squareup.okhttp3:*"
         update-types:
           - "version-update:semver-major"
       - dependency-name: "androidx.room:*"
