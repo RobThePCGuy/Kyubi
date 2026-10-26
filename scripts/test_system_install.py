@@ -92,6 +92,7 @@ force_bind_mount / /mirror
             (root / "manager.sh").write_text(source)
             harness = r'''
 . "$CASE_ROOT/manager.sh"
+umask 000
 BOOTMODE="$CASE_BOOTMODE"
 ui_print() { echo "$*"; }
 abort() { echo "$*"; exit 1; }
@@ -138,12 +139,19 @@ chcon() {
   echo chcon >> "$CASE_ROOT/events"
   [ "$CONTEXT_OK" = true ]
 }
+chmod() {
+  if [ "${@: -1}" = "$MIRRORDIR/system/etc/init/magisk.rc" ] && [ "$FAILURE" = init_mode ]; then
+    return 1
+  fi
+  command chmod "$@"
+}
 cp() {
   echo "cp $*" >> "$CASE_ROOT/events"
   command cp "$@"
 }
 random_str() { echo fixture; }
 fix_env() {
+  echo "init_mode=$(stat -c %a "$MIRRORDIR/system/etc/init/magisk.rc")" >> "$CASE_ROOT/events"
   echo fix_env >> "$CASE_ROOT/events"
   [ "$FAILURE" != fix_env ]
 }
@@ -192,6 +200,18 @@ exit "$result"
         self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
         self.assertIn("kyubi-mirror.", events)
         self.assertFalse(leftovers)
+
+    def test_init_script_mode_failure_aborts_and_rolls_back(self):
+        run, events, _ = self.run_case(failure="init_mode")
+        self.assertNotEqual(run.returncode, 0)
+        self.assertIn("rollback", events)
+        self.assertNotIn("fix_env", events)
+
+    @unittest.skipIf(os.name == "nt", "Windows does not model POSIX file creation modes")
+    def test_init_script_is_secure_with_permissive_umask(self):
+        run, events, _ = self.run_case()
+        self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+        self.assertIn("init_mode=644", events)
 
     def test_existing_proc_mirror_keeps_original_route(self):
         run, events, _ = self.run_case(proc=True)

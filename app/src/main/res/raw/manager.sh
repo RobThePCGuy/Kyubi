@@ -420,6 +420,9 @@ direct_install_system(){
             fi
         }
         echo "$(magiskrc "$MAGISKTMP_TO_INSTALL")" >>"$hijackrc" || return 1
+        # Android init rejects group/world-writable rc files. MEmu's root
+        # shell can have umask 000, so do not rely on creation defaults.
+        chmod 644 "$hijackrc" || { ui_print "! Unable to secure init boot script"; return 1; }
     fi
 
     ui_print "[*] Reflash your ROM if your ROM is unable to start"
