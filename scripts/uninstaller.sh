@@ -52,8 +52,13 @@ ui_print "- Device platform: $ABI"
 
 if ( [ -z "$(grep_prop SHA1 "$MAGISKTMP/.magisk/config")" ] && $BOOTMODE ) || [ "$(grep_prop SYSTEMMODE /system/etc/init/magisk/config)" == "true" ]; then
 
-# Use kernel trick to clean up mirrors automatically when installer completed
-MIRRORDIR="/proc/$$/attr"
+# Use the same fallback as installation on kernels without /proc attr (#58).
+MIRRORDIR=/ MIRRORTMP=
+if $BOOTMODE; then
+    setup_installer_mirror || abort "! Unable to set up uninstaller mirror"
+    # abort/exit must also detach the fallback; never recursively remove it.
+    trap 'cleanup_installer_mirror' EXIT
+fi
 ROOTDIR="$MIRRORDIR/system_root"
 SYSTEMDIR="$MIRRORDIR/system"
 VENDORDIR="$MIRRORDIR/vendor"
@@ -61,17 +66,16 @@ ODM_DIR="$MIRRORDIR/odm"
 
 if $BOOTMODE; then
     # setup mirrors to get the original content
-    mount -t tmpfs -o 'mode=0755' tmpfs "$MIRRORDIR" || return 1
     if is_rootfs; then
         ROOTDIR=/
         mkdir "$SYSTEMDIR"
-        force_bind_mount "/system" "$SYSTEMDIR" || return 1
+        force_bind_mount "/system" "$SYSTEMDIR" || abort "! Unable to mirror /system"
     else
         mkdir "$ROOTDIR"
-        force_bind_mount "/" "$ROOTDIR" || return 1
+        force_bind_mount "/" "$ROOTDIR" || abort "! Unable to mirror system root"
         if mountpoint -q /system; then
             mkdir "$SYSTEMDIR"
-            force_bind_mount "/system" "$SYSTEMDIR" || return 1
+            force_bind_mount "/system" "$SYSTEMDIR" || abort "! Unable to mirror /system"
         else
             ln -fs ./system_root/system "$SYSTEMDIR"
         fi
@@ -80,7 +84,7 @@ if $BOOTMODE; then
     # check if /vendor is seperated fs
     if mountpoint -q /vendor; then
         mkdir "$VENDORDIR"
-        force_bind_mount "/vendor" "$VENDORDIR" || return 1
+        force_bind_mount "/vendor" "$VENDORDIR" || abort "! Unable to mirror /vendor"
     else
         ln -fs ./system/vendor "$VENDORDIR"
     fi
@@ -88,7 +92,7 @@ if $BOOTMODE; then
     # check if /odm is seperated fs
     if mountpoint -q /odm; then
         mkdir "$ODM_DIR"
-        force_bind_mount "/odm" "$ODM_DIR" || return 1
+        force_bind_mount "/odm" "$ODM_DIR" || abort "! Unable to mirror /odm"
     else
         ln -fs ./system_root/odm "$ODM_DIR"
     fi
@@ -146,6 +150,10 @@ rm -rf \
 /data/unencrypted/magisk /metadata/magisk /persist/magisk /mnt/vendor/persist/magisk
 
 cd /
+
+# Release mirrors before reboot; keep the EXIT trap as an error-path guard.
+cleanup_installer_mirror || abort "! Unable to clean up uninstaller mirror"
+MIRRORDIR= MIRRORTMP=
 
 ui_print "********************************************"
 ui_print " The Kyubi app will uninstall itself, and"

@@ -45,6 +45,9 @@ jobs:
       - name: Setup environment
         uses: ./.github/actions/setup
 
+      - name: Check installer mirror lifecycle
+        run: python3 scripts/test_system_install.py
+
       # Fail fast if the stub's compiled-in cert pin drifts from the workflow pin.
       - name: Verify cert pin is single-source
         run: |

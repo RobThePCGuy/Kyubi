@@ -613,6 +613,48 @@ force_bind_mount(){
     remount_check rw "$2" || warn_system_ro
 }
 
+setup_installer_mirror(){
+    MIRRORDIR="/proc/$$/attr"
+    if [ -d "$MIRRORDIR" ]; then
+        umount -l "$MIRRORDIR" 2>/dev/null
+        mount -t tmpfs -o 'mode=0755' tmpfs "$MIRRORDIR" && return 0
+    fi
+    # Some emulator kernels have no LSM /proc attr directory. Keep the
+    # fallback outside INSTALLDIR: fix_env removes that directory before commit.
+    ui_print "- Using temporary installer mirror (proc attr unavailable)"
+    MIRRORTMP=$(mktemp -d /dev/kyubi-mirror.XXXXXX) || {
+        ui_print "! Unable to create temporary installer mirror"
+        MIRRORDIR=
+        return 1
+    }
+    MIRRORDIR="$MIRRORTMP"
+    if ! mount -t tmpfs -o 'mode=0755' tmpfs "$MIRRORDIR"; then
+        ui_print "! Unable to mount temporary installer mirror"
+        rmdir "$MIRRORTMP"
+        MIRRORDIR= MIRRORTMP=
+        return 1
+    fi
+}
+
+cleanup_installer_mirror(){
+    local result=0 part
+    if $BOOTMODE && [ -n "$MIRRORDIR" ]; then
+        # Never follow the system/vendor/odm symlinks when unmounting mirrors.
+        for part in odm vendor system system_root; do
+            if [ -d "$MIRRORDIR/$part" ] && [ ! -L "$MIRRORDIR/$part" ]; then
+                umount -l "$MIRRORDIR/$part" || result=1
+            fi
+        done
+        umount -l "$MIRRORDIR" || result=1
+        # Do not recursively remove a directory which might still be mounted.
+        if [ "$result" = 0 ] && [ -n "$MIRRORTMP" ]; then
+            rmdir "$MIRRORTMP" || result=1
+        fi
+        [ "$result" = 0 ] || ui_print "! Unable to clean up installer mirror: $MIRRORDIR"
+    fi
+    return "$result"
+}
+
 ##########
 # Presets
 ##########
