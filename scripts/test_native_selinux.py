@@ -96,6 +96,19 @@ class NativeSelinux(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('No such file', result.stderr)
 
+    def test_disabled_kernel_can_copy_from_filesystem_without_xattrs(self):
+        if self.selinux != 'Disabled':
+            self.skipTest('requires disabled SELinux and procfs without xattrs')
+        expected = self.command('cat /proc/version').stdout
+        self.assertEqual(self.clone('/proc/version').returncode, 0)
+        self.assertEqual(self.command(f'cat {self.dst}').stdout, expected)
+
+    def test_permission_change_failure_propagates(self):
+        self.command(f'touch {self.dst}; chmod 644 {self.src} {self.dst}')
+        result = self.command(f'su 2000 {self.bin} --clone-attr {self.src} {self.dst}', False)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('Operation not permitted', result.stderr)
+
     def test_unreadable_source_fails(self):
         self.command(f'chmod 600 {self.src}')
         result = self.clone(uid=2000)
