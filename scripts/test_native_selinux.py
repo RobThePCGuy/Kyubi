@@ -84,7 +84,7 @@ class NativeSelinux(unittest.TestCase):
         # A private mount namespace supplies the enabled/permissive probe while
         # retaining the real absent proc context and security.selinux xattr.
         # Make mounts private BEFORE overlaying sysfs so nothing escapes the test.
-        setup = 'mount --make-rprivate / && mount -t tmpfs tmpfs /sys/fs && mkdir /sys/fs/selinux && echo 0 > /sys/fs/selinux/enforce && '
+        setup = 'mount -o rprivate none / && mount -t tmpfs tmpfs /sys/fs && mkdir /sys/fs/selinux && echo 0 > /sys/fs/selinux/enforce && '
         for args, error in [(f'--clone {self.src} {self.dst}', 'No data available'),
                             ('--auto-selinux -c', 'No such file')]:
             result = self.command('unshare -m sh -c ' + shlex.quote(setup + self.bin + ' ' + args), False)
