@@ -51,10 +51,11 @@ fix_env() {
 }
 
 run_uninstaller() {
-  rm -rf /dev/tmp
-  mkdir -p /dev/tmp/install
-  unzip -o "$1" "assets/*" "lib/*" -d /dev/tmp/install
-  INSTALLER=/dev/tmp/install sh /dev/tmp/install/assets/uninstaller.sh dummy 1 "$1"
+  rm -rf /dev/tmp || return 1
+  mkdir -p /dev/tmp/install || return 1
+  unzip -o "$1" "assets/*" "lib/*" -d /dev/tmp/install || return 1
+  # The running package can be a hidden manager, not the build's applicationId.
+  INSTALLER=/dev/tmp/install sh /dev/tmp/install/assets/uninstaller.sh dummy 1 "$1" "$2"
 }
 
 add_hosts_module() {

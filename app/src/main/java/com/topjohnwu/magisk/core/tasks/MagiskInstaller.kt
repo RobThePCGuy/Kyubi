@@ -126,7 +126,8 @@ abstract class MagiskInstallImpl protected constructor(
 
     protected suspend fun fixEnv() = extractFiles() && "fix_env $installDir".sh().isSuccess
 
-    protected fun uninstall() = "run_uninstaller $AppApkPath".sh().isSuccess
+    protected fun uninstall() =
+        "run_uninstaller \"$AppApkPath\" \"${context.packageName}\"".sh().isSuccess
 
     // installDir is lateinit; a duplicate-session bail returns before it is set,
     // so only clean up when it was actually initialized. isInitialized is only
@@ -198,15 +199,6 @@ abstract class MagiskInstaller(
     ) : MagiskInstallImpl(console, logs) {
         override suspend fun operations() = uninstall()
 
-        override suspend fun exec(): Boolean {
-            val success = super.exec()
-            if (success) {
-                UiThreadHandler.handler.postDelayed(3000) {
-                    Shell.cmd("pm uninstall ${context.packageName}").exec()
-                }
-            }
-            return success
-        }
     }
 
     class FixEnv(private val callback: () -> Unit) : MagiskInstallImpl() {

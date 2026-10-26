@@ -12,6 +12,8 @@ umask 022
 
 OUTFD=$2
 COMMONDIR=$INSTALLER/assets
+# Optional app-only argument. Standalone flashable use has no manager identity.
+MANAGER_PACKAGE=$4
 
 if [ ! -f $COMMONDIR/util_functions.sh ]; then
   echo "! Unable to extract zip file!"
@@ -139,7 +141,7 @@ fi
 
 if $BOOTMODE; then
   ui_print "- Removing modules"
-  magisk --remove-modules -n
+  magisk --remove-modules -n || abort "! Unable to remove modules"
 fi
 
 ui_print "- Removing Kyubi files"
@@ -147,7 +149,8 @@ rm -rf \
 /cache/*magisk* /cache/unblock /data/*magisk* /data/cache/*magisk* /data/property/*magisk* \
 /data/Magisk.apk /data/busybox /data/adb/*magisk* \
 /data/adb/post-fs-data.d /data/adb/service.d /data/adb/modules* \
-/data/unencrypted/magisk /metadata/magisk /persist/magisk /mnt/vendor/persist/magisk
+/data/unencrypted/magisk /metadata/magisk /persist/magisk /mnt/vendor/persist/magisk \
+  || abort "! Unable to remove Kyubi files"
 
 cd /
 
@@ -155,12 +158,25 @@ cd /
 cleanup_installer_mirror || abort "! Unable to clean up uninstaller mirror"
 MIRRORDIR= MIRRORTMP=
 
-ui_print "********************************************"
-ui_print " The Kyubi app will uninstall itself, and"
-ui_print " the device will reboot after a few seconds"
-ui_print "********************************************"
+rm -rf "$TMPDIR" || abort "! Unable to remove uninstaller temporary files"
+
+# Package removal kills the app. Finish cleanup first and let this root shell
+# own the remaining sequence, rather than depending on an app callback after
+# reboot. Capture pm output so it is not written to the app's closed log pipe.
+if [ -n "$MANAGER_PACKAGE" ]; then
+  ui_print "- Removing manager package: $MANAGER_PACKAGE"
+  PM_RESULT=$(/system/bin/pm uninstall "$MANAGER_PACKAGE") \
+    || abort "! Unable to remove manager package: $PM_RESULT"
+  [ "$PM_RESULT" = Success ] || abort "! Unable to remove manager package: $PM_RESULT"
+else
+  ui_print "- System cleanup complete"
+fi
+
 sleep 8
-if ! /system/bin/reboot; then
+if /system/bin/reboot; then
+  exit 0
+else
+  REBOOT_RESULT=$?
   # Reboot failed to even start (rather than silently not completing, which
   # this shell can't observe either way) -- don't leave the partitions we
   # remounted read-write above sitting open with nothing to close them.
@@ -169,7 +185,5 @@ if ! /system/bin/reboot; then
   mount -o ro,remount /system 2>/dev/null
   mount -o ro,remount /vendor 2>/dev/null
   mount -o ro,remount /odm 2>/dev/null
+  exit "$REBOOT_RESULT"
 fi
-
-rm -rf $TMPDIR
-exit 0
