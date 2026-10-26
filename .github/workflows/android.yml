@@ -196,7 +196,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           disable-animations: true
-          script: ./scripts/kyubi_emulator_smoke.sh
+          script: ./scripts/kyubi_emulator_smoke.sh && bash scripts/native_selinux_ci.sh
 
   # Publish ONLY on a kitsune push, and ONLY after build + smoke both pass. The
   # APKs are the ones built (and signed) in `build` -- downloaded, not rebuilt.

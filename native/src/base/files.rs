@@ -156,6 +156,24 @@ impl FileAttr {
 #[cfg(feature = "selinux")]
 const XATTR_NAME_SELINUX: &[u8] = b"security.selinux\0";
 
+// Disabled-SELinux kernels may have no label or no xattr support. Only those
+// errors are optional, and only when selinuxfs is absent. In particular, a
+// permissive kernel still has SELinux labels, and access errors are not absence.
+#[cfg(feature = "selinux")]
+fn selinux_attr_len(result: io::Result<isize>) -> io::Result<usize> {
+    match result {
+        Ok(sz) => Ok((sz as usize).saturating_sub(1)),
+        Err(e)
+            if matches!(e.raw_os_error(), Some(libc::ENODATA | libc::EOPNOTSUPP))
+                && matches!(std::fs::metadata("/sys/fs/selinux/enforce"),
+                    Err(ref probe) if probe.raw_os_error() == Some(libc::ENOENT)) =>
+        {
+            Ok(0)
+        }
+        Err(e) => Err(e),
+    }
+}
+
 pub struct DirEntry<'a> {
     dir: &'a Directory,
     entry: &'a dirent,
@@ -637,14 +655,14 @@ impl FsPath {
 
             #[cfg(feature = "selinux")]
             {
-                let sz = libc::lgetxattr(
+                let len = selinux_attr_len(libc::lgetxattr(
                     self.as_ptr(),
                     XATTR_NAME_SELINUX.as_ptr().cast(),
                     attr.con.as_mut_ptr().cast(),
                     attr.con.capacity(),
                 )
-                .check_os_err()?;
-                attr.con.set_len((sz - 1) as usize);
+                .check_os_err())?;
+                attr.con.set_len(len);
             }
         }
         Ok(attr)
@@ -733,14 +751,14 @@ pub fn fd_get_attr(fd: RawFd) -> io::Result<FileAttr> {
 
         #[cfg(feature = "selinux")]
         {
-            let sz = libc::fgetxattr(
+            let len = selinux_attr_len(libc::fgetxattr(
                 fd,
                 XATTR_NAME_SELINUX.as_ptr().cast(),
                 attr.con.as_mut_ptr().cast(),
                 attr.con.capacity(),
             )
-            .check_os_err()?;
-            attr.con.set_len((sz - 1) as usize);
+            .check_os_err())?;
+            attr.con.set_len(len);
         }
     }
     Ok(attr)
