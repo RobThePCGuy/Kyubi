@@ -608,8 +608,18 @@ remount_check(){
 }
 
 force_bind_mount(){
-    mount -o bind,private "$1" "$2"
-    mount -o rw,remount "$2"
+    mount -o bind,private "$1" "$2" || return 1
+    remount_check rw "$2" && return 0
+
+    # MEmu can mark the backing partition read-only. BusyBox remount does
+    # not clear BLKROSET like Android's mount does. Resolve this mirror's
+    # actual device; never guess a mapper path or unlock unrelated disks.
+    local part="$(realpath "$2")" device
+    device=$(awk -v part="$part" '$2 == part { print $1; exit }' /proc/mounts)
+    [ -b "$device" ] || { warn_system_ro; return 1; }
+    [ "$(blockdev --getro "$device")" = 1 ] || { warn_system_ro; return 1; }
+    ui_print "- Clearing read-only flag on $device for installer mirror"
+    blockdev --setrw "$device" || { warn_system_ro; return 1; }
     remount_check rw "$2" || warn_system_ro
 }
 

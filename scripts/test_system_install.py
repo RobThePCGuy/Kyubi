@@ -15,6 +15,53 @@ UTIL = MANAGER.parents[5] / "scripts/util_functions.sh"
 
 
 class SystemInstallTests(unittest.TestCase):
+    def test_backing_device_retry(self):
+        helpers = UTIL.read_text().split("remount_check(){", 1)[1]
+        helpers = "remount_check(){" + helpers.split("setup_installer_mirror(){", 1)[0]
+        for scenario in ("readonly", "writable", "unknown", "setrw_fail", "retry_fail", "bind_fail", "normal", "nonblock", "missing"):
+            with self.subTest(scenario=scenario), tempfile.TemporaryDirectory() as case:
+                root = Path(case)
+                device = "tmpfs" if scenario == "nonblock" else "/dev/block/sda6"
+                (root / "mounts").write_text("" if scenario == "missing" else f"{device} /mirror ext4 ro 0 0\n")
+                source = helpers.replace("/proc/mounts", '"$CASE_ROOT/mounts"')
+                # The fixture represents a block device without creating host devices.
+                source = source.replace('[ -b "$device" ]', '[ "$device" = /dev/block/sda6 ]')
+                harness = source + r'''
+ui_print() { echo "$*"; }
+warn_system_ro() { return 1; }
+realpath() { echo "$1"; }
+mount() {
+  echo "mount $*"
+  case "$2" in
+    bind,private) [ "$SCENARIO" != bind_fail ]; return $? ;;
+  esac
+  if [ "$SCENARIO" = normal ] || { [ "$unlocked" = yes ] && [ "$SCENARIO" != retry_fail ]; }; then
+    echo '/dev/block/sda6 /mirror ext4 rw 0 0' > "$CASE_ROOT/mounts"
+    return 0
+  fi
+  return 1
+}
+blockdev() {
+  echo "blockdev $*" >&2
+  case "$1" in
+    --getro)
+      case "$SCENARIO" in writable) echo 0;; unknown) return 1;; *) echo 1;; esac ;;
+    --setrw) [ "$SCENARIO" != setrw_fail ] || return 1; unlocked=yes ;;
+  esac
+}
+force_bind_mount / /mirror
+'''
+                run = subprocess.run(["bash"], input=harness, text=True, capture_output=True,
+                                     env=dict(os.environ, CASE_ROOT=root.as_posix(), SCENARIO=scenario))
+                if scenario in ("readonly", "normal"):
+                    self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+                else:
+                    self.assertNotEqual(run.returncode, 0, run.stdout + run.stderr)
+                if scenario in ("readonly", "setrw_fail", "retry_fail"):
+                    self.assertIn("blockdev --setrw /dev/block/sda6", run.stderr)
+                else:
+                    self.assertNotIn("--setrw", run.stderr)
+
     def run_case(self, *, proc=False, proc_mount=True, fallback_mount=True,
                  selinux=False, failure="", cleanup_failure=False,
                  context_ok=False, bootmode=True, uninstall=False):
