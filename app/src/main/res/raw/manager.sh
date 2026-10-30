@@ -295,7 +295,7 @@ direct_install_system(){
         # we are modifying system directly so we need to create /sbin if it does not exist
         if [ ! -d "$ROOTDIR"/sbin ]; then
             rm -rf "$ROOTDIR"/sbin
-            mkdir "$ROOTDIR"/sbin
+            mkdir -m 755 "$ROOTDIR"/sbin
             if [ ! -d "$ROOTDIR"/sbin ]; then
                 ui_print "! Can't create tmpfs path /sbin"
                 return 1;
@@ -332,7 +332,7 @@ direct_install_system(){
         # we are modifying system directly so we need to create /sbin if it does not exist
         if [ -d "$ROOTDIR" ] && [ ! -d "$ROOTDIR"/sbin ]; then
             rm -rf "$ROOTDIR"/sbin
-            mkdir "$ROOTDIR"/sbin
+            mkdir -m 755 "$ROOTDIR"/sbin
             if [ ! -d "$ROOTDIR"/sbin ]; then
                 ui_print "! Can't create tmpfs path /sbin"
                 return 1;
