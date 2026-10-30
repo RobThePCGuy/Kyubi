@@ -35,7 +35,6 @@
     <string name="install_start">დაწყება</string>
     <string name="manager_download_install">დააჭირეთ გადმოსაწერად და შემდგომ დასაყენებლად</string>
     <string name="setup_title">დამატებითი ინსტალაცია</string>
-    <string name="reboot_delay_toast">გადატვირთვა 5 წამში…</string>
     <string name="flash_screen_title">ინსტალაცია</string>
 
     <!--Superuser-->
@@ -86,7 +85,6 @@
 
     <!--Module Fragment-->
     <string name="no_info_provided">(ინფორმაცია არ არის მითითებული)</string>
-    <string name="reboot_userspace">სისტემის გადატვირთვა</string>
     <string name="module_version_author">%1$s %2$s-სგან</string>
     <string name="module_state_remove">წაშლა</string>
     <string name="module_state_restore">აღდგენა</string>

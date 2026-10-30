@@ -34,7 +34,6 @@
     <string name="install_start">Aan de slag</string>
     <string name="manager_download_install">Druk om te downloaden en installeren</string>
     <string name="setup_title">Installatie afronden</string>
-    <string name="reboot_delay_toast">Je apparaat wordt over 5 seconden herstart…</string>
     <string name="flash_screen_title">Installatie</string>
 
     <!--Superuser-->

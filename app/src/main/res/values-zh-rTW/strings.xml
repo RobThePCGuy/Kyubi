@@ -37,7 +37,6 @@
     <string name="install_start">開始執行</string>
     <string name="manager_download_install">點選以下載並安裝</string>
     <string name="setup_title">修復安裝</string>
-    <string name="reboot_delay_toast">將在 5 秒後重新啟動……</string>
     <string name="flash_screen_title">安裝</string>
 
     <!--Superuser-->
@@ -88,7 +87,6 @@
 
     <!--Module -->
     <string name="no_info_provided">（未提供資訊）</string>
-    <string name="reboot_userspace">快速重新啟動</string>
     <string name="module_version_author">%1$s 來自 %2$s</string>
     <string name="module_state_remove">移除</string>
     <string name="module_state_restore">復原</string>

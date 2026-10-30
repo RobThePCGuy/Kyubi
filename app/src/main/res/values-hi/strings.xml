@@ -37,7 +37,6 @@
     <string name="install_start">तो चलिए शुरू करते हैं!</string>
     <string name="manager_download_install">डाउनलोड और इंस्टॉल करने के लिए दबाएं</string>
     <string name="setup_title">अतिरिक्त सेटअप</string>
-    <string name="reboot_delay_toast">5 सेकंड में रिबूट हो रहा है...</string>
     <string name="flash_screen_title">इंस्टॉलेशन</string>
 
     <!--Superuser-->
@@ -88,7 +87,6 @@
 
     <!--Module -->
     <string name="no_info_provided">(कोई जानकारी नहीं दी गई)</string>
-    <string name="reboot_userspace">सॉफ्ट रिबूट</string>
     <string name="module_version_author"> %2$s के द्वारा %1$s</string>
     <string name="module_state_remove">हटाएँ</string>
     <string name="module_state_restore">रिस्टोर करें</string>

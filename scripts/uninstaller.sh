@@ -163,15 +163,26 @@ rm -rf "$TMPDIR" || abort "! Unable to remove uninstaller temporary files"
 # Package removal kills the app. Finish cleanup first and let this root shell
 # own the remaining sequence, rather than depending on an app callback after
 # reboot. Capture pm output so it is not written to the app's closed log pipe.
+remount_system_ro() {
+  mount -o ro,remount /system_root 2>/dev/null
+  mount -o ro,remount /system 2>/dev/null
+  mount -o ro,remount /vendor 2>/dev/null
+  mount -o ro,remount /odm 2>/dev/null
+}
+
 if [ -n "$MANAGER_PACKAGE" ]; then
   ui_print "- Removing manager package: $MANAGER_PACKAGE"
   PM_RESULT=$(/system/bin/pm uninstall "$MANAGER_PACKAGE") \
     || abort "! Unable to remove manager package: $PM_RESULT"
   [ "$PM_RESULT" = Success ] || abort "! Unable to remove manager package: $PM_RESULT"
-else
-  ui_print "- System cleanup complete"
+  # No reboot from the app: on the emulators Kyubi targets an in-guest reboot
+  # never returns (BlueStacks' player hangs, MEmu's kernel faults in shutdown).
+  # The uninstall dialog told the user to close and reopen the emulator.
+  remount_system_ro
+  exit 0
 fi
 
+ui_print "- System cleanup complete"
 sleep 8
 if /system/bin/reboot; then
   exit 0
@@ -181,9 +192,6 @@ else
   # this shell can't observe either way) -- don't leave the partitions we
   # remounted read-write above sitting open with nothing to close them.
   ui_print "! Reboot failed, remounting system partitions read-only"
-  mount -o ro,remount /system_root 2>/dev/null
-  mount -o ro,remount /system 2>/dev/null
-  mount -o ro,remount /vendor 2>/dev/null
-  mount -o ro,remount /odm 2>/dev/null
+  remount_system_ro
   exit "$REBOOT_RESULT"
 fi

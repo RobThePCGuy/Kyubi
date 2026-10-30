@@ -35,7 +35,6 @@
     <string name="install_start">போகலாம்</string>
     <string name="manager_download_install">பதிவிறக்கி நிறுவ இந்த பொத்தானை அழுத்தவும்</string>
     <string name="setup_title">கூடுதல் அமைப்பு</string>
-    <string name="reboot_delay_toast">5 வினாடிகளில் மீண்டும் துவக்குகிறது…</string>
     <string name="flash_screen_title">நிறுவல்</string>
 
     <!--Superuser-->
@@ -86,7 +85,6 @@
 
     <!--Module-->
     <string name="no_info_provided">(எந்த தகவலும் வழங்கப்படவில்லை)</string>
-    <string name="reboot_userspace">மென்மையான மறுதொடக்கம்</string>
     <string name="module_version_author">%1$s மூலமாக %2$s</string>
     <string name="module_state_remove">அகற்று</string>
     <string name="module_state_restore">மீட்டமை</string>

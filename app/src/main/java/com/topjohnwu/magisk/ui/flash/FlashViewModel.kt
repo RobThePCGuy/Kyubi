@@ -12,7 +12,7 @@ import com.topjohnwu.magisk.R
 import com.topjohnwu.magisk.arch.BaseViewModel
 import com.topjohnwu.magisk.core.Const
 import com.topjohnwu.magisk.core.Info
-import com.topjohnwu.magisk.core.ktx.reboot
+import com.topjohnwu.magisk.dialog.RestartEmulatorDialog
 import com.topjohnwu.magisk.core.ktx.synchronized
 import com.topjohnwu.magisk.core.ktx.timeFormatStandard
 import com.topjohnwu.magisk.core.ktx.toTime
@@ -111,5 +111,5 @@ class FlashViewModel : BaseViewModel() {
         }
     }
 
-    fun restartPressed() = reboot()
+    fun restartPressed() = RestartEmulatorDialog().show()
 }

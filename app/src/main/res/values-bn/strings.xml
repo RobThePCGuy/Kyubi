@@ -37,7 +37,6 @@
     <string name="install_start">চলো যাই</string>
     <string name="manager_download_install">ডাউনলোড এবং ইনস্টল করুন</string>
     <string name="setup_title">অতিরিক্ত সেটআপ</string>
-    <string name="reboot_delay_toast">৫ সেকেন্ডের মধ্যে রিবুট হচ্ছে...</string>
     <string name="flash_screen_title">স্থাপন</string>
 
     <!--Superuser-->
@@ -87,7 +86,6 @@
 
     <!--Module-->
     <string name="no_info_provided">(কোন তথ্য প্রদান করা হয়</string>
-    <string name="reboot_userspace">নরম রিবুট</string>
     <string name="module_version_author">%1$s by %2$s</string>
     <string name="module_state_remove">অপসারণ</string>
     <string name="module_state_restore">পুনরুদ্ধার করুন</string>

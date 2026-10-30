@@ -36,7 +36,6 @@
     <string name="install_start">Đi nào</string>
     <string name="manager_download_install">Nhấn để tải xuống và cài đặt</string>
     <string name="setup_title">Thiết lập bổ sung</string>
-    <string name="reboot_delay_toast">Khởi động lại sau 5 giây…</string>
     <string name="flash_screen_title">Cài đặt</string>
 
     <!--Superuser-->
@@ -87,7 +86,6 @@
 
     <!--Module-->
     <string name="no_info_provided">(Không cung cấp thông tin)</string>
-    <string name="reboot_userspace">Khởi động lại</string>
     <string name="module_version_author">%1$s bởi %2$s</string>
     <string name="module_state_remove">Gỡ bỏ</string>
     <string name="module_state_restore">Khôi phục</string>

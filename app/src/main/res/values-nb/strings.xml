@@ -35,7 +35,6 @@
     <string name="install_start">Start</string>
     <string name="manager_download_install">Trykk for å laste ned og installere</string>
     <string name="setup_title">Ytterligere oppsett</string>
-    <string name="reboot_delay_toast">Starter på ny om 5 sek …</string>
     <string name="flash_screen_title">Installasjon</string>
 
     <!--Superuser-->
@@ -86,7 +85,6 @@
 
     <!--Module-->
     <string name="no_info_provided">(Ingen info angitt)</string>
-    <string name="reboot_userspace">Myk omstart</string>
     <string name="module_version_author">%1$s av %2$s</string>
     <string name="module_state_remove">Fjern</string>
     <string name="module_state_restore">Gjenopprett</string>

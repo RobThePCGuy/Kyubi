@@ -33,7 +33,7 @@ run_uninstaller '/data/app/hidden manager/base.apk' com.hidden.random_manager
                     self.assertEqual(result.returncode, 0, result.stderr)
                     self.assertIn('CHILD:/dev/tmp/install|/dev/tmp/install/assets/uninstaller.sh|dummy|1|/data/app/hidden manager/base.apk|com.hidden.random_manager', result.stdout)
 
-    def run_case(self, package='io.github.robthepcguy.kyubi', failure='', stall=False):
+    def run_case(self, package='io.github.robthepcguy.kyubi', failure=''):
         with tempfile.TemporaryDirectory() as temp:
             case = Path(temp)
             (case / 'assets').mkdir()
@@ -85,7 +85,6 @@ pm() {
 }
 reboot() {
   event reboot
-  [ "$STALL" != true ] || while :; do :; done
   [ "$FAILURE" != reboot ] || return 37
 }
 ''')
@@ -95,7 +94,7 @@ reboot() {
             source = source.replace('cd /\n', 'cd "$CASE_ROOT"\n')
             (case / 'uninstaller.sh').write_text(source)
             env = dict(os.environ, CASE_ROOT=case.as_posix(), INSTALLER=case.as_posix(),
-                       EXPECTED_PACKAGE=package, FAILURE=failure, STALL=str(stall).lower())
+                       EXPECTED_PACKAGE=package, FAILURE=failure)
             command = ['bash', (case/'uninstaller.sh').as_posix(),
                        'dummy', '1', 'fixture.apk', package]
             process = subprocess.Popen(command, env=env, stdout=subprocess.PIPE,
@@ -105,7 +104,7 @@ reboot() {
                 result = subprocess.CompletedProcess(command, process.returncode, stdout, stderr)
             except subprocess.TimeoutExpired:
                 # Git Bash has a launcher process: kill this fixture's whole
-                # tree so a deliberately stalled reboot cannot hang the suite.
+                # tree so a hung fixture cannot hang the suite.
                 if os.name == 'nt':
                     subprocess.run(['taskkill', '/PID', str(process.pid), '/T', '/F'],
                                    capture_output=True, timeout=5)
@@ -116,14 +115,17 @@ reboot() {
             events = (case/'events').read_text().splitlines()
             return result, events, (case/'manager-present').exists()
 
-    def test_manager_removed_before_reboot(self):
+    def test_app_uninstall_removes_manager_without_reboot(self):
+        # An in-guest reboot hangs the emulators Kyubi targets, so the app path
+        # finishes cleanup, removes the manager, remounts read-only and exits.
         result, events, present = self.run_case()
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertFalse(present)
         removal = events.index('pm uninstall io.github.robthepcguy.kyubi')
         self.assertLess(events.index('mirror-cleanup'), removal)
-        self.assertLess(removal, events.index('reboot'))
         self.assertTrue(any('payload' in e for e in events[:removal]))
+        self.assertIn('mount', events[removal:])
+        self.assertNotIn('reboot', events)
 
     def test_hidden_manager_uses_running_package_identity(self):
         result, events, present = self.run_case('com.hidden.random_manager')
@@ -148,12 +150,6 @@ reboot() {
                 self.assertNotEqual(result.returncode, 0)
                 self.assertTrue(present)
                 self.assertNotIn('reboot', events)
-
-    def test_stalled_reboot_cannot_prevent_manager_removal(self):
-        result, events, present = self.run_case(stall=True)
-        self.assertIsNone(result, 'fixture must actually block in reboot')
-        self.assertIn('reboot', events)
-        self.assertFalse(present)
 
     def test_standalone_does_not_remove_an_assumed_package(self):
         result, events, present = self.run_case(package='')

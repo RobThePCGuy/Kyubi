@@ -37,7 +37,6 @@
     <string name="install_start">צא לדרך</string>
     <string name="manager_download_install">לחיצה להורדה והתקנה</string>
     <string name="setup_title">התקנה נוספת</string>
-    <string name="reboot_delay_toast">מאתחל בעוד 5 שניות…</string>
     <string name="flash_screen_title">התקנה</string>
 
     <!--Superuser-->
@@ -90,7 +89,6 @@
 
     <!--Module-->
     <string name="no_info_provided">(לא סופק מידע)</string>
-    <string name="reboot_userspace">אתחול מהיר</string>
     <string name="module_version_author">%1$s מאת %2$s</string>
     <string name="module_state_remove">הסרה</string>
     <string name="module_state_restore">שיחזור</string>

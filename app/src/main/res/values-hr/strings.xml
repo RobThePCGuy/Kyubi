@@ -34,7 +34,6 @@
     <string name="install_start">Krenimo</string>
     <string name="manager_download_install">Dodirnite za preuzimanje i instalaciju</string>
     <string name="setup_title">Dodatno postavljanje</string>
-    <string name="reboot_delay_toast">Ponovno pokretanje za 5 sekundi…</string>
     <string name="flash_screen_title">Instalacija</string>
 
     <!--Superuser-->

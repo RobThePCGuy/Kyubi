@@ -34,7 +34,6 @@
     <string name="install_start">Siguir</string>
     <string name="manager_download_install">Primi equí pa baxalu ya instalalu</string>
     <string name="setup_title">Configuración adicional</string>
-    <string name="reboot_delay_toast">Reaniciando en 5 segundos…</string>
     <string name="flash_screen_title">Instalación</string>
     <!--Superuser-->
     <string name="su_request_title">Solicitú de superusuariu</string>
@@ -79,7 +78,6 @@
     <string name="hide_search">Buscar</string>
     <!--Module-->
     <string name="no_info_provided">(Nun s\'apurrió nenguna información)</string>
-    <string name="reboot_userspace">Reaniciu del sistema</string>
     <string name="module_version_author">%1$s por %2$s</string>
     <string name="module_state_remove">Quitar</string>
     <string name="module_state_restore">Restaurar</string>

@@ -36,7 +36,6 @@
     <string name="install_start">설치</string>
     <string name="manager_download_install">눌러서 다운로드하고 설치</string>
     <string name="setup_title">추가 설정</string>
-    <string name="reboot_delay_toast">5초 후 다시 시작합니다…</string>
     <string name="flash_screen_title">설치과정</string>
 
     <!--Superuser-->
@@ -87,7 +86,6 @@
 
     <!--Module-->
     <string name="no_info_provided">(제공된 정보 없음)</string>
-    <string name="reboot_userspace">조용히 다시 시작</string>
     <string name="module_version_author">%1$s by %2$s</string>
     <string name="module_state_remove">제거</string>
     <string name="module_state_restore">복구</string>

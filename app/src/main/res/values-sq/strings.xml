@@ -37,7 +37,6 @@
     <string name="install_start">Shkojme</string>
     <string name="manager_download_install">Shtypni për ta shkarkuar dhe instaluarl</string>
     <string name="setup_title">Konfigurimet shtesë</string>
-    <string name="reboot_delay_toast">Rinisje pas 5 sekondash…</string>
     <string name="flash_screen_title">Instalimi</string>
 
     <!--Superuser-->
@@ -91,7 +90,6 @@
 
     <!--Module-->
     <string name="no_info_provided">(Nuk ka asnjë informacion)</string>
-    <string name="reboot_userspace">Rinisje e shpejtë</string>
     <string name="module_version_author">%1$s nga %2$s</string>
     <string name="module_state_remove">Hiqe</string>
     <string name="module_state_restore">Rikëthe</string>

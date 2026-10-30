@@ -37,7 +37,6 @@
     <string name="install_start">Įdiegti</string>
     <string name="manager_download_install">Spustelėkite, kad atsisiųstumėte ir įdiegtumėte</string>
     <string name="setup_title">Išplėstinė sąranka</string>
-    <string name="reboot_delay_toast">Paleidžiama iš naujo po 5 sekundžių…</string>
     <string name="flash_screen_title">Įdiegimas</string>
 
     <!--Superuser-->
@@ -88,7 +87,6 @@
 
     <!--Module-->
     <string name="no_info_provided">(Nėra informacijos)</string>
-    <string name="reboot_userspace">Paleidimas neišjungus</string>
     <string name="module_version_author">%1$s nuo %2$s</string>
     <string name="module_state_remove">Šalinti</string>
     <string name="module_state_restore">Atkurti</string>

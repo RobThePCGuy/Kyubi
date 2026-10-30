@@ -3,7 +3,6 @@ package com.topjohnwu.magisk.core.tasks
 import android.system.Os
 import android.widget.Toast
 import androidx.annotation.WorkerThread
-import androidx.core.os.postDelayed
 import com.topjohnwu.magisk.BuildConfig
 import com.topjohnwu.magisk.R
 import com.topjohnwu.magisk.StubApk
@@ -12,13 +11,11 @@ import com.topjohnwu.magisk.core.Const
 import com.topjohnwu.magisk.core.Info
 import com.topjohnwu.magisk.core.di.ServiceLocator
 import com.topjohnwu.magisk.core.isRunningAsStub
-import com.topjohnwu.magisk.core.ktx.reboot
 import com.topjohnwu.magisk.core.ktx.toast
 import com.topjohnwu.magisk.core.ktx.writeTo
 import com.topjohnwu.magisk.core.utils.NopList
 import com.topjohnwu.magisk.core.utils.RootUtils
 import com.topjohnwu.superuser.Shell
-import com.topjohnwu.superuser.internal.UiThreadHandler
 import com.topjohnwu.superuser.nio.ExtendedFile
 import com.topjohnwu.superuser.nio.FileSystemManager
 import kotlinx.coroutines.Dispatchers
@@ -207,12 +204,11 @@ abstract class MagiskInstaller(
         override suspend fun exec(): Boolean {
             val success = super.exec()
             callback()
+            // No automatic reboot: it hangs the emulators Kyubi runs on.
             context.toast(
-                if (success) R.string.reboot_delay_toast else R.string.setup_fail,
+                if (success) R.string.setup_done_restart else R.string.setup_fail,
                 Toast.LENGTH_LONG
             )
-            if (success)
-                UiThreadHandler.handler.postDelayed(5000) { reboot() }
             return success
         }
     }

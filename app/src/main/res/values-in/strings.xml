@@ -37,7 +37,6 @@
     <string name="install_start">Mulai</string>
     <string name="manager_download_install">Sentuh untuk unduh dan pasang</string>
     <string name="setup_title">Penyiapan tambahan</string>
-    <string name="reboot_delay_toast">Memulai ulang dalam 5 detik…</string>
     <string name="flash_screen_title">Instalasi</string>
 
     <!--Superuser-->
@@ -88,7 +87,6 @@
 
     <!--Module-->
     <string name="no_info_provided">(Info tidak tersedia)</string>
-    <string name="reboot_userspace">Mulai ulang secara halus</string>
     <string name="module_version_author">%1$s oleh %2$s</string>
     <string name="module_state_remove">Hapus</string>
     <string name="module_state_restore">Pulihkan</string>

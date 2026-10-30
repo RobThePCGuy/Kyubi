@@ -35,7 +35,6 @@
     <string name="install_start">Endavant</string>
     <string name="manager_download_install">Premi per baixar i instal·lar</string>
     <string name="setup_title">Instal·lació addicional</string>
-    <string name="reboot_delay_toast">Reinici en 5 segons…</string>
     <string name="flash_screen_title">Instal·lació</string>
 
     <!--Superuser-->
@@ -86,7 +85,6 @@
 
     <!--Module-->
     <string name="no_info_provided">(No hi ha informació)</string>
-    <string name="reboot_userspace">Reinici suau</string>
     <string name="module_version_author">%1$s per %2$s</string>
     <string name="module_state_remove">Eliminar</string>
     <string name="module_state_restore">Recuperar</string>

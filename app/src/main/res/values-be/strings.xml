@@ -32,7 +32,6 @@
     <string name="install_start">Усталяваць</string>
     <string name="manager_download_install">Націсніце, каб спампаваць і ўсталяваць</string>
     <string name="setup_title">Дадатковая ўсталёўка</string>
-    <string name="reboot_delay_toast">Перазапуск праз 5 секунд…</string>
     <string name="flash_screen_title">Усталёўка</string>
     <!--Superuser-->
     <string name="su_request_title">Запыт правоў суперкарыстальніка</string>
@@ -77,7 +76,6 @@
     <string name="hide_search">Пошук</string>
     <!--Module-->
     <string name="no_info_provided">(Няма інфармацыі)</string>
-    <string name="reboot_userspace">Праграмны перазапуск</string>
     <string name="module_version_author">%1$s ад %2$s</string>
     <string name="module_state_remove">Выдаліць</string>
     <string name="module_state_restore">Аднавіць</string>

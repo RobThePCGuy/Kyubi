@@ -37,7 +37,6 @@
     <string name="install_start">C’est parti</string>
     <string name="manager_download_install">Appuyez pour le télécharger et l’installer</string>
     <string name="setup_title">Configuration supplémentaire</string>
-    <string name="reboot_delay_toast">Redémarrage dans 5 secondes…</string>
     <string name="flash_screen_title">Installation</string>
 
     <!--Superuser-->
@@ -91,7 +90,6 @@
 
     <!--Module -->
     <string name="no_info_provided">(aucune info transmise)</string>
-    <string name="reboot_userspace">Redémarrage à chaud</string>
     <string name="module_version_author">%1$s, par %2$s</string>
     <string name="module_state_remove">Supprimer</string>
     <string name="module_state_restore">Restaurer</string>

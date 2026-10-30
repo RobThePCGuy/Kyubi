@@ -37,7 +37,6 @@
     <string name="install_start">Andiamo!</string>
     <string name="manager_download_install">Apri questa notifica per scaricare e installare</string>
     <string name="setup_title">Configurazione aggiuntiva</string>
-    <string name="reboot_delay_toast">Riavvio fra 5 secondi…</string>
     <string name="flash_screen_title">Installazione</string>
 
     <!--Superuser-->
@@ -87,7 +86,6 @@
 
     <!--Module-->
     <string name="no_info_provided">(Nessuna informazione)</string>
-    <string name="reboot_userspace">Riavvio veloce</string>
     <string name="module_version_author">%1$s di %2$s</string>
     <string name="module_state_remove">Rimuovi</string>
     <string name="module_state_restore">Ripristina</string>

@@ -33,7 +33,6 @@
     <string name="install_start">ਤਾਂ ਆਓ ਸ਼ੁਰੂ ਕਰੀਏ!</string>
     <string name="manager_download_install">ਡਾਊਨਲੋਡ ਅਤੇ ਇੰਸਟੌਲ ਕਰਨ ਲਈ ਦਬਾਓ</string>
     <string name="setup_title">ਅਤਿਰਿਕਤ ਸੈਟਅਪ</string>
-    <string name="reboot_delay_toast">5 ਸਕਿੰਟਾਂ ਵਿੱਚ ਰੀਬੂਟ ਹੋ ਰਿਹਾ ਹੈ …</string>
     <string name="flash_screen_title">ਇੰਸਟਾਲੇਸ਼ਨ</string>
 
     <!--Superuser-->
@@ -83,7 +82,6 @@
 
     <!--Module -->
     <string name="no_info_provided">(ਕੋਈ ਜਾਣਕਾਰੀ ਨਹੀਂ ਦਿੱਤੀ ਗਈ)</string>
-    <string name="reboot_userspace">ਸਾਫਟ ਰੀਬੂਟ</string>
     <string name="module_version_author"> %2$s ਦੇ ਦੁਆਰਾ %1$s</string>
     <string name="module_state_remove">ਹਟਾਓ</string>
     <string name="module_state_restore">ਰੀਸਟੋਰ ਕਰੋ</string>

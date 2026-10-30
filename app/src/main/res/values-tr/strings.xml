@@ -37,7 +37,6 @@
     <string name="install_start">Hadi gidelim</string>
     <string name="manager_download_install">İndirmek ve yüklemek için basın</string>
     <string name="setup_title">Ek Kurulum</string>
-    <string name="reboot_delay_toast">5 saniye içinde yeniden başlatılıyor…</string>
     <string name="flash_screen_title">Yükleniyor</string>
 
     <!--Superuser-->
@@ -88,7 +87,6 @@
 
     <!--Module-->
     <string name="no_info_provided">(Bilgi verilmedi)</string>
-    <string name="reboot_userspace">Yazılımsal olarak yeniden başlat</string>
     <string name="module_version_author">%1$s / %2$s</string>
     <string name="module_state_remove">Kaldır</string>
     <string name="module_state_restore">Geri yükle</string>
