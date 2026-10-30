@@ -106,7 +106,7 @@ object Config : PreferenceConfig, DBConfig {
         const val ORDER_DATE = 1
     }
 
-    private val defaultChannel = Value.STABLE_CHANNEL
+    private val defaultChannel = Value.PRERELEASE_CHANNEL
 
 
     var bootId by preference(Key.BOOT_ID, "")
