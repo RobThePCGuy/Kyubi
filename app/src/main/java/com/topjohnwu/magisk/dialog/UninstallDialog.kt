@@ -14,7 +14,10 @@ class UninstallDialog : DialogBuilder {
     override fun build(dialog: MagiskDialog) {
         dialog.apply {
             setTitle(R.string.uninstall_magisk_title)
-            setMessage(R.string.uninstall_magisk_msg)
+            // The app removes itself, so this is the last chance to say how
+            // to finish: the uninstaller no longer reboots the emulator.
+            setMessage(context.getString(R.string.uninstall_magisk_msg) + "\n\n" +
+                context.getString(R.string.uninstall_restart_note))
             setButton(MagiskDialog.ButtonType.POSITIVE) {
                 text = R.string.complete_uninstall
                 onClick { completeUninstall(dialog) }

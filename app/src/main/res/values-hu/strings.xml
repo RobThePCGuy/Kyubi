@@ -37,7 +37,6 @@
     <string name="install_start">Hajrá</string>
     <string name="manager_download_install">Nyomd a letöltéshez és telepítéshez</string>
     <string name="setup_title">További beállítások</string>
-    <string name="reboot_delay_toast">Újraindítás 5 másodpercen belül…</string>
     <string name="flash_screen_title">Telepítés</string>
 
     <!--Superuser-->
@@ -88,7 +87,6 @@
 
     <!--Module-->
     <string name="no_info_provided">(Nincs információ)</string>
-    <string name="reboot_userspace">Lágy újraindítás</string>
     <string name="module_version_author">%1$s / %2$s</string>
     <string name="module_state_remove">Eltávolít</string>
     <string name="module_state_restore">Visszaállít</string>

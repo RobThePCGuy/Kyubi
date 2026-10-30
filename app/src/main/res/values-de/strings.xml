@@ -37,7 +37,6 @@
     <string name="install_start">Los geht\'s</string>
     <string name="manager_download_install">Tippen zum Herunterladen und Installieren</string>
     <string name="setup_title">Zusätzliche Einstellungen</string>
-    <string name="reboot_delay_toast">Neustart in 5 Sekunden …</string>
     <string name="flash_screen_title">Installieren</string>
 
     <!--Superuser-->
@@ -88,7 +87,6 @@
 
     <!--Module-->
     <string name="no_info_provided">(Keine Informationen verfügbar)</string>
-    <string name="reboot_userspace">Sanfter Neustart</string>
     <string name="module_version_author">%1$s von %2$s</string>
     <string name="module_state_remove">Entfernen</string>
     <string name="module_state_restore">Wiederherstellen</string>

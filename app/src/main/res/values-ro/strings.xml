@@ -37,7 +37,6 @@
     <string name="install_start">Să-i dăm drumul</string>
     <string name="manager_download_install">Apasă pentru a descărca și a instala</string>
     <string name="setup_title">Configurare suplimentară</string>
-    <string name="reboot_delay_toast">Repornire în 5 secunde…</string>
     <string name="flash_screen_title">Instalare</string>
 
     <!--Superuser-->
@@ -88,7 +87,6 @@
 
     <!--Module-->
     <string name="no_info_provided">(Nu sunt furnizate informații)</string>
-    <string name="reboot_userspace">Repornire software</string>
     <string name="module_version_author">%1$s de %2$s</string>
     <string name="module_state_remove">Elimină</string>
     <string name="module_state_restore">Restaurează</string>

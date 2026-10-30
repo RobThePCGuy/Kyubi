@@ -37,7 +37,6 @@
     <string name="install_start">Getdik</string>
     <string name="manager_download_install">Endirib quraşdırmaq üçün bas</string>
     <string name="setup_title">Əlavə Sazlamalar</string>
-    <string name="reboot_delay_toast">5 saniyəyə yenidən başlayacaq…</string>
     <string name="flash_screen_title">Quraşdırılma</string>
 
     <!--Superuser-->
@@ -88,7 +87,6 @@
 
     <!--Module-->
     <string name="no_info_provided">(Məlumat verilməyib)</string>
-    <string name="reboot_userspace">Yumuşaq başlatma</string>
     <string name="module_version_author">%2$s tərəfindən %1$s buraxılışı</string>
     <string name="module_state_remove">Sil</string>
     <string name="module_state_restore">Bərpa et</string>

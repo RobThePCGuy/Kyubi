@@ -36,7 +36,6 @@
     <string name="install_start">Let\'s go</string>
     <string name="manager_download_install">Press to download and install</string>
     <string name="setup_title">Additional Setup</string>
-    <string name="reboot_delay_toast">Rebooting in 5 seconds…</string>
     <string name="flash_screen_title">Installation</string>
 
     <!--Superuser-->
@@ -87,7 +86,6 @@
 
     <!--Module-->
     <string name="no_info_provided">(No info provided)</string>
-    <string name="reboot_userspace">Soft reboot</string>
     <string name="module_version_author">%1$s by %2$s</string>
     <string name="module_state_remove">Remove</string>
     <string name="module_state_restore">Restore</string>

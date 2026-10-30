@@ -37,7 +37,6 @@
     <string name="install_start">Εκκίνηση</string>
     <string name="manager_download_install">Πιέστε για λήψη και εγκατάσταση</string>
     <string name="setup_title">Πρόσθετη εγκατάσταση</string>
-    <string name="reboot_delay_toast">Επανεκκίνηση σε 5 δευτερόλεπτα…</string>
     <string name="flash_screen_title">Εγκατάσταση</string>
 
     <!--Superuser-->
@@ -88,7 +87,6 @@
 
     <!--Module-->
     <string name="no_info_provided">(Δεν δόθηκαν πληροφορίες)</string>
-    <string name="reboot_userspace">Soft επανεκκίνηση</string>
     <string name="module_version_author">%1$s από %2$s</string>
     <string name="module_state_remove">Αφαίρεση</string>
     <string name="module_state_restore">Επαναφορά</string>

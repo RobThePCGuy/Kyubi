@@ -45,7 +45,6 @@
     <string name="install_start">Let\'s go</string>
     <string name="manager_download_install">Press to download and install</string>
     <string name="setup_title">Additional Setup</string>
-    <string name="reboot_delay_toast">Rebooting in 5 seconds…</string>
     <string name="flash_screen_title">Installation</string>
 
     <!--Superuser-->
@@ -99,7 +98,6 @@
 
     <!--Module-->
     <string name="no_info_provided">(No info provided)</string>
-    <string name="reboot_userspace">Soft reboot</string>
     <string name="module_version_author">%1$s by %2$s</string>
     <string name="module_state_remove">Remove</string>
     <string name="module_action">Action</string>
@@ -210,6 +208,12 @@
     <string name="repo_install_title">Install %1$s %2$s(%3$d)</string>
     <string name="download">Download</string>
     <string name="reboot">Reboot</string>
+    <string name="restart_emulator_title">Restart the emulator</string>
+    <string name="restart_emulator_msg">Close the emulator and open it again.
+
+Kyubi does not reboot from inside Android because emulators such as BlueStacks and MEmu freeze when it does.</string>
+    <string name="setup_done_restart">Setup complete. Close the emulator and open it again to finish.</string>
+    <string name="uninstall_restart_note">When the Kyubi app disappears, close the emulator and open it again to finish.</string>
     <string name="close">Close</string>
     <string name="release_notes">Release notes</string>
     <string name="flashing">Flashing…</string>

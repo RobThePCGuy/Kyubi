@@ -37,7 +37,6 @@
     <string name="install_start">Установить</string>
     <string name="manager_download_install">Нажмите для установки</string>
     <string name="setup_title">Расширенная установка</string>
-    <string name="reboot_delay_toast">Перезагрузка через 5 секунд…</string>
     <string name="flash_screen_title">Установка</string>
 
     <!--Superuser-->
@@ -88,7 +87,6 @@
 
     <!--Module-->
     <string name="no_info_provided">(Нет информации)</string>
-    <string name="reboot_userspace">Перезапуск оболочки</string>
     <string name="module_version_author">%1$s от %2$s</string>
     <string name="module_state_remove">Удалить</string>
     <string name="module_state_restore">Восстановить</string>

@@ -25,6 +25,7 @@ import com.topjohnwu.magisk.databinding.bindExtra
 import com.topjohnwu.magisk.databinding.set
 import com.topjohnwu.magisk.dialog.EnvFixDialog
 import com.topjohnwu.magisk.dialog.ManagerInstallDialog
+import com.topjohnwu.magisk.dialog.RestartEmulatorDialog
 import com.topjohnwu.magisk.dialog.UninstallDialog
 import com.topjohnwu.magisk.events.SnackbarEvent
 import com.topjohnwu.magisk.utils.asText
@@ -138,6 +139,8 @@ class HomeViewModel(
             }
         }
     }
+
+    fun onRestartPressed() = RestartEmulatorDialog().show()
 
     fun onMagiskPressed() = withExternalRW {
         HomeFragmentDirections.actionHomeFragmentToInstallFragment().navigate()

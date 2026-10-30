@@ -68,7 +68,7 @@ class HomeFragment : BaseFragment<FragmentHomeMd2Binding>(), MenuProvider {
         when (item.itemId) {
             R.id.action_settings ->
                 HomeFragmentDirections.actionHomeFragmentToSettingsFragment().navigate()
-            R.id.action_reboot -> activity?.let { RebootMenu.inflate(it).show() }
+            R.id.action_reboot -> viewModel.onRestartPressed()
             else -> return super.onOptionsItemSelected(item)
         }
         return true

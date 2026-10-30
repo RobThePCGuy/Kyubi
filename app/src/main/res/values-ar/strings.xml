@@ -33,7 +33,6 @@
     <string name="install_start">هيا، بنا</string>
     <string name="manager_download_install">اضغط للتنزيل و التثبيت</string>
     <string name="setup_title">إعدادات إضافية</string>
-    <string name="reboot_delay_toast">إعادة التشغيل بعد ٥ ثواني…</string>
     <string name="flash_screen_title">التثبيت</string>
 
     <!--Superuser-->

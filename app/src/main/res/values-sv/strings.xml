@@ -34,7 +34,6 @@
     <string name="install_start">Nu kör vi!</string>
     <string name="manager_download_install">Tryck för att ladda ned och installera install</string>
     <string name="setup_title">Ytterligare installation</string>
-    <string name="reboot_delay_toast">Omstart om 5 sekunder…</string>
     <string name="flash_screen_title">Installation</string>
 
     <!--Superuser-->
@@ -85,7 +84,6 @@
 
     <!--Module-->
     <string name="no_info_provided">(Ingen information tillgänglig)</string>
-    <string name="reboot_userspace">Mjuk omstart</string>
     <string name="module_version_author">%1$s av %2$s</string>
     <string name="module_state_remove">Ta bort</string>
     <string name="module_state_restore">Återställ</string>

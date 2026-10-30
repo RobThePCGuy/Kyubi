@@ -33,7 +33,6 @@
     <string name="install_start">بزن بریم</string>
     <string name="manager_download_install">برای دانلود و نصب فشار دهید</string>
     <string name="setup_title">تنظیمات اضافی</string>
-    <string name="reboot_delay_toast">راه اندازی مجدد در 5 ثانیه…</string>
     <string name="flash_screen_title">نصب و راه اندازی</string>
 
     <!--Superuser-->

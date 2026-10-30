@@ -37,7 +37,6 @@
     <string name="install_start">നമുക്ക് തുടങ്ങാം</string>
     <string name="manager_download_install">ഡൗൺലോഡ് ചെയ്ത് ഇൻസ്റ്റാൾ ചെയ്യാൻ അമർത്തുക</string>
     <string name="setup_title">അധിക സജ്ജീകരണം</string>
-    <string name="reboot_delay_toast">5 സെക്കൻഡിൽ റീബൂട്ട് ചെയ്യുന്നു…</string>
     <string name="flash_screen_title">ഇൻസ്റ്റലേഷൻ</string>
 
     <!--Superuser-->
@@ -88,7 +87,6 @@
 
     <!--Module-->
     <string name="no_info_provided">(വിവരങ്ങളൊന്നും നൽകിയിട്ടില്ല)</string>
-    <string name="reboot_userspace">സോഫ്റ്റ് റീബൂട്ട്</string>
     <string name="module_version_author">%1$s നിർമ്മിച്ചത് %2$s</string>
     <string name="module_state_remove">നീക്കുക</string>
     <string name="module_state_restore">പുനഃസ്ഥാപിക്കുക</string>

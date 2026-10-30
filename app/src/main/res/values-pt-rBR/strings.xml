@@ -36,7 +36,6 @@
     <string name="install_start">Vamos lá</string>
     <string name="manager_download_install">Toque para baixar e instalar</string>
     <string name="setup_title">Configuração adicional</string>
-    <string name="reboot_delay_toast">Reiniciando em 5 segundos…</string>
     <string name="flash_screen_title">Instalação</string>
 
     <!--Superuser-->
@@ -88,7 +87,6 @@
 
     <!--Module-->
     <string name="no_info_provided">(Nenhuma informação fornecida)</string>
-    <string name="reboot_userspace">Reinício rápido</string>
     <string name="module_version_author">%1$s por %2$s</string>
     <string name="module_state_remove">Remover</string>
     <string name="module_state_restore">Restaurar</string>

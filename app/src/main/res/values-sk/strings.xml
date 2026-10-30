@@ -37,7 +37,6 @@
     <string name="install_start">Poďme na to</string>
     <string name="manager_download_install">Stlačte pre stiahnutie a inštaláciu</string>
     <string name="setup_title">Ďalšie nastavenia</string>
-    <string name="reboot_delay_toast">Reštart o 5 sekúnd…</string>
     <string name="flash_screen_title">Inštalácia</string>
 
     <!--Superuser-->
@@ -91,7 +90,6 @@
 
     <!--Module-->
     <string name="no_info_provided">(Nie sú k dispozícii žiadne informácie)</string>
-    <string name="reboot_userspace">Softvérový reštart</string>
     <string name="module_version_author">%1$s od %2$s</string>
     <string name="module_state_remove">Odstrániť</string>
     <string name="module_state_restore">Obnoviť</string>

@@ -36,7 +36,6 @@
     <string name="install_start">Встановити</string>
     <string name="manager_download_install">Натисніть, щоб завантажити і встановити</string>
     <string name="setup_title">Додаткове налаштування</string>
-    <string name="reboot_delay_toast">Перезавантаження через 5 секунд…</string>
     <string name="flash_screen_title">Встановлення</string>
 
     <!--Superuser-->
@@ -87,7 +86,6 @@
 
     <!--Module-->
     <string name="no_info_provided">(немає наданої інформації)</string>
-    <string name="reboot_userspace">Швидке перезавантаження</string>
     <string name="module_version_author">%1$s, розробник %2$s</string>
     <string name="module_state_remove">Видалити</string>
     <string name="module_state_restore">Відновити</string>

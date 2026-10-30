@@ -37,7 +37,6 @@
     <string name="install_start">Начало</string>
     <string name="manager_download_install">За да изтеглите и инсталирате, докоснете</string>
     <string name="setup_title">Допълнителни настройки</string>
-    <string name="reboot_delay_toast">Рестартиране след 5 секунди…</string>
     <string name="flash_screen_title">Инсталиране</string>
 
     <!--Superuser-->
@@ -88,7 +87,6 @@
 
     <!--Module-->
     <string name="no_info_provided">(Липсва информация)</string>
-    <string name="reboot_userspace">Бърз рестарт</string>
     <string name="module_version_author">%1$s от %2$s</string>
     <string name="module_state_remove">Премахване</string>
     <string name="module_state_restore">Възстановяване</string>
