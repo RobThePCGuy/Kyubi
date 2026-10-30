@@ -155,6 +155,27 @@ Migration checklist:
 
 ## Building
 
+### Installer mirror fallback (#58)
+
+[@xiaomu18's MEmu report](https://github.com/RobThePCGuy/Kyubi/issues/58)
+identified the installer assumption that `/proc/<pid>/attr` exists. Installation
+and uninstallation now share a temporary tmpfs mirror fallback under `/dev`
+when that proc directory is missing or cannot host the mount. Rollback keeps
+the selected mirror until it finishes; cleanup unmounts mirrors and uses
+`rmdir`, never recursive deletion of the fallback mount tree. Setup errors
+appear in the install log. The uninstaller also cleans mirrors on exit.
+
+In boot mode, a missing `/sys/fs/selinux/enforce` skips context and policy steps
+for kernels without active SELinux. Both enforcing and permissive kernels
+retain these checks; recovery retains its existing policy behavior.
+
+`python3 scripts/test_system_install.py` checks the shell lifecycle with
+sandbox files and simulated mounts, including rollback, cleanup failure,
+SELinux guards, recovery paths and uninstaller exit cleanup. It performs no
+real mount or emulator operation. MEmu installation, reboot, root access and
+uninstallation still require observation on the reported emulator before
+release promotion.
+
 **JDK:** the bundled Kotlin compiler cannot parse class files from the newest
 JDKs — a default `JAVA_HOME` pointing at JDK 25+ fails with a Kotlin compiler
 error that does not name the JDK as the cause. Build with JDK 17 or 21:

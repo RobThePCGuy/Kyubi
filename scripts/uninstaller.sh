@@ -12,6 +12,8 @@ umask 022
 
 OUTFD=$2
 COMMONDIR=$INSTALLER/assets
+# Optional app-only argument. Standalone flashable use has no manager identity.
+MANAGER_PACKAGE=$4
 
 if [ ! -f $COMMONDIR/util_functions.sh ]; then
   echo "! Unable to extract zip file!"
@@ -52,8 +54,13 @@ ui_print "- Device platform: $ABI"
 
 if ( [ -z "$(grep_prop SHA1 "$MAGISKTMP/.magisk/config")" ] && $BOOTMODE ) || [ "$(grep_prop SYSTEMMODE /system/etc/init/magisk/config)" == "true" ]; then
 
-# Use kernel trick to clean up mirrors automatically when installer completed
-MIRRORDIR="/proc/$$/attr"
+# Use the same fallback as installation on kernels without /proc attr (#58).
+MIRRORDIR=/ MIRRORTMP=
+if $BOOTMODE; then
+    setup_installer_mirror || abort "! Unable to set up uninstaller mirror"
+    # abort/exit must also detach the fallback; never recursively remove it.
+    trap 'cleanup_installer_mirror' EXIT
+fi
 ROOTDIR="$MIRRORDIR/system_root"
 SYSTEMDIR="$MIRRORDIR/system"
 VENDORDIR="$MIRRORDIR/vendor"
@@ -61,17 +68,16 @@ ODM_DIR="$MIRRORDIR/odm"
 
 if $BOOTMODE; then
     # setup mirrors to get the original content
-    mount -t tmpfs -o 'mode=0755' tmpfs "$MIRRORDIR" || return 1
     if is_rootfs; then
         ROOTDIR=/
         mkdir "$SYSTEMDIR"
-        force_bind_mount "/system" "$SYSTEMDIR" || return 1
+        force_bind_mount "/system" "$SYSTEMDIR" || abort "! Unable to mirror /system"
     else
         mkdir "$ROOTDIR"
-        force_bind_mount "/" "$ROOTDIR" || return 1
+        force_bind_mount "/" "$ROOTDIR" || abort "! Unable to mirror system root"
         if mountpoint -q /system; then
             mkdir "$SYSTEMDIR"
-            force_bind_mount "/system" "$SYSTEMDIR" || return 1
+            force_bind_mount "/system" "$SYSTEMDIR" || abort "! Unable to mirror /system"
         else
             ln -fs ./system_root/system "$SYSTEMDIR"
         fi
@@ -80,7 +86,7 @@ if $BOOTMODE; then
     # check if /vendor is seperated fs
     if mountpoint -q /vendor; then
         mkdir "$VENDORDIR"
-        force_bind_mount "/vendor" "$VENDORDIR" || return 1
+        force_bind_mount "/vendor" "$VENDORDIR" || abort "! Unable to mirror /vendor"
     else
         ln -fs ./system/vendor "$VENDORDIR"
     fi
@@ -88,7 +94,7 @@ if $BOOTMODE; then
     # check if /odm is seperated fs
     if mountpoint -q /odm; then
         mkdir "$ODM_DIR"
-        force_bind_mount "/odm" "$ODM_DIR" || return 1
+        force_bind_mount "/odm" "$ODM_DIR" || abort "! Unable to mirror /odm"
     else
         ln -fs ./system_root/odm "$ODM_DIR"
     fi
@@ -135,7 +141,7 @@ fi
 
 if $BOOTMODE; then
   ui_print "- Removing modules"
-  magisk --remove-modules -n
+  magisk --remove-modules -n || abort "! Unable to remove modules"
 fi
 
 ui_print "- Removing Kyubi files"
@@ -143,16 +149,34 @@ rm -rf \
 /cache/*magisk* /cache/unblock /data/*magisk* /data/cache/*magisk* /data/property/*magisk* \
 /data/Magisk.apk /data/busybox /data/adb/*magisk* \
 /data/adb/post-fs-data.d /data/adb/service.d /data/adb/modules* \
-/data/unencrypted/magisk /metadata/magisk /persist/magisk /mnt/vendor/persist/magisk
+/data/unencrypted/magisk /metadata/magisk /persist/magisk /mnt/vendor/persist/magisk \
+  || abort "! Unable to remove Kyubi files"
 
 cd /
 
-ui_print "********************************************"
-ui_print " The Kyubi app will uninstall itself, and"
-ui_print " the device will reboot after a few seconds"
-ui_print "********************************************"
+# Release mirrors before reboot; keep the EXIT trap as an error-path guard.
+cleanup_installer_mirror || abort "! Unable to clean up uninstaller mirror"
+MIRRORDIR= MIRRORTMP=
+
+rm -rf "$TMPDIR" || abort "! Unable to remove uninstaller temporary files"
+
+# Package removal kills the app. Finish cleanup first and let this root shell
+# own the remaining sequence, rather than depending on an app callback after
+# reboot. Capture pm output so it is not written to the app's closed log pipe.
+if [ -n "$MANAGER_PACKAGE" ]; then
+  ui_print "- Removing manager package: $MANAGER_PACKAGE"
+  PM_RESULT=$(/system/bin/pm uninstall "$MANAGER_PACKAGE") \
+    || abort "! Unable to remove manager package: $PM_RESULT"
+  [ "$PM_RESULT" = Success ] || abort "! Unable to remove manager package: $PM_RESULT"
+else
+  ui_print "- System cleanup complete"
+fi
+
 sleep 8
-if ! /system/bin/reboot; then
+if /system/bin/reboot; then
+  exit 0
+else
+  REBOOT_RESULT=$?
   # Reboot failed to even start (rather than silently not completing, which
   # this shell can't observe either way) -- don't leave the partitions we
   # remounted read-write above sitting open with nothing to close them.
@@ -161,7 +185,5 @@ if ! /system/bin/reboot; then
   mount -o ro,remount /system 2>/dev/null
   mount -o ro,remount /vendor 2>/dev/null
   mount -o ro,remount /odm 2>/dev/null
+  exit "$REBOOT_RESULT"
 fi
-
-rm -rf $TMPDIR
-exit 0

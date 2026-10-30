@@ -51,10 +51,11 @@ fix_env() {
 }
 
 run_uninstaller() {
-  rm -rf /dev/tmp
-  mkdir -p /dev/tmp/install
-  unzip -o "$1" "assets/*" "lib/*" -d /dev/tmp/install
-  INSTALLER=/dev/tmp/install sh /dev/tmp/install/assets/uninstaller.sh dummy 1 "$1"
+  rm -rf /dev/tmp || return 1
+  mkdir -p /dev/tmp/install || return 1
+  unzip -o "$1" "assets/*" "lib/*" -d /dev/tmp/install || return 1
+  # The running package can be a hidden manager, not the build's applicationId.
+  INSTALLER=/dev/tmp/install sh /dev/tmp/install/assets/uninstaller.sh dummy 1 "$1" "$2"
 }
 
 add_hosts_module() {
@@ -238,8 +239,10 @@ restore_system_sepolicy(){
 }
 
 installer_cleanup(){
-    umount -l "/proc/$$/attr"
-    mount -o ro,remount /
+    local result=0
+    cleanup_installer_mirror || result=1
+    mount -o ro,remount / || result=1
+    return "$result"
 }
 
 direct_install_system(){
@@ -249,8 +252,15 @@ direct_install_system(){
     local INSTALLDIR="$1"
 
     ui_print "- Remount system partition as read-write"
-    # Use kernel trick to clean up mirrors automatically when installer completed
-    local MIRRORDIR="/proc/$$/attr" ROOTDIR SYSTEMDIR VENDORDIR
+    local ROOTDIR SYSTEMDIR VENDORDIR ODM_DIR PATCH_SEPOLICY=true
+    if $BOOTMODE; then
+        setup_installer_mirror || return 1
+        # An enforce file exists in both enforcing and permissive SELinux.
+        [ -e /sys/fs/selinux/enforce ] || PATCH_SEPOLICY=false
+    else
+        MIRRORDIR=/
+    fi
+    MIRROR_READY=true
 
     ROOTDIR="$MIRRORDIR/system_root"
     SYSTEMDIR="$MIRRORDIR/system"
@@ -265,9 +275,7 @@ direct_install_system(){
     fi
 
     if $BOOTMODE; then
-        umount -l "/proc/$$/attr"
         # setup mirrors to get the original content
-        mount -t tmpfs -o 'mode=0755' tmpfs "$MIRRORDIR" || return 1
         if is_rootfs; then
             ROOTDIR=/
             force_bind_mount "/" "$ROOTDIR" || return 1
@@ -311,7 +319,6 @@ direct_install_system(){
             ln -fs ./system_root/odm "$ODM_DIR"
         fi
     else
-        local MIRRORDIR="/" ROOTDIR SYSTEMDIR VENDORDIR
         ROOTDIR="$MIRRORDIR/system_root"
         SYSTEMDIR="$MIRRORDIR/system"
         VENDORDIR="$MIRRORDIR/vendor"
@@ -359,13 +366,15 @@ direct_install_system(){
         cat "$INSTALLDIR/$magisk" >"$MIRRORDIR$MAGISKSYSTEMDIR/$magisk" || { ui_print "! Unable to write Magisk binaries to system"; return 1; }
     done
     echo -e "SYSTEMMODE=true\nRECOVERYMODE=false" >"$MIRRORDIR$MAGISKSYSTEMDIR/config" || { ui_print "! Unable to write Magisk config"; return 1; }
-    chcon -R u:object_r:system_file:s0 "$MIRRORDIR$MAGISKSYSTEMDIR" || { ui_print "! Unable to set SELinux context on Magisk files"; return 1; }
+    if $PATCH_SEPOLICY; then
+        chcon -R u:object_r:system_file:s0 "$MIRRORDIR$MAGISKSYSTEMDIR" || { ui_print "! Unable to set SELinux context on Magisk files"; return 1; }
+    fi
     chmod -R 700 "$MIRRORDIR$MAGISKSYSTEMDIR" || { ui_print "! Unable to set permissions on Magisk files"; return 1; }
 
     if [ "$API" -gt 24 ]; then
 
-        # test live patch
-        {
+        # A kernel without SELinux has neither contexts nor a policy to patch.
+        if $PATCH_SEPOLICY; then
             if $BOOTMODE; then
                 ui_print "- Check if kernel supports dynamic SELinux Policy patch"
                 if [ -d /sys/fs/selinux ] && ! "$INSTALLDIR/magiskpolicy" --live "permissive su" &>/dev/null; then
@@ -403,7 +412,7 @@ direct_install_system(){
                 fi
               }
             fi
-        }
+        fi
         ui_print "- Add init boot script"
         {
             hijackrc="$MIRRORDIR/system/etc/init/magisk.rc" 
@@ -412,6 +421,9 @@ direct_install_system(){
             fi
         }
         echo "$(magiskrc "$MAGISKTMP_TO_INSTALL")" >>"$hijackrc" || return 1
+        # Android init rejects group/world-writable rc files. MEmu's root
+        # shell can have umask 000, so do not rely on creation defaults.
+        chmod 644 "$hijackrc" || { ui_print "! Unable to secure init boot script"; return 1; }
     fi
 
     ui_print "[*] Reflash your ROM if your ROM is unable to start"
@@ -426,27 +438,31 @@ direct_install_system(){
 xdirect_install_system() {
   # Keep the writable mirror mounted until every step commits, so rollback can
   # restore both the original policy and init files after any later failure.
-  local mirror="/proc/$$/attr"
+  local MIRRORDIR= MIRRORTMP= MIRROR_READY=false
   direct_install_system "$@" || {
-    restore_system_sepolicy "$mirror"
-    cleanup_system_installation "$mirror"
+    if $MIRROR_READY; then
+      restore_system_sepolicy "$MIRRORDIR"
+      cleanup_system_installation "$MIRRORDIR"
+    fi
     installer_cleanup
     return 1
   }
   fix_env "$1" || {
-    restore_system_sepolicy "$mirror"
-    cleanup_system_installation "$mirror"
+    restore_system_sepolicy "$MIRRORDIR"
+    cleanup_system_installation "$MIRRORDIR"
     installer_cleanup
     return 1
   }
   run_migrations || {
-    restore_system_sepolicy "$mirror"
-    cleanup_system_installation "$mirror"
+    restore_system_sepolicy "$MIRRORDIR"
+    cleanup_system_installation "$MIRRORDIR"
     installer_cleanup
     return 1
   }
-  installer_cleanup
-  return 0
+  installer_cleanup || {
+    ui_print "! Files installed, but cleanup failed; reboot before retrying"
+    return 1
+  }
 }
 
 

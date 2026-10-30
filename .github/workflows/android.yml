@@ -45,6 +45,11 @@ jobs:
       - name: Setup environment
         uses: ./.github/actions/setup
 
+      - name: Check installer mirror lifecycle
+        run: |
+          python3 scripts/test_system_install.py
+          python3 scripts/test_uninstall_order.py
+
       # Fail fast if the stub's compiled-in cert pin drifts from the workflow pin.
       - name: Verify cert pin is single-source
         run: |
@@ -193,7 +198,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim
           disable-animations: true
-          script: ./scripts/kyubi_emulator_smoke.sh
+          script: ./scripts/kyubi_emulator_smoke.sh && bash scripts/native_selinux_ci.sh
 
   # Publish ONLY on a kitsune push, and ONLY after build + smoke both pass. The
   # APKs are the ones built (and signed) in `build` -- downloaded, not rebuilt.

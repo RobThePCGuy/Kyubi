@@ -63,7 +63,7 @@ Available applets:
 
 int magisk_main(int argc, char *argv[]) {
     if (argc >= 2 && argv[1] == "--auto-selinux"sv) {
-        {
+        if (selinux_enabled() || errno != ENOENT) {
             int secontext_fd = xopen("/proc/self/attr/current", O_RDWR);
             if (secontext_fd >= 0 && (
                 write(secontext_fd, "u:r:" SEPOL_PROC_DOMAIN ":s0", sizeof("u:r:" SEPOL_PROC_DOMAIN ":s0")) > 0 ||
