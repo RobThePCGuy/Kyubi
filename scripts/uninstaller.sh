@@ -133,6 +133,10 @@ $MIRRORDIR/system/xbin/magisk $MIRRORDIR/system/xbin/.magisk || abort "! Cannot 
 
 backup_restore "$MIRRORDIR/system/etc/init/bootanim.rc" && rm -rf "$MIRRORDIR/system/etc/init/bootanim.rc.gz"
 
+# The installer creates /sbin on guests that have none. rmdir only removes it
+# while empty, so a populated stock /sbin stays put.
+rmdir "$ROOTDIR/sbin" 2>/dev/null
+
 else
 
 abort "! No system-mode Kyubi installation found (Kyubi is system-mode only)"
@@ -164,6 +168,8 @@ rm -rf "$TMPDIR" || abort "! Unable to remove uninstaller temporary files"
 # own the remaining sequence, rather than depending on an app callback after
 # reboot. Capture pm output so it is not written to the app's closed log pipe.
 remount_system_ro() {
+  # System-as-root guests mount the system disk at / (see the rw remount above).
+  mount -o ro,remount / 2>/dev/null
   mount -o ro,remount /system_root 2>/dev/null
   mount -o ro,remount /system 2>/dev/null
   mount -o ro,remount /vendor 2>/dev/null

@@ -59,7 +59,8 @@ mountpoint() { return 1; }
 force_bind_mount() { return 0; }
 mkdir() { :; }
 ln() { :; }
-mount() { event mount; }
+mount() { event "mount $*"; }
+rmdir() { event "rmdir $*"; }
 blockdev() { :; }
 rm() {
   event "remove $*"
@@ -124,7 +125,8 @@ reboot() {
         removal = events.index('pm uninstall io.github.robthepcguy.kyubi')
         self.assertLess(events.index('mirror-cleanup'), removal)
         self.assertTrue(any('payload' in e for e in events[:removal]))
-        self.assertIn('mount', events[removal:])
+        self.assertIn('mount -o ro,remount /', events[removal:])
+        self.assertTrue(any(e.startswith('rmdir ') and e.endswith('/sbin') for e in events[:removal]))
         self.assertNotIn('reboot', events)
 
     def test_hidden_manager_uses_running_package_identity(self):
